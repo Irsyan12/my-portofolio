@@ -29,4 +29,8 @@ export default {
     },
   },
   plugins: [],
+  corePlugins: {
+    // preflight: false,
+    scrollBehavior: true,
+  },
 };

@@ -9,7 +9,7 @@ function HelloWorldPage() {
     <>
     {/* <MouseShadowEffect /> */}
 
-      <div className="w-11/12 mx-auto min-h-screen text-white bg-dark">
+      <div className="w-11/12 mx-auto min-h-screen text-white bg-dark" id="home">
 
         <div className="md:w-5/6 mx-auto ">
           <div className="flex flex-col md:flex-row justify-between items-center pt-16 md:pt-32">

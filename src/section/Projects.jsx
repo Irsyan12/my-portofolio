@@ -223,7 +223,7 @@ const Projects = ({ limit = 3 }) => {
   const displayedProjects = filteredProjects.slice(0, limit);
 
   return (
-    <section className="py-20 w-11/12 md:w-5/6 mx-auto text-white">
+    <section className="py-20 w-11/12 md:w-5/6 mx-auto text-white" id="projects">
       {/* Section Header */}
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold mb-4">My Projects</h2>
