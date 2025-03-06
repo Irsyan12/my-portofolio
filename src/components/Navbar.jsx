@@ -2,52 +2,89 @@
 import React, { useState, useEffect } from "react";
 
 function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+
+  // Effect untuk mendeteksi scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      // Aktifkan efek floating ketika scroll melebihi 10px
+      if (window.scrollY > 100) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    // Tambahkan event listener untuk scroll
+    window.addEventListener("scroll", handleScroll);
+
+    // Cleanup event listener saat komponen unmount
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <nav className="md:mx-6 md:w-5/6 lg:mx-auto py-8 md:py-16 ">
-      <div className="flex justify-between items-center">
-        <img
-          src="/images/IrsyanRmd.png"
-          className="w-[100px] md:w-[100px] ml-5 md:ml-0"
-          alt="photo"
-          draggable="false"
-        />
-        <ul className="hidden md:flex items-center text-secondary text-sm md:text-base space-x-16">
-          {/* Regular screen menu */}
-          <li className="hover:text-primary relative group cursor-pointer">
-            <a href="#home" className="transition-colors">Home</a>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+    <nav
+      className={`fixed  top-0 w-full z-50 md:left-1/2 md:-translate-x-1/2 transition-all duration-500
+      ${
+        scrolled
+          ? "bg-black/60 backdrop-blur-md shadow-md rounded-2xl mt-3 w-5/6 sm:left-1/2 md:rounded-xl md:w-4/6 md:mt-4 py-5 translate-x-10"
+          : "bg-transparent md:my-9 md:w-5/6 py-4"
+      }`}
+    >
+      <div className="px-4 md:px-6 mx-auto flex justify-between items-center">
+        <a href="/" onClick={() => window.scrollTo(0, 0)}>
+          <img
+            src="/images/IrsyanRmd.png"
+            className="w-[70px] md:w-[100px]"
+            alt="Irsyan Ramadhan Logo"
+            draggable="false"
+          />
+        </a>
+
+        {/* Desktop Menu */}
+        <ul className="hidden md:flex items-center text-white text-base space-x-10">
+          <li className="hover:text-[#c5f82a] relative group cursor-pointer">
+            <a
+              href="/"
+              onClick={() => window.scrollTo(0, 0)}
+              className="transition-colors"
+            >
+              Home
+            </a>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#c5f82a] transition-all duration-300 group-hover:w-full"></span>
           </li>
-          <li className="hover:text-primary relative group cursor-pointer">
-            <a href="#about" className="transition-colors">About</a>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+          <li className="hover:text-[#c5f82a] relative group cursor-pointer">
+            <a href="#about" className="transition-colors">
+              About
+            </a>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#c5f82a] transition-all duration-300 group-hover:w-full"></span>
           </li>
-          <li className="hover:text-primary relative group cursor-pointer">
-            <a href="#projects" className="transition-colors">Projects</a>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+          <li className="hover:text-[#c5f82a] relative group cursor-pointer">
+            <a href="#projects" className="transition-colors">
+              Projects
+            </a>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#c5f82a] transition-all duration-300 group-hover:w-full"></span>
           </li>
-          <li className="hover:text-primary relative group cursor-pointer">
-            <a href="#contactMe" className="transition-colors">Contact Me</a>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+          <li className="hover:text-[#c5f82a] relative group cursor-pointer">
+            <a href="#contactMe" className="transition-colors">
+              Contact Me
+            </a>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#c5f82a] transition-all duration-300 group-hover:w-full"></span>
           </li>
         </ul>
 
-        {/* Mobile menu */}
-        <ul className="flex md:hidden items-center text-secondary text-xs space-x-4 me-5">
-          <li className="hover:text-primary relative group">
-            <i href="#home" className="transition-colors">Home</i>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+        {/* Mobile Menu - Simple Text Links */}
+        <ul className="md:hidden flex items-center text-white text-sm space-x-3">
+          <li className="hover:text-[#c5f82a]">
+            <a href="#about">About</a>
           </li>
-          <li className="hover:text-primary relative group">
-            <i href="#about" className="transition-colors">About</i>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+          <li className="hover:text-[#c5f82a]">
+            <a href="#projects">Projects</a>
           </li>
-          <li className="hover:text-primary relative group">
-            <i href="#projects" className="transition-colors">Projects</i>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-          </li>
-          <li className="hover:text-primary relative group">
-            <i href="#contact" className="transition-colors">Contact</i>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+          <li className="hover:text-[#c5f82a]">
+            <a href="#contactMe">Contact Me</a>
           </li>
         </ul>
       </div>

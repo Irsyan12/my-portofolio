@@ -4,11 +4,15 @@ import { Link } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
 const Projects = ({ limit = 3 }) => {
-  const categories = ["All", "UI/UX", "Web Design", "App Design", "Graphic Design"];
+  const categories = [
+    "All",
+    "UI/UX",
+    "Web Design",
+    "App Design",
+    "Graphic Design",
+  ];
   const [activeCategory, setActiveCategory] = useState("All");
   // const [currentIndex, setCurrentIndex] = useState(0);
-
-
 
   // Projects data
   const projectsData = [
@@ -16,220 +20,222 @@ const Projects = ({ limit = 3 }) => {
       id: 1,
       title: "AirCalling Landing Page Design",
       category: "Web Design",
-      image: "/images/projects/project1.png",
+      image: "https://placehold.co/600x400?text=AirCalling+Landing+Page+Design",
     },
     {
       id: 2,
       title: "Business Landing Page Design",
       category: "Web Design",
-      image: "/images/projects/project2.png",
+      image: "https://placehold.co/600x400?text=Business+Landing+Page+Design",
     },
     {
       id: 3,
       title: "Ecom Web Page Design",
       category: "Web Design",
-      image: "/images/projects/project3.png",
+      image: "https://placehold.co/600x400?text=Ecom+Web+Page+Design",
     },
     {
       id: 4,
       title: "Portfolio Website",
       category: "Web Design",
-      image: "/images/projects/project4.png",
+      image: "https://placehold.co/600x400?text=Portfolio+Website",
     },
     {
       id: 5,
       title: "Landing Page for SaaS",
       category: "Web Design",
-      image: "/images/projects/project5.png",
+      image: "https://placehold.co/600x400?text=Landing+Page+for+SaaS",
     },
     {
       id: 6,
       title: "E-commerce Store",
       category: "Web Design",
-      image: "/images/projects/project6.png",
+      image: "https://placehold.co/600x400?text=E-commerce+Store",
     },
     {
       id: 7,
       title: "Personal Blog",
       category: "Web Design",
-      image: "/images/projects/project7.png",
+      image: "https://placehold.co/600x400?text=Personal+Blog",
     },
     {
       id: 8,
       title: "Online Resume",
       category: "Web Design",
-      image: "/images/projects/project8.png",
+      image: "https://placehold.co/600x400?text=Online+Resume",
     },
     {
       id: 9,
       title: "Photography Portfolio",
       category: "Web Design",
-      image: "/images/projects/project9.png",
+      image: "https://placehold.co/600x400?text=Photography+Portfolio",
     },
     {
       id: 10,
       title: "Restaurant Website",
       category: "Web Design",
-      image: "/images/projects/project10.png",
+      image: "https://placehold.co/600x400?text=Restaurant+Website",
     },
     {
       id: 11,
       title: "Event Landing Page",
       category: "Web Design",
-      image: "/images/projects/project11.png",
+      image: "https://placehold.co/600x400?text=Event+Landing+Page",
     },
     {
       id: 12,
       title: "Fitness App Landing Page",
       category: "App Design",
-      image: "/images/projects/project12.png",
+      image: "https://placehold.co/600x400?text=Fitness+App+Landing+Page",
     },
     {
       id: 13,
       title: "Travel Agency Website",
       category: "Web Design",
-      image: "/images/projects/project13.png",
+      image: "https://placehold.co/600x400?text=Travel+Agency+Website",
     },
     {
       id: 14,
       title: "Real Estate Website",
       category: "Web Design",
-      image: "/images/projects/project14.png",
+      image: "https://placehold.co/600x400?text=Real+Estate+Website",
     },
     {
       id: 15,
       title: "Corporate Website",
       category: "Web Design",
-      image: "/images/projects/project15.png",
+      image: "https://placehold.co/600x400?text=Corporate+Website",
     },
     {
       id: 16,
       title: "Mobile App Landing Page",
       category: "App Design",
-      image: "/images/projects/project16.png",
+      image: "https://placehold.co/600x400?text=Mobile+App+Landing+Page",
     },
     {
       id: 17,
       title: "Blog Template",
       category: "Web Design",
-      image: "/images/projects/project17.png",
+      image: "https://placehold.co/600x400?text=Blog+Template",
     },
     {
       id: 18,
       title: "Shop Template",
       category: "Web Design",
-      image: "/images/projects/project18.png",
+      image: "https://placehold.co/600x400?text=Shop+Template",
     },
     {
       id: 19,
       title: "Portfolio Template",
       category: "Web Design",
-      image: "/images/projects/project19.png",
+      image: "https://placehold.co/600x400?text=Portfolio+Template",
     },
     {
       id: 20,
       title: "Landing Page for Non-Profit",
       category: "Web Design",
-      image: "/images/projects/project20.png",
+      image: "https://placehold.co/600x400?text=Landing+Page+for+Non-Profit",
     },
     {
       id: 21,
       title: "Product Showcase",
       category: "Web Design",
-      image: "/images/projects/project21.png",
+      image: "https://placehold.co/600x400?text=Product+Showcase",
     },
     {
       id: 22,
       title: "Fashion Store",
       category: "Web Design",
-      image: "/images/projects/project22.png",
+      image: "https://placehold.co/600x400?text=Fashion+Store",
     },
     {
       id: 23,
       title: "Tech Startup Landing Page",
       category: "Web Design",
-      image: "/images/projects/project23.png",
+      image: "https://placehold.co/600x400?text=Tech+Startup+Landing+Page",
     },
     {
       id: 24,
       title: "Consulting Website",
       category: "Web Design",
-      image: "/images/projects/project24.png",
+      image: "https://placehold.co/600x400?text=Consulting+Website",
     },
     {
       id: 25,
       title: "Online Course Website",
       category: "Web Design",
-      image: "/images/projects/project25.png",
+      image: "https://placehold.co/600x400?text=Online+Course+Website",
     },
     {
       id: 26,
       title: "Health & Wellness Website",
       category: "Web Design",
-      image: "/images/projects/project26.png",
+      image: "https://placehold.co/600x400?text=Health+%26+Wellness+Website",
     },
     {
       id: 27,
       title: "Music Band Website",
       category: "Web Design",
-      image: "/images/projects/project27.png",
+      image: "https://placehold.co/600x400?text=Music+Band+Website",
     },
     {
       id: 28,
       title: "Charity Website",
       category: "Web Design",
-      image: "/images/projects/project28.png",
+      image: "https://placehold.co/600x400?text=Charity+Website",
     },
     {
       id: 29,
       title: "Gaming Website",
       category: "Web Design",
-      image: "/images/projects/project29.png",
+      image: "https://placehold.co/600x400?text=Gaming+Website",
     },
     {
       id: 30,
       title: "Art Gallery Website",
       category: "Web Design",
-      image: "/images/projects/project30.png",
+      image: "https://placehold.co/600x400?text=Art+Gallery+Website",
     },
     {
       id: 31,
       title: "Blogging Platform",
       category: "Web Design",
-      image: "/images/projects/project31.png",
+      image: "https://placehold.co/600x400?text=Blogging+Platform",
     },
     {
       id: 32,
       title: "Online Store",
       category: "Web Design",
-      image: "/images/projects/project32.png",
+      image: "https://placehold.co/600x400?text=Online+Store",
     },
     {
       id: 33,
       title: "Digital Marketing Agency",
       category: "Web Design",
-      image: "/images/projects/project33.png",
+      image: "https://placehold.co/600x400?text=Digital+Marketing+Agency",
     },
-
-    // Add more projects as needed
   ];
 
   // Filter projects based on active category
-  const filteredProjects = activeCategory === "All"
-    ? projectsData
-    : projectsData.filter(project => project.category === activeCategory);
+  const filteredProjects =
+    activeCategory === "All"
+      ? projectsData
+      : projectsData.filter((project) => project.category === activeCategory);
 
-    // Batasi jumlah proyek yang ditampilkan
+  // Batasi jumlah proyek yang ditampilkan
   const displayedProjects = filteredProjects.slice(0, limit);
 
   return (
-    <section className="py-20 w-11/12 md:w-5/6 mx-auto text-white" id="projects">
+    <section
+      className="py-20 w-11/12 md:w-5/6 mx-auto text-white"
+      id="projects"
+    >
       {/* Section Header */}
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold mb-4">My Projects</h2>
-        <p className="text-gray-400 max-w-2xl mx-auto">
-          Lorem ipsum dolor sit amet consectetur. Mollis erat duis aliquam mauris est risus
-          lectus. Phasellus consequat urna tellus
+        <h2 className="text-4xl font-bold mb-4 text-color1">My Projects</h2>
+        <p className="text-text-gray-400 max-w-2xl mx-auto">
+          Here are some of the projects I have worked on. Feel free to explore
+          and see more details.
         </p>
       </div>
 
@@ -240,9 +246,10 @@ const Projects = ({ limit = 3 }) => {
             key={category}
             onClick={() => setActiveCategory(category)}
             className={`px-6 py-2 rounded-full transition-colors 
-              ${activeCategory === category
-                ? "bg-primary text-black"
-                : "bg-white/10 hover:bg-white/20"
+              ${
+                activeCategory === category
+                  ? "bg-color1 text-black"
+                  : "bg-white/10 hover:bg-white/20"
               }`}
           >
             {category}
@@ -252,9 +259,7 @@ const Projects = ({ limit = 3 }) => {
 
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {displayedProjects.map((project) => (
-
-
+        {displayedProjects.map((project) => (
           <div
             key={project.id}
             className="group relative rounded-xl overflow-hidden bg-white/5 hover:bg-white/10 transition-colors"
@@ -267,16 +272,16 @@ const Projects = ({ limit = 3 }) => {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>
-            
+
             {/* Project Info */}
             <div className="p-6">
-              <span className="text-primary text-sm">{project.category}</span>
+              <span className="text-color1 text-sm">{project.category}</span>
               <h3 className="text-xl font-semibold mt-2">{project.title}</h3>
             </div>
 
             {/* Hover Overlay */}
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <button className="px-6 py-3 bg-primary text-black rounded-full transform -translate-y-4 group-hover:translate-y-0 transition-transform">
+              <button className="px-6 py-3 bg-color1 text-black rounded-full transform -translate-y-4 group-hover:translate-y-0 transition-transform">
                 View Details
               </button>
             </div>
@@ -285,14 +290,10 @@ const Projects = ({ limit = 3 }) => {
       </div>
       {/* See More Button */}
       {projectsData.length > limit && (
-
-
         <div className="text-center mt-12">
-
           <Link
-
             to="/projects"
-            className="inline-block px-8 py-3 bg-primary text-black rounded-full hover:bg-opacity-90 transition-colors"
+            className="inline-block px-8 py-3 bg-color1 text-black rounded-full hover:bg-opacity-90 transition-colors"
           >
             See More Projects
           </Link>

@@ -9,15 +9,15 @@ function HelloWorldPage() {
     <>
     {/* <MouseShadowEffect /> */}
 
-      <div className="w-11/12 mx-auto min-h-screen text-white bg-dark" id="home">
+      <div className="w-11/12 md:pt-16 mx-auto min-h-screen text-white bg-dark" id="home">
 
         <div className="md:w-5/6 mx-auto ">
           <div className="flex flex-col md:flex-row justify-between items-center pt-16 md:pt-32">
             {/* Left side content */}
             <div className="space-y-3 md:w-1/2 text-center md:text-left cursor-default">
               {/*eslint-disable-next-line react/no-unescaped-entities */}
-              <p className="text-lg text-[#c5f82a]">Hello World, I'm</p>
-              <h1 className="text-4xl md:text-6xl font-bold text-[#c5f82a]">
+              <p className="text-lg text-color1">Hello World, I'm</p>
+              <h1 className="text-4xl md:text-6xl font-bold text-color1">
                 Irsyan Ramadhan
               </h1>
               <TypeWriter />
@@ -25,7 +25,7 @@ function HelloWorldPage() {
                 Welcome to my personal website{" "}
                 <span className="inline-block animate-wave">👋</span>
               </p>
-              <button className="bg-[#c5f82a] text-black px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors">
+              <button className="bg-color1 text-black px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors">
                 Download CV
               </button>
             </div>
@@ -33,7 +33,7 @@ function HelloWorldPage() {
             {/* Right side content */}
             <div className="mt-12 md:mt-0 md:w-1/2 flex justify-center">
               <div className="relative ms-auto">
-                <div className="w-[250px] md:w-[300px] h-[250px] md:h-[300px] rounded-full overflow-hidden border-4 border-[#c5f82a]">
+                <div className="w-[250px] md:w-[300px] h-[250px] md:h-[300px] rounded-full overflow-hidden border-4 border-color1">
                   <img
                     src="/images/MyPhoto.png"
                     alt="Profile"
@@ -44,25 +44,25 @@ function HelloWorldPage() {
                   <div className="flex space-x-4">
                     <a
                       href="#"
-                      className="bg-white p-2 rounded-full text-black hover:bg-[#c5f82a] transition-colors"
+                      className="bg-white p-2 rounded-full text-black hover:bg-color1 transition-colors"
                     >
                       <FaFacebook size={20} />
                     </a>
                     <a
                       href="#"
-                      className="bg-white p-2 rounded-full text-black hover:bg-[#c5f82a] transition-colors"
+                      className="bg-white p-2 rounded-full text-black hover:bg-color1 transition-colors"
                     >
                       <FaTwitter size={20} />
                     </a>
                     <a
                       href="#"
-                      className="bg-white p-2 rounded-full text-black hover:bg-[#c5f82a] transition-colors"
+                      className="bg-white p-2 rounded-full text-black hover:bg-color1 transition-colors"
                     >
                       <FaInstagram size={20} />
                     </a>
                     <a
                       href="#"
-                      className="bg-white p-2 rounded-full text-black hover:bg-[#c5f82a] transition-colors"
+                      className="bg-white p-2 rounded-full text-black hover:bg-color1 transition-colors"
                     >
                       <FaLinkedin size={20} />
                     </a>
