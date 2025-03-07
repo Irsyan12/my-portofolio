@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React from "react";
 import Projects from "../section/Projects";
 import { FaLongArrowAltUp } from "react-icons/fa";
