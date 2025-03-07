@@ -1,15 +1,15 @@
 // eslint-disable-next-line no-unused-vars
 import React from "react";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
-import TypeWriter from "../components/TypeWriter"; // Adjust the import path as needed
-// import MouseShadowEffect from "../components/MouseShadowEffect";
+import TypeWriter from "../components/TypeWriter"; 
+import profil from "../assets/images/MyPhoto.png"; 
 
 function HelloWorldPage() {
   return (
     <>
     {/* <MouseShadowEffect /> */}
 
-      <div className="w-11/12 md:pt-16 mx-auto min-h-screen text-white bg-dark" id="home">
+      <div className="w-11/12 md:pt-16 mx-auto text-white bg-dark" id="home">
 
         <div className="md:w-5/6 mx-auto ">
           <div className="flex flex-col md:flex-row justify-between items-center pt-16 md:pt-32">
@@ -35,7 +35,7 @@ function HelloWorldPage() {
               <div className="relative ms-auto">
                 <div className="w-[250px] md:w-[300px] h-[250px] md:h-[300px] rounded-full overflow-hidden border-4 border-color1">
                   <img
-                    src="/images/MyPhoto.png"
+                    src={profil}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />
@@ -61,7 +61,7 @@ function HelloWorldPage() {
                       <FaInstagram size={20} />
                     </a>
                     <a
-                      href="#"
+                      href="https://www.linkedin.com/in/irsyanramadhan/"
                       className="bg-white p-2 rounded-full text-black hover:bg-color1 transition-colors"
                     >
                       <FaLinkedin size={20} />

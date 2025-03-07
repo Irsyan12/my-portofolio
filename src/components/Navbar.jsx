@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
+import logo from "../assets/images/IrsyanRmd.png";
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -26,17 +27,17 @@ function Navbar() {
 
   return (
     <nav
-      className={`fixed  top-0 w-full z-50 md:left-1/2 md:-translate-x-1/2 transition-all duration-500
+      className={`fixed top-0 z-50 md:left-1/2 md:-translate-x-1/2 transition-all duration-500
       ${
         scrolled
-          ? "bg-black/60 backdrop-blur-md shadow-md rounded-2xl mt-3 w-5/6 sm:left-1/2 md:rounded-xl md:w-4/6 md:mt-4 py-5 translate-x-10"
-          : "bg-transparent md:my-9 md:w-5/6 py-4"
+          ? "bg-black/60 w-5/6 backdrop-blur-md shadow-md rounded-2xl mt-3 w-5/6 sm:left-1/2 md:rounded-xl md:w-4/6 md:mt-4 py-5 translate-x-10"
+          : "w-full bg-transparent md:my-9 md:w-5/6 py-4"
       }`}
     >
       <div className="px-4 md:px-6 mx-auto flex justify-between items-center">
-        <a href="/" onClick={() => window.scrollTo(0, 0)}>
+        <a onClick={() => window.scrollTo(0, 0)}>
           <img
-            src="/images/IrsyanRmd.png"
+            src={logo}
             className="w-[70px] md:w-[100px]"
             alt="Irsyan Ramadhan Logo"
             draggable="false"
@@ -47,7 +48,7 @@ function Navbar() {
         <ul className="hidden md:flex items-center text-white text-base space-x-10">
           <li className="hover:text-[#c5f82a] relative group cursor-pointer">
             <a
-              href="/"
+            
               onClick={() => window.scrollTo(0, 0)}
               className="transition-colors"
             >

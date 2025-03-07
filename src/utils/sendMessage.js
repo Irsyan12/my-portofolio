@@ -11,7 +11,7 @@ export const sendMessage = async (formData, setFormData, setSnackbar) => {
     return;
   }
 
-  const text = `New Contact Form Submission:%0AName: ${name}%0AEmail: ${email}%0ASubject: ${subject}%0AMessage: ${message}`;
+  const text = `New Message from Contactme form:%0AName: ${name}%0AEmail: ${email}%0ASubject: ${subject}%0AMessage: ${message}`;
   const apiUrl = `https://api.callmebot.com/whatsapp.php`;
 
   try {

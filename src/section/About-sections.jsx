@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React from "react";
-import { FaEnvelope, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+import { FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import TechStack from "../components/TechStack";
 
 const AboutSection = () => {
@@ -19,10 +19,6 @@ const AboutSection = () => {
             <div className="flex items-center space-x-4">
               <FaEnvelope className="text-[#c5f82a]" />
               <span>irsyanramadhan72@gmail.com</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <FaPhone className="text-[#c5f82a]" />
-              <span>+6288214717802</span>
             </div>
             <div className="flex items-center space-x-4">
               <FaMapMarkerAlt className="text-[#c5f82a]" />
