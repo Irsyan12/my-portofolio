@@ -231,8 +231,8 @@ const Projects = ({ limit = 3 }) => {
       id="projects"
     >
       {/* Section Header */}
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold mb-4 text-color1">My Projects</h2>
+      <div className="text-center mb-12 cursor-default">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">My Projects</h2>
         <p className="text-text-gray-400 max-w-2xl mx-auto">
           Here are some of the projects I have worked on. Feel free to explore
           and see more details.

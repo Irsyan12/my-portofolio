@@ -30,7 +30,7 @@ function Navbar() {
       className={`fixed top-0 z-50 md:left-1/2 md:-translate-x-1/2 transition-all duration-500
       ${
         scrolled
-          ? "bg-black/60 w-5/6 backdrop-blur-md shadow-md rounded-2xl mt-3 w-5/6 sm:left-1/2 md:rounded-xl md:w-4/6 md:mt-4 py-5 translate-x-10"
+          ? "bg-black/60 backdrop-blur-md shadow-md rounded-2xl mt-3 w-5/6 md:rounded-xl md:w-4/6 md:mt-4 py-5 translate-x-10"
           : "w-full bg-transparent md:my-9 md:w-5/6 py-4"
       }`}
     >

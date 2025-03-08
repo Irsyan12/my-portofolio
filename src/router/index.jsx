@@ -2,8 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import ProjectsPage from "../pages/ProjectsPage";
 import Home from "../Home";
 import Login from "../admin/login";
+import NotFoundPage from "../pages/404";
 
-const isGitHubPages = window.location.hostname.includes("github.io");
 const router = createBrowserRouter(
   [
     {
@@ -17,11 +17,13 @@ const router = createBrowserRouter(
     {
       path: "/login",
       element: <Login />,
+    },
+    {
+      path: "*",
+      element: <NotFoundPage />,
     }
-  ],
-  {
-    basename: isGitHubPages ? "/portofolio-irsyan" : "/",
-  }
+
+  ]
 );
 
 export default router;

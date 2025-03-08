@@ -74,7 +74,7 @@ const Footer = () => {
           />
           <button
             type="submit"
-            className="md:ml-2 bg-color1 hover:bg-blue-700 text-black px-4 py-2 rounded-md md:w-auto"
+            className="md:ml-2 bg-color1 hover:bg-opacity-90 text-black px-4 py-2 rounded-md md:w-auto"
           >
             Send
           </button>
