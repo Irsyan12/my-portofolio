@@ -67,3 +67,13 @@
 .animate-marquee2 {
   animation: marquee2 25s linear infinite;
 }
+
+@media (max-width: 640px) {
+  .animate-marquee, .animate-marquee2 {
+    animation-duration: 30s;
+  }
+}
+
+div[ref="scrollRef"]::-webkit-scrollbar {
+  display: none;
+}

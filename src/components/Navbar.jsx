@@ -1,9 +1,9 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
-import logo from "../assets/images/IrsyanRmd.png";
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const logo = "https://res.cloudinary.com/dxwmph7tj/image/upload/v1741494933/images-web/whtlytqgyqdef1mxnndl.png";
 
   // Effect untuk mendeteksi scroll
   useEffect(() => {

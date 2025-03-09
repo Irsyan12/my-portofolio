@@ -1,51 +1,77 @@
-const techIcons = [
-  "firebase",
-  "flutter",
-  "laravel",
-  "mysql",
-  "node",
-  "react",
-  "typescript",
-  "python",
-  "tensorflow",
-  "php",
-];
+import { useEffect, useState } from "react";
+import Marquee from "react-fast-marquee";
 
-// Import all images dynamically
-const icons = import.meta.glob("../assets/icon/*.png", { eager: true });
-
-const iconMap = Object.fromEntries(
-  Object.entries(icons).map(([path, mod]) => [
-    path.split("/").pop().replace(".png", ""),
-    mod.default,
-  ])
-);
+const cloudinaryBaseUrl = "https://res.cloudinary.com/dxwmph7tj/image/upload";
+const cloudinaryFolder = "icons";
 
 const TechStack = () => {
+  const [icons, setIcons] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+
+    // Opsi 1: Jika Anda tahu public_id semua gambar
+    const iconIds = [
+      "xnnvgq5aswuihh8qzta4", // Contoh dari URL yang Anda berikan
+      "nly9im2daeprsv8wxebf",
+      "pz3uxsmdfclx65pmx9ls",
+      "zpmkeuzpbmn4daejecwl",
+      "q703u1nytlnjrw642jdq",
+      "nirkkkolnc1pegcay2sw",
+      "ayrwxgcemrspfgfjgmwz",
+      "owjeoe0fmddzsztpugmb",
+      "wtnnvetxyqycl3ljolot",
+      "axsekpus1o7h06rbvobt",
+    ];
+
+    // eslint-disable-next-line no-unused-vars
+    const techIcons = [
+      "firebase",
+      "flutter",
+      "laravel",
+      "mysql",
+      "node",
+      "react",
+      "typescript",
+      "python",
+      "tensorflow",
+      "php",
+    ];
+
+    setIcons(
+      iconIds.map(
+        (id) => `${cloudinaryBaseUrl}/v1741494343/${cloudinaryFolder}/${id}.png`
+      )
+    );
+
+    // ATAU, jika Anda tahu pattern URL dan ID bisa diprediksi berdasarkan nama teknologi:
+    // setIcons(techIcons.map(tech => `${cloudinaryBaseUrl}/v1741494343/${cloudinaryFolder}/${tech}.png`));
+
+    setLoading(false);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="mt-20 w-full bg-transparent">Loading tech stack...</div>
+    );
+  }
+
   return (
-    <div className="mt-20 w-full overflow-hidden bg-transparent">
-      <div className="relative flex">
-        <div className="animate-marquee whitespace-nowrap flex">
-          {techIcons.map((icon, index) => (
+    <div className="mt-20 w-full bg-transparent">
+      <Marquee
+        speed={40}
+        autoFill={true}
+      >
+        {icons.map((iconUrl, index) => (
+          <div key={`icon-${index}`} className="mx-5 md:mx-8">
             <img
-              key={`icon-1-${index}`}
-              src={iconMap[icon]}
-              alt={icon}
-              className="mx-3 h-9 md:mx-8 md:h-12 object-contain"
+              src={iconUrl}
+              alt={`Tech Icon ${index + 1}`}
+              className="h-10 md:h-12 object-contain"
             />
-          ))}
-        </div>
-        <div className="absolute top-0 animate-marquee2 whitespace-nowrap flex">
-          {techIcons.map((icon, index) => (
-            <img
-              key={`icon-2-${index}`}
-              src={iconMap[icon]}
-              alt={icon}
-              className="mx-3 h-9 md:mx-8 md:h-12 object-contain"
-            />
-          ))}
-        </div>
-      </div>
+          </div>
+        ))}
+      </Marquee>
     </div>
   );
 };
