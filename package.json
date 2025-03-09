@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://irsyan12.github.io/" ,
+  "homepage": "https://irsyan12.github.io/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -21,6 +21,7 @@
     "axios": "^1.8.1",
     "cors": "^2.8.5",
     "express": "^4.21.2",
+    "firebase": "^11.4.0",
     "node-fetch": "^3.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

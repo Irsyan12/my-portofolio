@@ -2,13 +2,11 @@
 import React from "react";
 import { FaGithub, FaInstagram, FaLinkedin, FaEnvelope } from "react-icons/fa";
 import TypeWriter from "../components/TypeWriter";
-import profil from "../assets/images/MyPhoto.png";
+import OptimizedProfileImage from "../components/OptimizedProfileImage";
 
 function HelloWorldPage() {
   return (
     <>
-      {/* <MouseShadowEffect /> */}
-
       <div
         className="w-11/12 md:pt-16 min-h-screen mx-auto text-white bg-dark"
         id="home"
@@ -35,13 +33,7 @@ function HelloWorldPage() {
             {/* Right side content */}
             <div className="mt-12 md:mt-0 md:w-1/2 flex justify-center">
               <div className="relative ms-auto">
-                <div className="w-[250px] md:w-[300px] h-[250px] md:h-[300px] rounded-full overflow-hidden border-4 border-color1">
-                  <img
-                    src={profil}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
+                <OptimizedProfileImage />
                 <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
                   <div className="flex space-x-4">
                     <a
