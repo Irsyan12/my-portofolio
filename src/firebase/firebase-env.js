@@ -16,4 +16,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
+console.log("Firebase API Key:", process.env.REACT_APP_FIREBASE_API_KEY);
+console.log("Firebase Auth Domain:", process.env.REACT_APP_FIREBASE_AUTH_DOMAIN);
+
 export { app, analytics };

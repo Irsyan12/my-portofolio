@@ -2,25 +2,27 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import CustomTextField from "../components/OutlinedTextField";
-import logo from "../assets/images/IrsyanRmd.png";
+import { login } from "../firebase/auth"; // Import fungsi login dari auth.js
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError("");
-
-    // Dummy authentication (replace with real auth logic later)
-    if (email === "admin@example.com" && password === "admin123") {
-      alert("Login successful!");
-      // Redirect or set authentication state
-    } else {
-      setError("Invalid email or password");
-    }
-  };
+  const logo =
+    "https://res.cloudinary.com/dxwmph7tj/image/upload/v1741494933/images-web/whtlytqgyqdef1mxnndl.png";
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setError("");
+    
+      try {
+        await login(email, password); // Panggil fungsi login dari auth.js
+        alert("Login successful!");
+        // Redirect atau set authentication state di sini
+      } catch (error) {
+        setError(error.message);
+      }
+    };    
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-dark text-white">
