@@ -2,12 +2,15 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import CustomTextField from "../components/OutlinedTextField";
-import { login } from "../firebase/auth"; // Import fungsi login dari auth.js
+import { login } from "../firebase/auth"; 
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+  
 
   const logo =
     "https://res.cloudinary.com/dxwmph7tj/image/upload/v1741494933/images-web/whtlytqgyqdef1mxnndl.png";
@@ -17,8 +20,8 @@ const LoginPage = () => {
     
       try {
         await login(email, password); // Panggil fungsi login dari auth.js
-        alert("Login successful!");
-        // Redirect atau set authentication state di sini
+        navigate('/admin');
+        
       } catch (error) {
         setError(error.message);
       }

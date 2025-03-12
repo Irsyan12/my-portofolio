@@ -3,6 +3,9 @@ import ProjectsPage from "../pages/ProjectsPage";
 import Home from "../Home";
 import Login from "../admin/login";
 import NotFoundPage from "../pages/404";
+import Dashboard from "../admin/Dashboard";
+import ExperiencesPage from "../admin/ExperiencesPage";
+import ProjectsAdminPage from "../admin/ProjectsPage"; 
 
 const router = createBrowserRouter(
   [
@@ -17,6 +20,24 @@ const router = createBrowserRouter(
     {
       path: "/login",
       element: <Login />,
+    },
+    {
+      path: "/admin",
+      element: <Dashboard />,
+      children: [
+        {
+          index: true, // This will match /admin exactly
+          element: <Dashboard /> // You might want to create a home dashboard component
+        },
+        {
+          path: "experiences",
+          element: <ExperiencesPage />
+        },
+        {
+          path: "projects",
+          element: <ProjectsAdminPage />
+        }
+      ]
     },
     {
       path: "*",
