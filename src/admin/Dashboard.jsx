@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { db, doc, getDoc } from "../firebase/firebase"; // Sesuaikan path
+import {
+  db,
+  doc,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+  increment,
+  Timestamp,
+} from "../firebase/firebase"; // Sesuaikan path
 import { Routes, Route, Navigate } from "react-router-dom";
 import DashboardLayout from "./DashboardLayout";
 import ExperiencesPage from "./ExperiencesPage";
 import ProjectsPage from "./ProjectsPage";
 import { Snackbar, Alert } from "@mui/material";
+import VisitsChart from "../components/VisitsChart";
 
 const DashboardHome = () => {
   const [totalVisits, setTotalVisits] = useState(0);
+  const [timestamps, setTimestamps] = useState([]);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -21,9 +31,21 @@ const DashboardHome = () => {
         const visitSnap = await getDoc(visitRef);
 
         if (visitSnap.exists()) {
-          setTotalVisits(visitSnap.data().total_visits);
+          const data = visitSnap.data();
+          setTotalVisits(data.total_visits || 0);
+
+          // Ambil data timestamps dari Firestore
+          if (data.timestamps && Array.isArray(data.timestamps)) {
+            console.log("Timestamps from Firestore:", data.timestamps.length);
+            setTimestamps(data.timestamps);
+          } else {
+            console.log("No timestamps array found in Firestore document");
+          }
+        } else {
+          console.log("Document doesn't exist");
         }
       } catch (error) {
+        console.error("Error fetching visits:", error);
         setSnackbar({
           open: true,
           message: `Error: ${error.message}`,
@@ -54,6 +76,18 @@ const DashboardHome = () => {
             Total Web Visited
           </h2>
           <p className="text-gray-300">{totalVisits}</p>
+        </div>
+        <div className="col-span-1 md:col-span-2">
+          {timestamps.length > 0 ? (
+            <VisitsChart timestamps={timestamps} />
+          ) : (
+            <div className="bg-[#1E1E1E] p-6 rounded-lg">
+              <h2 className="text-color1 text-xl font-semibold mb-4">
+                Website Visit Chart
+              </h2>
+              <p className="text-gray-300">No visit data available</p>
+            </div>
+          )}
         </div>
       </div>
 

@@ -31,7 +31,10 @@ const Footer = () => {
       <div className="container mx-auto text-center flex flex-col-reverse md:flex-row items-center md:justify-between px-4">
         <div className="mb-4 md:mb-0 text-center md:text-left w-full md:w-auto">
           <p className="mt-3 mb-2 text-sm">
-            &copy; 2025 Irsyan Ramadhan. All rights reserved.
+            <span onClick={() => (window.location.href = "/login")}>
+              &copy; 2025
+            </span>{" "}
+            Irsyan Ramadhan. All rights reserved.
           </p>
           <div className="flex justify-center md:justify-start space-x-4">
             <a

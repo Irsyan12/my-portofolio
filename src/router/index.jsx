@@ -26,8 +26,8 @@ const router = createBrowserRouter(
       element: <Dashboard />,
       children: [
         {
-          index: true, // This will match /admin exactly
-          element: <Dashboard /> // You might want to create a home dashboard component
+          index: true,
+          element: <Dashboard />
         },
         {
           path: "experiences",
