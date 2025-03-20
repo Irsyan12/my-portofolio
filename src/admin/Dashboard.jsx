@@ -3,19 +3,11 @@ import {
   db,
   doc,
   getDoc,
-  updateDoc,
-  arrayUnion,
-  increment,
-  Timestamp,
-} from "../firebase/firebase"; // Sesuaikan path
-import { Routes, Route, Navigate } from "react-router-dom";
-import DashboardLayout from "./DashboardLayout";
-import ExperiencesPage from "./ExperiencesPage";
-import ProjectsPage from "./ProjectsPage";
+} from "../firebase/firebase";
 import { Snackbar, Alert } from "@mui/material";
 import VisitsChart from "../components/VisitsChart";
 
-const DashboardHome = () => {
+const Dashboard = () => {
   const [totalVisits, setTotalVisits] = useState(0);
   const [timestamps, setTimestamps] = useState([]);
   const [snackbar, setSnackbar] = useState({
@@ -34,7 +26,6 @@ const DashboardHome = () => {
           const data = visitSnap.data();
           setTotalVisits(data.total_visits || 0);
 
-          // Ambil data timestamps dari Firestore
           if (data.timestamps && Array.isArray(data.timestamps)) {
             console.log("Timestamps from Firestore:", data.timestamps.length);
             setTimestamps(data.timestamps);
@@ -91,7 +82,6 @@ const DashboardHome = () => {
         </div>
       </div>
 
-      {/* Snackbar untuk menampilkan error */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
@@ -106,19 +96,6 @@ const DashboardHome = () => {
         </Alert>
       </Snackbar>
     </div>
-  );
-};
-
-const Dashboard = () => {
-  return (
-    <DashboardLayout>
-      <Routes>
-        <Route path="" element={<DashboardHome />} />
-        <Route path="experiences" element={<ExperiencesPage />} />
-        <Route path="projects" element={<ProjectsPage />} />
-        <Route path="*" element={<Navigate to="/admin" replace />} />
-      </Routes>
-    </DashboardLayout>
   );
 };
 

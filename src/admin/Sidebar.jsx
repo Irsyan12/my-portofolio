@@ -7,6 +7,7 @@ import {
   FaCog,
   FaBars,
   FaTimes,
+  FaEnvelope
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -17,6 +18,7 @@ const Sidebar = () => {
     { icon: FaHome, label: "Dashboard", href: "/admin" },
     { icon: FaBriefcase, label: "Experiences", href: "/admin/experiences" },
     { icon: FaFile, label: "Projects", href: "/admin/projects" },
+    { icon: FaEnvelope, label: "Message", href: "/admin/message" },
     { icon: FaCog, label: "Settings", href: "/admin/settings" },
   ];
 

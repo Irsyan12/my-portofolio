@@ -227,7 +227,7 @@ const Projects = ({ limit = 3 }) => {
 
   return (
     <section
-      className="py-20 w-11/12 md:w-5/6 mx-auto text-white"
+      className="py-20 w-11/12 md:w-5/6 mx-auto text-white hidden"
       id="projects"
     >
       {/* Section Header */}

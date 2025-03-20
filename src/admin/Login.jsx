@@ -1,38 +1,70 @@
-// eslint-disable-next-line no-unused-vars
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import CustomTextField from "../components/OutlinedTextField";
 import { login } from "../firebase/auth"; 
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../context/AuthContext";
+import { Snackbar, Alert } from "@mui/material";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "error"
+  });
   
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  
+  // If already logged in, redirect to admin
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/admin');
+    }
+  }, [currentUser, navigate]);
 
-  const logo =
-    "https://res.cloudinary.com/dxwmph7tj/image/upload/v1741494933/images-web/whtlytqgyqdef1mxnndl.png";
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setError("");
+  const logo = "https://res.cloudinary.com/dxwmph7tj/image/upload/v1741494933/images-web/whtlytqgyqdef1mxnndl.png";
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     
-      try {
-        await login(email, password); // Panggil fungsi login dari auth.js
-        navigate('/admin');
-        
-      } catch (error) {
-        setError(error.message);
-      }
-    };    
+    if (!email || !password) {
+      setSnackbar({
+        open: true,
+        message: "Please enter both email and password",
+        severity: "warning"
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      await login(email, password);
+      // No need to use localStorage for auth state,
+      // Firebase handles this with tokens
+      navigate('/admin');
+    } catch (error) {
+      console.error("Login error:", error);
+      setSnackbar({
+        open: true,
+        message: error.message || "Authentication failed",
+        severity: "error"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };    
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-dark text-white">
       <div className="w-5/6 md:w-full max-w-md p-8 bg-white/5 rounded-lg shadow-lg">
-        <img src={logo} className="w-28 mx-auto mb-2" draggable="false" />
+        <img src={logo} className="w-28 mx-auto mb-2" alt="Logo" draggable="false" />
         <h2 className="text-2xl font-bold text-center mb-6">Admin Login</h2>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+        
         <Box
           component="form"
           sx={{ "& > :not(style)": { m: 2, width: "90%" } }}
@@ -49,6 +81,7 @@ const LoginPage = () => {
             variant="outlined"
             focusedColor="success"
             className="mb-16"
+            required
           />
           <CustomTextField
             type="password"
@@ -58,12 +91,36 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             variant="outlined"
             focusedColor="secondary"
+            required
           />
-          <button className="w-full bg-color1 text-black px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors mt-4">
-            Login
+          <button 
+            type="submit"
+            className="w-full bg-color1 text-black px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors mt-4 flex items-center justify-center"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"></span>
+            ) : (
+              "Login"
+            )}
           </button>
         </Box>
       </div>
+      
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert 
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

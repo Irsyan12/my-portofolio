@@ -1,10 +1,16 @@
 import React from 'react';
 import { LogOut, User } from 'lucide-react';
+import { logout } from "../firebase/auth"; 
+import { useNavigate } from 'react-router-dom';
+
 
 const Header = () => {
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     // Implement logout logic
-    console.log('Logout clicked');
+    logout();
+    navigate('/login');
   };
 
   return (
