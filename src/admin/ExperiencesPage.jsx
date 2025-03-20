@@ -1,21 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import {
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+  Slide,
+} from "@mui/material";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  doc,
+  updateDoc,
+  deleteDoc,
+  Timestamp,
+  query,
+  orderBy,
+} from "firebase/firestore";
+import { db } from "../firebase/firebase";
+import ExperienceModal from "./modal/ExperiencesModal";
+
+// Slide transition component for the dialog
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const ExperiencesPage = () => {
-  const [experiences, setExperiences] = useState([
-    {
-      period: "Jul 2024 - Dec 2024",
-      role: "Part of Human Resource Department",
-      company: "Himpunan Mahasiswa Teknik Komputer",
-      description:
-        "Responsible for managing the organization's human resources",
-    },
-  ]);
-
-  console.log(experiences);
-
+  const [experiences, setExperiences] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentExperience, setCurrentExperience] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "info",
+  });
+
+  // State for delete confirmation dialog
+  const [deleteDialog, setDeleteDialog] = useState({
+    open: false,
+    experience: null,
+  });
+
+  // Fetch experiences from Firestore
+  useEffect(() => {
+    const fetchExperiences = async () => {
+      try {
+        setIsLoading(true);
+        const experiencesRef = collection(db, "experiences");
+        const q = query(experiencesRef, orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+
+        const experiencesData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        setExperiences(experiencesData);
+      } catch (error) {
+        console.error("Error fetching experiences:", error);
+        setSnackbar({
+          open: true,
+          message: `Error fetching experiences: ${error.message}`,
+          severity: "error",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExperiences();
+  }, []);
 
   const openModal = (experience = null) => {
     setCurrentExperience(experience);
@@ -27,21 +87,141 @@ const ExperiencesPage = () => {
     setCurrentExperience(null);
   };
 
-  const handleSave = (experience) => {
-    if (currentExperience) {
-      // Edit existing experience
-      setExperiences(
-        experiences.map((exp) => (exp === currentExperience ? experience : exp))
+  // Open delete confirmation dialog
+  const openDeleteDialog = (experience) => {
+    setDeleteDialog({
+      open: true,
+      experience: experience,
+    });
+  };
+
+  // Close delete confirmation dialog
+  const closeDeleteDialog = () => {
+    setDeleteDialog({
+      open: false,
+      experience: null,
+    });
+  };
+
+  // Add a new experience to Firestore
+  const addExperience = async (experience) => {
+    try {
+      // Create a data object without startMonth, startYear, endMonth, endYear
+      const experienceData = {
+        period: experience.period,
+        role: experience.role,
+        company: experience.company,
+        description: experience.description,
+        createdAt: Timestamp.now(),
+      };
+
+      const experiencesRef = collection(db, "experiences");
+      const docRef = await addDoc(experiencesRef, experienceData);
+
+      // Update the experiences state with the new experience including its ID
+      setExperiences((prevExperiences) => [
+        {
+          id: docRef.id,
+          ...experienceData,
+        },
+        ...prevExperiences,
+      ]);
+
+      setSnackbar({
+        open: true,
+        message: "Experience added successfully",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Error adding experience:", error);
+      setSnackbar({
+        open: true,
+        message: `Error adding experience: ${error.message}`,
+        severity: "error",
+      });
+    }
+  };
+
+  // Update an existing experience in Firestore
+  const updateExperience = async (updatedExperience) => {
+    try {
+      // Create a data object without startMonth, startYear, endMonth, endYear, id
+      const experienceData = {
+        period: updatedExperience.period,
+        role: updatedExperience.role,
+        company: updatedExperience.company,
+        description: updatedExperience.description,
+        updatedAt: Timestamp.now(),
+      };
+
+      const experienceRef = doc(db, "experiences", updatedExperience.id);
+      await updateDoc(experienceRef, experienceData);
+
+      // Update the experiences state
+      setExperiences((prevExperiences) =>
+        prevExperiences.map((exp) =>
+          exp.id === updatedExperience.id
+            ? { ...experienceData, id: updatedExperience.id }
+            : exp
+        )
       );
+
+      setSnackbar({
+        open: true,
+        message: "Experience updated successfully",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Error updating experience:", error);
+      setSnackbar({
+        open: true,
+        message: `Error updating experience: ${error.message}`,
+        severity: "error",
+      });
+    }
+  };
+
+  // Handle save (add or update)
+  const handleSave = (experience) => {
+    if (experience.id) {
+      updateExperience(experience);
     } else {
-      // Add new experience
-      setExperiences([...experiences, experience]);
+      addExperience(experience);
     }
     closeModal();
   };
 
-  const handleDelete = (experienceToDelete) => {
-    setExperiences(experiences.filter((exp) => exp !== experienceToDelete));
+  // Delete experience from Firestore
+  const handleDelete = async () => {
+    try {
+      const experienceToDelete = deleteDialog.experience;
+      if (!experienceToDelete) return;
+
+      await deleteDoc(doc(db, "experiences", experienceToDelete.id));
+
+      // Update the experiences state
+      setExperiences((prevExperiences) =>
+        prevExperiences.filter((exp) => exp.id !== experienceToDelete.id)
+      );
+
+      setSnackbar({
+        open: true,
+        message: "Experience deleted successfully",
+        severity: "success",
+      });
+
+      // Close the dialog
+      closeDeleteDialog();
+    } catch (error) {
+      console.error("Error deleting experience:", error);
+      setSnackbar({
+        open: true,
+        message: `Error deleting experience: ${error.message}`,
+        severity: "error",
+      });
+      // Close the dialog even if there's an error
+      closeDeleteDialog();
+    }
   };
 
   return (
@@ -52,53 +232,65 @@ const ExperiencesPage = () => {
         </h1>
         <button
           onClick={() => openModal()}
-          className="bg-color1 text-black text-sm md:text-xl px-4 py-2 rounded-md hover:opacity-90 transition-opacity flex items-center"
+          className="bg-color1 text-black text-sm md:text-md px-4 py-2 rounded-md hover:opacity-90 transition-opacity flex items-center"
         >
-          <FaPlus className="mr-2" size={20} />
+          <FaPlus className="mr-2" size={15} />
           Add Experience
         </button>
       </div>
 
-      <div className="bg-[#1E1E1E] rounded-lg scrollbar p-4 overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-gray-800">
-              <th className="p-4 text-left">Period</th>
-              <th className="p-4 text-left">Role</th>
-              <th className="p-4 text-left">Company</th>
-              <th className="p-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {experiences.map((experience, index) => (
-              <tr
-                key={index}
-                className="border-b border-gray-800 hover:bg-gray-800 transition-colors"
-              >
-                <td className="p-4">{experience.period}</td>
-                <td className="p-4">{experience.role}</td>
-                <td className="p-4">{experience.company}</td>
-                <td className="p-4 text-right">
-                  <div className="flex justify-end space-x-2">
-                    <button
-                      onClick={() => openModal(experience)}
-                      className="text-gray-400 hover:text-color1 transition-colors"
-                    >
-                      <FaEdit size={20} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(experience)}
-                      className="text-red-500 hover:opacity-80 transition-opacity"
-                    >
-                      <FaTrash size={20} />
-                    </button>
-                  </div>
-                </td>
+      {isLoading ? (
+        <div className="flex justify-center items-center h-40">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-color1"></div>
+        </div>
+      ) : experiences.length === 0 ? (
+        <div className="bg-[#1E1E1E] rounded-lg p-8 text-center">
+          <p className="text-gray-300">
+            No experiences found. Add your first one!
+          </p>
+        </div>
+      ) : (
+        <div className="bg-[#1E1E1E] rounded-lg scrollbar p-4 overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-800">
+                <th className="p-4 text-left">Period</th>
+                <th className="p-4 text-left">Role</th>
+                <th className="p-4 text-left">Company</th>
+                <th className="p-4 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {experiences.map((experience) => (
+                <tr
+                  key={experience.id}
+                  className="border-b border-gray-800 hover:bg-gray-800 transition-colors"
+                >
+                  <td className="p-4">{experience.period}</td>
+                  <td className="p-4">{experience.role}</td>
+                  <td className="p-4">{experience.company}</td>
+                  <td className="p-4 text-right">
+                    <div className="flex justify-end space-x-4">
+                      <button
+                        onClick={() => openModal(experience)}
+                        className="text-gray-400 hover:text-color1 transition-colors"
+                      >
+                        <FaEdit size={25} />
+                      </button>
+                      <button
+                        onClick={() => openDeleteDialog(experience)}
+                        className="text-red-500 hover:opacity-80 transition-opacity"
+                      >
+                        <FaTrash size={25} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
       {isModalOpen && (
         <ExperienceModal
@@ -107,190 +299,51 @@ const ExperiencesPage = () => {
           onClose={closeModal}
         />
       )}
-    </div>
-  );
-};
 
-const ExperienceModal = ({ experience, onSave, onClose }) => {
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 10 }, (_, index) => currentYear - index); // Create an array of years (10 years from current)
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        sx={{
+          "& .MuiDialog-paper": {
+            backgroundColor: "#121212", // Dark background
+            color: "#c5f82a",
+          },
+        }}
+        open={deleteDialog.open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={closeDeleteDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description" sx={{ color: "#f8f8f8" }}>
+            Are you sure you want to delete this experience? This action cannot
+            be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDeleteDialog}>Cancel</Button>
+          <Button onClick={handleDelete} color="error" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-  const [formData, setFormData] = useState(
-    experience || {
-      startMonth: "",
-      startYear: "",
-      endMonth: "",
-      endYear: "",
-      role: "",
-      company: "",
-      description: "",
-    }
-  );
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Combine start and end month/year into a period string
-    const period = `${formData.startMonth} ${formData.startYear} - ${formData.endMonth} ${formData.endYear}`;
-    onSave({ ...formData, period });
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[#1E1E1E] mx-10 md:mx-auto rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-color1 text-2xl font-bold mb-4">
-          {experience ? "Edit Experience" : "Add New Experience"}
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">
-              Period (Month & Year)
-            </label>
-            <div className="flex space-x-2">
-              <select
-                name="startMonth"
-                value={formData.startMonth}
-                onChange={handleChange}
-                className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
-              >
-                <option value="">Start Month</option>
-                {[
-                  "Jan",
-                  "Feb",
-                  "Mar",
-                  "Apr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Aug",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dec",
-                ].map((month, index) => (
-                  <option key={index} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                name="startYear"
-                value={formData.startYear}
-                onChange={handleChange}
-                className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
-              >
-                <option value="">Start Year</option>
-                {years.map((year, index) => (
-                  <option key={index} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">
-              End Period (Month & Year)
-            </label>
-            <div className="flex space-x-2">
-              <select
-                name="endMonth"
-                value={formData.endMonth}
-                onChange={handleChange}
-                className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
-              >
-                <option value="">End Month</option>
-                {[
-                  "Jan",
-                  "Feb",
-                  "Mar",
-                  "Apr",
-                  "May",
-                  "Jun",
-                  "Jul",
-                  "Aug",
-                  "Sep",
-                  "Oct",
-                  "Nov",
-                  "Dec",
-                ].map((month, index) => (
-                  <option key={index} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                name="endYear"
-                value={formData.endYear}
-                onChange={handleChange}
-                className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
-              >
-                <option value="">End Year</option>
-                {years.map((year, index) => (
-                  <option key={index} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Role</label>
-            <input
-              type="text"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Company</label>
-            <input
-              type="text"
-              name="company"
-              value={formData.company}
-              onChange={handleChange}
-              className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Description</label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
-              rows="4"
-              required
-            />
-          </div>
-          <div className="flex justify-end space-x-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="text-gray-300 hover:text-white transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="bg-color1 text-black px-4 py-2 rounded-md hover:opacity-90 transition-opacity"
-            >
-              Save
-            </button>
-          </div>
-        </form>
-      </div>
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

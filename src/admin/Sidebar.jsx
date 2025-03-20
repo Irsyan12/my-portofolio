@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   FaHome,
   FaBriefcase,
@@ -10,6 +11,7 @@ import {
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation(); // Hook to get current location
 
   const menuItems = [
     { icon: FaHome, label: "Dashboard", href: "/admin" },
@@ -20,6 +22,16 @@ const Sidebar = () => {
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  // Function to check if the menu item is active
+  const isActive = (path) => {
+    // Exact match for dashboard to avoid matching with sub-routes
+    if (path === "/admin") {
+      return location.pathname === path;
+    }
+    // For other routes, check if the current path starts with the menu item path
+    return location.pathname.startsWith(path);
   };
 
   return (
@@ -58,13 +70,26 @@ const Sidebar = () => {
             <a
               key={index}
               href={item.href}
-              className="flex items-center p-3 mb-2 hover:bg-gray-800 rounded-md transition-all duration-200 group"
+              className={`flex items-center p-3 mb-2 rounded-md transition-all duration-200 group
+                         ${isActive(item.href)
+                           ? "bg-gray-800 border-l-4 border-color1" 
+                           : "hover:bg-gray-800"
+                         }`}
             >
               <item.icon
-                className="mr-3 text-gray-400 group-hover:text-color1 transition-colors duration-200"
+                className={`mr-3 transition-colors duration-200 
+                           ${isActive(item.href) 
+                             ? "text-color1" 
+                             : "text-gray-400 group-hover:text-color1"
+                           }`}
                 size={20}
               />
-              <span className="text-gray-300 group-hover:text-color1 transition-colors duration-200">
+              <span className={`transition-colors duration-200 
+                               ${isActive(item.href) 
+                                 ? "text-color1 font-medium" 
+                                 : "text-gray-300 group-hover:text-color1"
+                               }`}
+              >
                 {item.label}
               </span>
             </a>
