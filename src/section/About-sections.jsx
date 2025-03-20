@@ -140,7 +140,7 @@ const ExperienceSection = () => {
             >
               <div className="md:w-1/4 flex items-center md:items-start md:justify-end">
                 {/* Timeline dot */}
-                <div className="absolute left-0 md:left-1/4 w-8 h-8 rounded-full bg-color1 flex items-center justify-center -ml-3 mt-1 shadow-lg shadow-color1/20 hidden md:flex">
+                <div className="absolute left-0 md:left-1/4 w-8 h-8 rounded-full bg-color1 items-center justify-center -ml-3 mt-1 shadow-lg shadow-color1/20 hidden md:flex">
                   <div className="w-3 h-3 bg-black rounded-full"></div>
                 </div>
 

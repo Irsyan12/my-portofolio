@@ -1,6 +1,15 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics, logEvent } from "firebase/analytics";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  increment,
+  Timestamp,
+  arrayUnion,
+} from "firebase/firestore";
 
 // Konfigurasi Firebase dari .env
 const firebaseConfig = {
@@ -18,4 +27,16 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
-export { app, analytics, db, logEvent, doc, getDoc, setDoc, updateDoc, increment };
+export {
+  app,
+  analytics,
+  db,
+  logEvent,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  increment,
+  Timestamp,
+  arrayUnion,
+};
