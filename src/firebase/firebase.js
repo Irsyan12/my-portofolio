@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, logEvent } from "firebase/analytics";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
 
+// Konfigurasi Firebase dari .env
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -14,6 +16,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+const db = getFirestore(app);
 
-
-export { app, analytics };
+export { app, analytics, db, logEvent, doc, getDoc, setDoc, updateDoc, increment };

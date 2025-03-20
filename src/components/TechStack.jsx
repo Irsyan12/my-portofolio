@@ -10,9 +10,8 @@ const TechStack = () => {
 
   useEffect(() => {
 
-    // Opsi 1: Jika Anda tahu public_id semua gambar
     const iconIds = [
-      "xnnvgq5aswuihh8qzta4", // Contoh dari URL yang Anda berikan
+      "xnnvgq5aswuihh8qzta4",
       "nly9im2daeprsv8wxebf",
       "pz3uxsmdfclx65pmx9ls",
       "zpmkeuzpbmn4daejecwl",

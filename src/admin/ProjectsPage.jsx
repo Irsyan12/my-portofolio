@@ -48,17 +48,17 @@ const ProjectsPage = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-color1 text-3xl font-bold">Projects</h1>
+        <h1 className="text-color1 text-2xl md:text-3xl font-bold">Projects</h1>
         <button 
           onClick={() => openModal()}
-          className="bg-color1 text-black px-4 py-2 rounded-md hover:opacity-90 transition-opacity flex items-center"
+          className="bg-color1 text-black text-sm md:text-xl px-4 py-2 rounded-md hover:opacity-90 transition-opacity flex items-center"
         >
           <Plus className="mr-2" size={20} />
           Add Project
         </button>
       </div>
 
-      <div className="bg-[#1E1E1E] rounded-lg">
+      <div className="bg-[#1E1E1E] rounded-lg scrollbar p-4 overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-800">
