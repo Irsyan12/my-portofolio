@@ -32,24 +32,24 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Dashboard />
+            element: <Dashboard />,
           },
           {
             path: "experiences",
-            element: <ExperiencesPage />
+            element: <ExperiencesPage />,
           },
           {
             path: "projects",
-            element: <ProjectsAdminPage />
-          }
-        ]
-      }
-    ]
+            element: <ProjectsAdminPage />,
+          },
+        ],
+      },
+    ],
   },
   {
     path: "*",
     element: <NotFoundPage />,
-  }
+  },
 ]);
 
 export default router;
