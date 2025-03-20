@@ -1,5 +1,16 @@
 import { useEffect } from "react";
-import { analytics, logEvent, db, doc, getDoc, setDoc, updateDoc, increment } from "../src/firebase/firebase";
+import {
+  analytics,
+  logEvent,
+  db,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  increment,
+  arrayUnion,
+  Timestamp,
+} from "../src/firebase/firebase"; // Timestamp sekarang bisa digunakan langsung!
 import Navbar from "./components/Navbar";
 import HelloWorldPage from "./section/HelloWorldPage";
 import Projects from "./section/Projects";
@@ -16,21 +27,27 @@ function Home() {
         logEvent(analytics, "page_view");
         logEvent(analytics, "page_view_increment");
 
-        // Simpan timestamp terakhir kunjungan
+        // Simpan timestamp terakhir kunjungan ke localStorage
         localStorage.setItem("last_page_view", Date.now().toString());
 
         try {
           const visitRef = doc(db, "analytics", "website_visits");
           const visitSnap = await getDoc(visitRef);
 
+          const currentTime = Timestamp.now();
+
           if (visitSnap.exists()) {
             await updateDoc(visitRef, {
               total_visits: increment(1),
+              timestamps: arrayUnion(currentTime),
             });
           } else {
-            await setDoc(visitRef, { total_visits: 1 });
+            await setDoc(visitRef, {
+              total_visits: 1,
+              timestamps: [currentTime],
+            });
           }
-          console.log("Total kunjungan diperbarui!");
+          console.log("Total kunjungan dan timestamps diperbarui!");
         } catch (error) {
           console.error("Error memperbarui total kunjungan:", error);
         }
@@ -38,7 +55,6 @@ function Home() {
         // Hapus localStorage setelah 15 menit
         setTimeout(() => {
           localStorage.removeItem("last_page_view");
-          console.log("Local storage last_page_view dihapus setelah 15 menit");
         }, 15 * 60 * 1000);
       }
     };
