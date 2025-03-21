@@ -5,12 +5,18 @@ import TechStack from "../components/TechStack";
 
 const AboutSection = () => {
   return (
-    <section className="py-20 w-11/12 md:w-5/6 mx-auto text-white cursor-default" id="about">
+    <section
+      className="py-20 w-11/12 md:w-5/6 mx-auto text-white cursor-default"
+      id="about"
+    >
       <div className="grid md:grid-cols-2 gap-12 items-center">
         <div className="space-y-6">
           <h2 className="text-4xl font-bold text-[#c5f82a]">About Me</h2>
           <p className="text-lg text-gray-300">
-            I&apos;m a Computer Engineering student at Syiah Kuala University with skills in Machine Learning, Web Development, and mobile development. I enjoy learning new things and sharing knowledge. Open to collaboration and discussions on technology.
+            I&apos;m a Computer Engineering student at Syiah Kuala University
+            with skills in Machine Learning, Web Development, and mobile
+            development. I enjoy learning new things and sharing knowledge. Open
+            to collaboration and discussions on technology.
           </p>
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
@@ -24,23 +30,23 @@ const AboutSection = () => {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-          <h3 className="text-2xl font-bold text-[#c5f82a]">ML</h3>
-          <p>Machine Learning Specialist</p>
+          <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+            <h3 className="text-2xl font-bold text-[#c5f82a]">ML</h3>
+            <p>Machine Learning Specialist</p>
+          </div>
+          <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+            <h3 className="text-2xl font-bold text-[#c5f82a]">Web</h3>
+            <p>Full-Stack Developer</p>
+          </div>
+          <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+            <h3 className="text-2xl font-bold text-[#c5f82a]">Mobile</h3>
+            <p>App Development</p>
+          </div>
+          <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+            <h3 className="text-2xl font-bold text-[#c5f82a]">10+</h3>
+            <p>Tech Certifications</p>
+          </div>
         </div>
-        <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-          <h3 className="text-2xl font-bold text-[#c5f82a]">Web</h3>
-          <p>Full-Stack Developer</p>
-        </div>
-        <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-          <h3 className="text-2xl font-bold text-[#c5f82a]">Mobile</h3>
-          <p>App Development</p>
-        </div>
-        <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-          <h3 className="text-2xl font-bold text-[#c5f82a]">10+</h3>
-          <p>Tech Certifications</p>
-        </div>
-      </div>
       </div>
     </section>
   );
@@ -114,15 +120,16 @@ const ExperienceSection = () => {
       period: "Aug 2023 - Dec 2023",
       role: "Computer Programming Lab Assistant",
       company: "Syiah Kuala University, Banda Aceh",
-      description:
-        "Assisted students in learning python programming",
+      description: "Assisted students in learning python programming",
     },
   ];
 
   return (
     <section className="py-20  w-11/12 md:w-5/6 cursor-default mx-auto text-white">
       <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">Experience</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
+          Experience
+        </h2>
         <p className="text-gray-400 max-w-2xl mx-auto">
           My professional journey in the tech industry
         </p>
@@ -141,7 +148,7 @@ const ExperienceSection = () => {
               <div className="md:w-1/4 flex items-center md:items-start md:justify-end">
                 {/* Timeline dot */}
                 <div className="absolute left-0 md:left-1/4 w-8 h-8 rounded-full bg-color1 items-center justify-center -ml-3 mt-1 shadow-lg shadow-color1/20 hidden md:flex">
-                  <div className="w-3 h-3 bg-black rounded-full"></div>
+                  <div className="w-3 h-3 bg-dark rounded-full"></div>
                 </div>
 
                 {/* Mobile timeline indicator */}

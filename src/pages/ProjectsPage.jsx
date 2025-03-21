@@ -1,11 +1,11 @@
-import React from "react";
+import { React, useEffect, useState } from "react";
 import Projects from "../section/Projects";
 import { FaLongArrowAltUp } from "react-icons/fa";
 
 const ProjectsPage = () => {
-  const [scrolled, setScrolled] = React.useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setScrolled(true);
@@ -33,8 +33,8 @@ const ProjectsPage = () => {
       <Projects limit={999} /> {/* Passing a high limit to show all projects */}
       <button
         className={`${
-          scrolled ? "block" : "hidden"
-        } fixed bottom-5 right-5 p-10 bg-color1 rounded-full`}
+          scrolled ? "block animate-slide-up" : "hidden"
+        } fixed bottom-5 right-5 p-5 bg-color1 rounded-full transition-all duration-500  animate-fade-in`}
       >
         <FaLongArrowAltUp
           onClick={() => window.scrollTo({ top: 0 })}
