@@ -8,7 +8,7 @@ function HelloWorldPage() {
   return (
     <>
       <div
-        className="w-11/12 md:pt-16 min-h-screen mx-auto text-white bg-dark"
+        className="w-11/12 pt-20 md:pt-24 min-h-screen mx-auto text-white bg-dark"
         id="home"
       >
         <div className="md:w-5/6 mx-auto ">
