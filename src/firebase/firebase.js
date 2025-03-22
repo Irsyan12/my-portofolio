@@ -3,12 +3,14 @@ import { getAnalytics, logEvent } from "firebase/analytics";
 import {
   getFirestore,
   doc,
+  addDoc,
   getDoc,
   setDoc,
   updateDoc,
   increment,
   Timestamp,
   arrayUnion,
+  collection,
 } from "firebase/firestore";
 
 // Konfigurasi Firebase dari .env
@@ -39,4 +41,6 @@ export {
   increment,
   Timestamp,
   arrayUnion,
+  addDoc,
+  collection,
 };

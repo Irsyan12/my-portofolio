@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const sendMessage = async (formData, setFormData, setSnackbar) => {
+const sendMessage = async (formData, setFormData, setSnackbar) => {
   const apiKey = "4790698";
   const phoneNumber = "6288214717802";
 
@@ -31,3 +31,7 @@ export const sendMessage = async (formData, setFormData, setSnackbar) => {
     setFormData({ name: "", email: "", subject: "", message: "" });
   }
 };
+
+
+
+export { sendMessage };
