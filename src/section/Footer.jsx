@@ -6,6 +6,7 @@ import { sendFeedback } from "../utils/sendFeedback";
 
 const Footer = () => {
   const [feedback, setFeedback] = useState("");
+  const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -13,6 +14,7 @@ const Footer = () => {
   });
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
 
     const success = await sendFeedback(feedback, setSnackbar);
@@ -20,6 +22,11 @@ const Footer = () => {
     if (success) {
       setFeedback(""); // Kosongkan form setelah feedback berhasil dikirim
     }
+    setLoading(false);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -73,7 +80,9 @@ const Footer = () => {
           />
           <button
             type="submit"
-            className="md:ml-2 bg-color1 hover:bg-opacity-90 text-black px-4 py-2 rounded-md md:w-auto"
+            className={`${
+              loading ? "bg-opacity-70 cursor-not-allowed" : ""
+            } md:ml-2 bg-color1 hover:bg-opacity-90 text-black px-4 py-2 rounded-md md:w-auto`}
           >
             Send
           </button>
@@ -83,13 +92,10 @@ const Footer = () => {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-        >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
           {snackbar.message}
         </Alert>
       </Snackbar>

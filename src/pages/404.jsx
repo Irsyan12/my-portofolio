@@ -15,12 +15,17 @@ const NotFoundPage = () => {
       <p className="text-lg mb-4 mx-auto text-center">
         Sorry, the page you are looking for does not exist.
       </p>
-      <Link
-        to="/"
-        className="bg-gray-700 px-2 py-1 rounded-lg"
-      >
-        Go back to Home
-      </Link>
+      <div className="space-y-4 text-center">
+        <Link to="/" className="bg-gray-700 px-2 py-1 rounded-lg">
+          Go back to Home
+        </Link>
+        <div
+          onClick={() => window.history.go(-1)}
+          className="bg-gray-700 px-2 py-1 rounded-lg cursor-pointer"
+        >
+          Go back to previous page
+        </div>
+      </div>
     </div>
   );
 };

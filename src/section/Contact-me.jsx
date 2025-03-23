@@ -3,6 +3,8 @@ import { sendMessage } from "../utils/sendMessage";
 import { Snackbar, Alert } from "@mui/material";
 
 const ContactSection = () => {
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -21,15 +23,20 @@ const ContactSection = () => {
   };
 
   const handleSubmit = async (e) => {
+    setLoading(true);
     e.preventDefault();
-  
-    const success = await sendMessage(formData, setFormData, setSnackbar);
-  
+
+    const success = await sendMessage(formData, setSnackbar);
+
     if (success) {
       setFormData({ name: "", email: "", subject: "", message: "" });
     }
+    setLoading(false);
   };
-  
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
 
   return (
     <section
@@ -82,24 +89,22 @@ const ContactSection = () => {
           />
           <button
             type="submit"
-            className="w-full bg-color1 text-black py-3 rounded-lg hover:bg-opacity-90 transition-colors"
+            className={`${
+              loading ? "bg-opacity-70 cursor-not-allowed" : ""
+            } w-full bg-color1 text-black py-3 rounded-lg hover:bg-opacity-90 transition-colors`}
           >
-            Send Message
+            {loading ? "Sending..." : "Send Message"}
           </button>
         </form>
       </div>
 
-      {/* Snackbar untuk notifikasi */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-        >
+        <Alert onClose={handleSnackbarClose} severity={snackbar.severity}>
           {snackbar.message}
         </Alert>
       </Snackbar>
