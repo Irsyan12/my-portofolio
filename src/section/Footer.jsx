@@ -35,9 +35,9 @@ const Footer = () => {
         <div className="mb-4 md:mb-0 text-center md:text-left w-full md:w-auto">
           <p className="mt-3 mb-2 text-sm">
             <span onClick={() => (window.location.href = "/login")}>
-              &copy; 2025
+              &copy;
             </span>{" "}
-            Irsyan Ramadhan. All rights reserved.
+            2025 Irsyan Ramadhan. Made with ❤️.
           </p>
           <div className="flex justify-center md:justify-start space-x-4">
             <a
@@ -81,14 +81,15 @@ const Footer = () => {
           <button
             type="submit"
             className={`${
-              loading ? "bg-opacity-70 cursor-not-allowed" : ""
+              loading ? "bg-opacity-70" : ""
             } md:ml-2 bg-color1 hover:bg-opacity-90 text-black px-4 py-2 rounded-md md:w-auto`}
+            disabled={loading}
           >
-            Send
+            {loading ? "Sending..." : "Send"}
           </button>
         </form>
       </div>
-      {/* Snackbar untuk notifikasi */}
+      {/* Snackbar for notifications */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}

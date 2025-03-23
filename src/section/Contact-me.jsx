@@ -92,6 +92,7 @@ const ContactSection = () => {
             className={`${
               loading ? "bg-opacity-70 cursor-not-allowed" : ""
             } w-full bg-color1 text-black py-3 rounded-lg hover:bg-opacity-90 transition-colors`}
+            disabled={loading}
           >
             {loading ? "Sending..." : "Send Message"}
           </button>

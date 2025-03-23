@@ -64,7 +64,7 @@ function Home() {
   }, []);
 
   return (
-    <div className="bg-dark font-poppins">
+    <div className="bg-dark font-poppins selection:bg-color1 selection:text-black">
       <Navbar />
       <HelloWorldPage />
       <AboutSections />
