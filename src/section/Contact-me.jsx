@@ -22,12 +22,14 @@ const ContactSection = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await sendMessage(formData, setFormData, setSnackbar);
-    const success = await sendMessage(formData, setSnackbar);
+  
+    const success = await sendMessage(formData, setFormData, setSnackbar);
+  
     if (success) {
-      setFormData({ name: "", email: "", subject: "", message: "" }); // Reset form jika berhasil
+      setFormData({ name: "", email: "", subject: "", message: "" });
     }
   };
+  
 
   return (
     <section
@@ -35,7 +37,9 @@ const ContactSection = () => {
       id="contactMe"
     >
       <div className="text-center mb-12 cursor-default">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">Get In Touch</h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
+          Get In Touch
+        </h2>
         <p className="text-gray-400 max-w-2xl mx-auto">
           Have a project in mind? Let&apos;s work together!
         </p>
