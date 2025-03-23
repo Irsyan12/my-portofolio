@@ -5,215 +5,226 @@ import { Link } from "react-router-dom";
 // eslint-disable-next-line react/prop-types
 const Projects = ({ limit = 8 }) => {
   const categories = ["All", "Projects", "Certification"];
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeType, setActiveType] = useState("All");
 
   // Projects data
   const projectsData = [
     {
       id: 1,
       title: "AirCalling Landing Page Design",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=AirCalling+Landing+Page+Design",
     },
     {
       id: 2,
       title: "Business Landing Page Design",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Business+Landing+Page+Design",
     },
     {
       id: 3,
       title: "Ecom Web Page Design",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Ecom+Web+Page+Design",
     },
     {
       id: 4,
       title: "Portfolio Website",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Portfolio+Website",
     },
     {
       id: 5,
       title: "Landing Page for SaaS",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Landing+Page+for+SaaS",
     },
     {
       id: 6,
       title: "E-commerce Store",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=E-commerce+Store",
     },
     {
       id: 7,
       title: "Personal Blog",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Personal+Blog",
     },
     {
       id: 8,
       title: "Online Resume",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Online+Resume",
     },
     {
       id: 9,
       title: "Photography Portfolio",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Photography+Portfolio",
     },
     {
       id: 10,
       title: "Restaurant Website",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Restaurant+Website",
     },
     {
       id: 11,
       title: "Event Landing Page",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Event+Landing+Page",
     },
     {
       id: 12,
       title: "Fitness App Landing Page",
-      category: "Projects",
+      type: "Projects",
       image: "https://placehold.co/600x400?text=Fitness+App+Landing+Page",
     },
     {
       id: 13,
       title: "Travel Agency Website",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Travel+Agency+Website",
     },
     {
       id: 14,
       title: "Real Estate Website",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Real+Estate+Website",
     },
     {
       id: 15,
       title: "Corporate Website",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Corporate+Website",
     },
     {
       id: 16,
       title: "Mobile App Landing Page",
-      category: "Projects",
+      type: "Projects",
       image: "https://placehold.co/600x400?text=Mobile+App+Landing+Page",
     },
     {
       id: 17,
       title: "Blog Template",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Blog+Template",
     },
     {
       id: 18,
       title: "Shop Template",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Shop+Template",
     },
     {
       id: 19,
       title: "Portfolio Template",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Portfolio+Template",
     },
     {
       id: 20,
       title: "Landing Page for Non-Profit",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Landing+Page+for+Non-Profit",
     },
     {
       id: 21,
       title: "Product Showcase",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Product+Showcase",
     },
     {
       id: 22,
       title: "Fashion Store",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Fashion+Store",
     },
     {
       id: 23,
       title: "Tech Startup Landing Page",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Tech+Startup+Landing+Page",
     },
     {
       id: 24,
       title: "Consulting Website",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Consulting+Website",
     },
     {
       id: 25,
       title: "Online Course Website",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Online+Course+Website",
     },
     {
       id: 26,
       title: "Health & Wellness Website",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Health+%26+Wellness+Website",
     },
     {
       id: 27,
       title: "Music Band Website",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Music+Band+Website",
     },
     {
       id: 28,
       title: "Charity Website",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Charity+Website",
     },
     {
       id: 29,
       title: "Gaming Website",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Gaming+Website",
     },
     {
       id: 30,
       title: "Art Gallery Website",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Art+Gallery+Website",
     },
     {
       id: 31,
       title: "Blogging Platform",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Blogging+Platform",
     },
     {
       id: 32,
       title: "Online Store",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Online+Store",
     },
     {
       id: 33,
       title: "Digital Marketing Agency",
-      category: "Certification",
+      type: "Certification",
       image: "https://placehold.co/600x400?text=Digital+Marketing+Agency",
     },
   ];
 
-  // Filter projects based on active category
+  const classColorforType = (type) => {
+    switch (type) {
+      case "Projects":
+        return "bg-color1";
+      case "Certification":
+        return "bg-teal-400";
+      default:
+        return "bg-gray-500";
+    }
+  };
+
+  // Filter projects based on active type
   const filteredProjects =
-    activeCategory === "All"
+    activeType === "All"
       ? projectsData
-      : projectsData.filter((project) => project.category === activeCategory);
+      : projectsData.filter((project) => project.type === activeType);
 
   // Batasi jumlah proyek yang ditampilkan
   const displayedProjects = filteredProjects.slice(0, limit);
@@ -234,20 +245,20 @@ const Projects = ({ limit = 8 }) => {
         </p>
       </div>
 
-      {/* Category Filters */}
+      {/* Type Filters */}
       <div className="flex flex-wrap justify-center gap-4 mb-12">
-        {categories.map((category) => (
+        {categories.map((type) => (
           <button
-            key={category}
-            onClick={() => setActiveCategory(category)}
+            key={type}
+            onClick={() => setActiveType(type)}
             className={`px-6 py-2 rounded-full transition-colors 
               ${
-                activeCategory === category
+                activeType === type
                   ? "bg-color1 text-black"
                   : "bg-white/10 hover:bg-white/20"
               }`}
           >
-            {category}
+            {type}
           </button>
         ))}
       </div>
@@ -270,8 +281,12 @@ const Projects = ({ limit = 8 }) => {
 
             {/* Project Info */}
             <div className="p-6">
-              <span className="text-teal-600 bg-teal-200 font-semibold rounded-full px-2 py-1 text-xs">
-                {project.category}
+              <span
+                className={`${classColorforType(
+                  project.type
+                )} text-dark font-semibold rounded-full px-2 py-1 text-xs`}
+              >
+                {project.type}
               </span>
               <h3 className="text-md md:text-lg font-semibold mt-2 text-color2">
                 {project.title}
@@ -280,7 +295,11 @@ const Projects = ({ limit = 8 }) => {
 
             {/* Hover Overlay */}
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <button className="px-6 py-3 text-sm md:text-md bg-color1 text-black rounded-full transform -translate-y-4 group-hover:translate-y-0 transition-transform">
+              <button
+                className={`px-6 py-3 text-sm md:text-md ${classColorforType(
+                  project.type
+                )} text-black rounded-full transform -translate-y-4 group-hover:translate-y-0 transition-transform`}
+              >
                 View Details
               </button>
             </div>

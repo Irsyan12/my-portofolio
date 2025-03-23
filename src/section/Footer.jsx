@@ -14,15 +14,11 @@ const Footer = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await sendFeedback(feedback);
-    setSnackbar({
-      open: true,
-      message: response.message,
-      severity: response.success ? "success" : "warning",
-    });
 
-    if (response.success) {
-      setFeedback("");
+    const success = await sendFeedback(feedback, setSnackbar);
+
+    if (success) {
+      setFeedback(""); // Kosongkan form setelah feedback berhasil dikirim
     }
   };
 
@@ -88,7 +84,7 @@ const Footer = () => {
         open={snackbar.open}
         autoHideDuration={3000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
-        anchorOrigin={{ vertical: "bottom", horizontal: "top" }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
         <Alert
           onClose={() => setSnackbar({ ...snackbar, open: false })}
