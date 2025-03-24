@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image } from "lucide-react";
+import { FaImage, FaLink } from "react-icons/fa";
 
 const ProjectModal = ({ project, onSave, onClose }) => {
   const [formData, setFormData] = useState({
@@ -7,7 +7,9 @@ const ProjectModal = ({ project, onSave, onClose }) => {
     type: "Project", // Default value
     description: "", // Tambahkan description
     imageUrl: "",
-    ...project, // Spread operator untuk mengisi nilai jika project ada
+    certificateInstitution: "", // Tambahan untuk institusi sertifikat
+    certificateLink: "", // Tambahan untuk link sertifikat
+    ...project,
   });
 
   const [isUploading, setIsUploading] = useState(false);
@@ -20,6 +22,8 @@ const ProjectModal = ({ project, onSave, onClose }) => {
         type: project.type || "Project",
         description: project.description || "", // Default ke string kosong jika tidak ada
         imageUrl: project.imageUrl || "",
+        certificateInstitution: project.certificateInstitution || "", // Tambahkan default kosong
+        certificateLink: project.certificateLink || "",
       });
     }
   }, [project]);
@@ -74,12 +78,27 @@ const ProjectModal = ({ project, onSave, onClose }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formData.imageUrl) {
-      alert("Harap upload gambar terlebih dahulu!");
-      return;
+    const formattedTitle = formData.title.replace(/\s+/g, "+");
+
+    const imageUrl =
+      formData.imageUrl ||
+      `https://placehold.co/600x400?text=${formattedTitle}`;
+
+    // Tambahkan kondisi untuk sertifikat
+    const finalData = {
+      ...formData,
+      imageUrl: imageUrl,
+    };
+
+    // Jika tipe adalah Certification, pastikan field tambahan diisi
+    if (formData.type === "Certification") {
+      if (!formData.certificateInstitution) {
+        alert("Institusi sertifikat harus diisi");
+        return;
+      }
     }
 
-    onSave(formData);
+    onSave(finalData);
   };
 
   return (
@@ -115,6 +134,41 @@ const ProjectModal = ({ project, onSave, onClose }) => {
             </select>
           </div>
 
+          {formData.type === "Certification" && (
+            <>
+              <div className="mb-4">
+                <label className="block text-gray-300 mb-2">
+                  Certificate Institution
+                </label>
+                <input
+                  type="text"
+                  name="certificateInstitution"
+                  value={formData.certificateInstitution}
+                  onChange={handleChange}
+                  className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-300 mb-2">
+                  Certificate Link (Optional)
+                </label>
+                <div className="flex items-center">
+                  <FaLink className="mr-2 text-gray-400" size={20} />
+                  <input
+                    type="url"
+                    name="certificateLink"
+                    value={formData.certificateLink}
+                    onChange={handleChange}
+                    placeholder="https://example.com/certificate"
+                    className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
           <div className="mb-4">
             <label className="block text-gray-300 mb-2">
               Description (Optional)
@@ -137,13 +191,16 @@ const ProjectModal = ({ project, onSave, onClose }) => {
                 onChange={handleImageUpload}
                 className="hidden"
                 id="imageUpload"
+                disabled={isUploading}
               />
               <label
                 htmlFor="imageUpload"
-                className="bg-gray-800 text-gray-300 px-4 py-2 rounded-md hover:bg-gray-700 transition-colors flex items-center cursor-pointer"
+                className={`${
+                  isUploading ? "bg-gray-700" : "bg-gray-800"
+                } text-gray-300 px-4 py-2 rounded-md hover:bg-gray-700 transition-colors flex items-center cursor-pointer`}
               >
-                <Image className="mr-2" size={20} />
-                {isUploading ? "Sedang Upload..." : "Upload Gambar"}
+                <FaImage className="mr-2" size={20} />
+                {isUploading ? "Uploading..." : "Upload Gambar"}
               </label>
               {formData.imageUrl && (
                 <img

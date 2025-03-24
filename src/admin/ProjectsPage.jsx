@@ -24,6 +24,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import ProjectsModal from "./modal/ProjectModal";
+import AddButton from "../components/AddButton";
 
 // Transition untuk animasi dialog
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -127,14 +128,14 @@ const ProjectsPage = () => {
 
       setSnackbar({
         open: true,
-        message: "Project berhasil ditambahkan",
+        message: "Project successfully added",
         severity: "success",
       });
     } catch (error) {
       console.error("Error adding project:", error);
       setSnackbar({
         open: true,
-        message: `Error menambahkan project: ${error.message}`,
+        message: `Error adding project: ${error.message}`,
         severity: "error",
       });
     }
@@ -221,13 +222,7 @@ const ProjectsPage = () => {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-color1 text-2xl md:text-3xl font-bold">Projects</h1>
-        <button
-          onClick={() => openModal()}
-          className="bg-color1 text-black text-sm md:text-md px-4 py-2 rounded-md hover:opacity-90 transition-opacity flex items-center"
-        >
-          <FaPlus className="mr-2" size={15} />
-          Tambah Project
-        </button>
+        <AddButton onClick={() => openModal()} label="Add Project" />
       </div>
 
       {isLoading ? (
@@ -317,26 +312,26 @@ const ProjectsPage = () => {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Konfirmasi Penghapusan"}
+          {"Delete Confirmation"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText
             id="alert-dialog-description"
             sx={{ color: "#f8f8f8" }}
           >
-            Apakah Anda yakin ingin menghapus project ini? Tindakan ini tidak
-            dapat dibatalkan.
+            Are you sure you want to delete this project? This action cannot be
+            undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeDeleteDialog}>Batal</Button>
+          <Button onClick={closeDeleteDialog}>Cancel</Button>
           <Button onClick={handleDelete} color="error" autoFocus>
-            Hapus
+            Delete
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar untuk notifikasi */}
+      {/* Snackbar for notifications */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}

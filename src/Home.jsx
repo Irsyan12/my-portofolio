@@ -17,7 +17,6 @@ import Projects from "./section/Projects";
 import AboutSections from "./section/About-sections";
 import ContactSection from "./section/Contact-me";
 import Footer from "./section/Footer";
-import { AuthProvider } from "./context/AuthContext";
 
 function Home() {
   useEffect(() => {

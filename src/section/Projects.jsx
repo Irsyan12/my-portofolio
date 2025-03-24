@@ -221,13 +221,22 @@ const Projects = ({ limit = 8 }) => {
   };
 
   // Filter projects based on active type
-  const filteredProjects =
-    activeType === "All"
-      ? projectsData
-      : projectsData.filter((project) => project.type === activeType);
+  const filteredProjects = projectsData.filter((project) =>
+    activeType === "All" ? true : project.type === activeType
+  );
 
-  // Batasi jumlah proyek yang ditampilkan
-  const displayedProjects = filteredProjects.slice(0, limit);
+  // Ambil 4 Projects
+  const projectItems = filteredProjects
+    .filter((project) => project.type === "Projects")
+    .slice(0, 4);
+
+  // Ambil 4 Certification
+  const certificationItems = filteredProjects
+    .filter((project) => project.type === "Certification")
+    .slice(0, 4);
+
+  // Gabungkan hasilnya
+  const displayedProjects = [...projectItems, ...certificationItems];
 
   return (
     <section

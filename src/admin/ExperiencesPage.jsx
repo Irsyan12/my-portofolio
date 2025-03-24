@@ -24,6 +24,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import ExperienceModal from "./modal/ExperiencesModal";
+import AddButton from "../components/AddButton";
 
 // Slide transition component for the dialog
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -230,13 +231,7 @@ const ExperiencesPage = () => {
         <h1 className="text-color1 text-2xl md:text-3xl font-bold">
           Experiences
         </h1>
-        <button
-          onClick={() => openModal()}
-          className="bg-color1 text-black text-sm md:text-md px-4 py-2 rounded-md hover:opacity-90 transition-opacity flex items-center"
-        >
-          <FaPlus className="mr-2" size={15} />
-          Add Experience
-        </button>
+        <AddButton onClick={() => openModal()} label="Add Experience" />
       </div>
 
       {isLoading ? (
