@@ -18,7 +18,7 @@ const Sidebar = () => {
     { icon: FaHome, label: "Dashboard", href: "/admin" },
     { icon: FaBriefcase, label: "Experiences", href: "/admin/experiences" },
     { icon: FaFile, label: "Projects", href: "/admin/projects" },
-    { icon: FaEnvelope, label: "Message", href: "/admin/message" },
+    { icon: FaEnvelope, label: "Message", href: "/admin/messages" },
     { icon: FaCog, label: "Settings", href: "/admin/settings" },
   ];
 

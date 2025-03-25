@@ -8,6 +8,7 @@ import ExperiencesPage from "../admin/ExperiencesPage";
 import ProjectsAdminPage from "../admin/ProjectsPage";
 import ProtectedRoute from "../components/ProtectedRoute";
 import DashboardLayout from "../admin/DashboardLayout";
+import MessagesPage from "../admin/MessagesPage";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
             path: "projects",
             element: <ProjectsAdminPage />,
           },
+          {
+            path: "messages",
+            element: <MessagesPage />,
+          }
         ],
       },
     ],
