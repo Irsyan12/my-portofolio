@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
+import { formatDistanceToNow, differenceInDays } from "date-fns"; // Import date-fns
 
 // Transition untuk animasi dialog
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -123,6 +124,36 @@ const MessagesPage = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  // Fungsi untuk memformat timestamp
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp?.seconds * 1000);
+    const daysDifference = differenceInDays(new Date(), date);
+
+    if (daysDifference < 1) {
+      return `Today at ${date.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`;
+    } else if (daysDifference === 1) {
+      return `1 day ago at ${date.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`;
+    } else if (daysDifference <= 3) {
+      return `${formatDistanceToNow(date, {
+        addSuffix: true,
+      })} at ${date.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })}`;
+    } else {
+      return date.toLocaleString("id-ID", {
+        dateStyle: "long",
+        timeStyle: "short",
+      });
+    }
+  };
+
   return (
     <div>
       <h1 className="text-color1 text-2xl md:text-3xl font-bold mb-6">
@@ -134,11 +165,11 @@ const MessagesPage = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-color1"></div>
         </div>
       ) : messages.length === 0 ? (
-        <div className="bg-[#1E1E1E] rounded-lg p-8 text-center">
+        <div className="rounded-lg p-8 text-center">
           <p className="text-gray-300">No messages found.</p>
         </div>
       ) : (
-        <div className="bg-[#1E1E1E] rounded-lg p-4 overflow-x-auto">
+        <div className="rounded-lg p-4 overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-800">
@@ -146,7 +177,7 @@ const MessagesPage = () => {
                 <th className="p-4 text-left">Email</th>
                 <th className="p-4 text-left">Subject</th>
                 <th className="p-4 text-left">Message</th>
-                <th className="p-4 text-left">Timestamp</th>
+                <th className="p-4 text-left">Time Received</th>
                 <th className="p-4 text-left">Actions</th>
               </tr>
             </thead>
@@ -154,20 +185,28 @@ const MessagesPage = () => {
               {messages.map((message) => (
                 <tr
                   key={message.id}
-                  className="border-b border-gray-800 hover:bg-gray-800 transition-colors"
+                  className="border-b border-gray-800 hover:bg-gray-800 transition-colors text-sm"
                 >
                   <td className="p-4">{message.name}</td>
                   <td className="p-4 text-xs">
-                    <div className="flex">
+                    <div className="flex items-center">
                       {message.email}{" "}
                       <span>
-                        <FaEnvelope
-                          size={20}
-                          className="text-gray-400 ml-2 cursor-pointer"
-                          onClick={() =>
-                            window.open(`mailto:${message.email}`, "_blank")
-                          }
-                        />
+                        <Tooltip
+                          placement="top"
+                          title={`Mail to ${message.email}`}
+                          className="justify-center "
+                        >
+                          <IconButton
+                            size="small"
+                            onClick={() =>
+                              window.open(`mailto:${message.email}`, "_blank")
+                            }
+                            sx={{ color: "#6b7280" }} // Change the color here
+                          >
+                            <FaEnvelope size={20} />
+                          </IconButton>
+                        </Tooltip>
                       </span>
                     </div>
                   </td>
@@ -178,14 +217,7 @@ const MessagesPage = () => {
                       __html: message.message.replace(/\n/g, "<br />"),
                     }}
                   ></td>
-                  <td className="p-4">
-                    {new Date(message.timestamp?.seconds * 1000)
-                      .toLocaleString("id-id", {
-                        dateStyle: "long",
-                        timeStyle: "short",
-                      })
-                      .replace("pukul", "-")}
-                  </td>
+                  <td className="p-4">{formatTimestamp(message.timestamp)}</td>
                   <td className="p-4">
                     <button
                       className="text-red-500 px-4 py-2 rounded-md hover:opacity-90 transition-opacity"

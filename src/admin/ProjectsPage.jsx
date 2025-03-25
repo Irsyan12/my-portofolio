@@ -230,13 +230,13 @@ const ProjectsPage = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-color1"></div>
         </div>
       ) : projects.length === 0 ? (
-        <div className="bg-[#1E1E1E] rounded-lg p-8 text-center">
+        <div className="rounded-lg p-8 text-center">
           <p className="text-gray-300">
-            Belum ada project. Tambahkan project pertama Anda!
+            No projects yet. Add your first project!
           </p>
         </div>
       ) : (
-        <div className="bg-[#1E1E1E] rounded-lg p-4 overflow-x-auto">
+        <div className="rounded-lg p-4 overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-800">
