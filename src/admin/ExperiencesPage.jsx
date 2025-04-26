@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { MdRefresh } from "react-icons/md";
 import {
   Snackbar,
   Alert,
@@ -11,20 +12,14 @@ import {
   Button,
   Slide,
 } from "@mui/material";
-import {
-  collection,
-  getDocs,
-  addDoc,
-  doc,
-  updateDoc,
-  deleteDoc,
-  Timestamp,
-  query,
-  orderBy,
-} from "firebase/firestore";
-import { db } from "../firebase/firebase";
 import ExperienceModal from "./modal/ExperiencesModal";
 import AddButton from "../components/AddButton";
+import {
+  fetchExperiences,
+  addExperience,
+  updateExperience,
+  deleteExperience,
+} from "../firebase/experiencesService";
 
 // Slide transition component for the dialog
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -36,6 +31,7 @@ const ExperiencesPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentExperience, setCurrentExperience] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -48,35 +44,35 @@ const ExperiencesPage = () => {
     experience: null,
   });
 
-  // Fetch experiences from Firestore
   useEffect(() => {
-    const fetchExperiences = async () => {
+    const loadExperiences = async () => {
       try {
         setIsLoading(true);
-        const experiencesRef = collection(db, "experiences");
-        const q = query(experiencesRef, orderBy("createdAt", "desc"));
-        const snapshot = await getDocs(q);
-
-        const experiencesData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
+        const experiencesData = await fetchExperiences();
         setExperiences(experiencesData);
-      } catch (error) {
-        console.error("Error fetching experiences:", error);
-        setSnackbar({
-          open: true,
-          message: `Error fetching experiences: ${error.message}`,
-          severity: "error",
-        });
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchExperiences();
+    loadExperiences();
   }, []);
+
+  const reloadExperiences = async () => {
+    try {
+      setIsLoading(true);
+      const experiencesData = await fetchExperiences();
+      setExperiences(experiencesData);
+    } catch (error) {
+      console.error("Error reloading experiences:", error);
+      setSnackbar({
+        open: true,
+        message: `Error reloading: ${error.message}`,
+        severity: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const openModal = (experience = null) => {
     setCurrentExperience(experience);
@@ -104,92 +100,33 @@ const ExperiencesPage = () => {
     });
   };
 
-  // Add a new experience to Firestore
-  const addExperience = async (experience) => {
-    try {
-      // Create a data object without startMonth, startYear, endMonth, endYear
-      const experienceData = {
-        period: experience.period,
-        role: experience.role,
-        company: experience.company,
-        description: experience.description,
-        createdAt: Timestamp.now(),
-      };
-
-      const experiencesRef = collection(db, "experiences");
-      const docRef = await addDoc(experiencesRef, experienceData);
-
-      // Update the experiences state with the new experience including its ID
-      setExperiences((prevExperiences) => [
-        {
-          id: docRef.id,
-          ...experienceData,
-        },
-        ...prevExperiences,
-      ]);
-
-      setSnackbar({
-        open: true,
-        message: "Experience added successfully",
-        severity: "success",
-      });
-    } catch (error) {
-      console.error("Error adding experience:", error);
-      setSnackbar({
-        open: true,
-        message: `Error adding experience: ${error.message}`,
-        severity: "error",
-      });
-    }
-  };
-
-  // Update an existing experience in Firestore
-  const updateExperience = async (updatedExperience) => {
-    try {
-      // Create a data object without startMonth, startYear, endMonth, endYear, id
-      const experienceData = {
-        period: updatedExperience.period,
-        role: updatedExperience.role,
-        company: updatedExperience.company,
-        description: updatedExperience.description,
-        updatedAt: Timestamp.now(),
-      };
-
-      const experienceRef = doc(db, "experiences", updatedExperience.id);
-      await updateDoc(experienceRef, experienceData);
-
-      // Update the experiences state
-      setExperiences((prevExperiences) =>
-        prevExperiences.map((exp) =>
-          exp.id === updatedExperience.id
-            ? { ...experienceData, id: updatedExperience.id }
-            : exp
-        )
-      );
-
-      setSnackbar({
-        open: true,
-        message: "Experience updated successfully",
-        severity: "success",
-      });
-    } catch (error) {
-      console.error("Error updating experience:", error);
-      setSnackbar({
-        open: true,
-        message: `Error updating experience: ${error.message}`,
-        severity: "error",
-      });
-    }
-  };
-
   // Handle save (add or update)
-  const handleSave = (experience) => {
-    if (experience.id) {
-      updateExperience(experience);
-    } else {
-      addExperience(experience);
+  const handleSave = async (experience) => {
+    try {
+      if (experience.id) {
+        await updateExperience(experience);
+        setSnackbar({
+          open: true,
+          message: "Experience updated successfully",
+          severity: "success",
+        });
+      } else {
+        const newExperience = await addExperience(experience);
+        setSnackbar({
+          open: true,
+          message: "Experience added successfully",
+          severity: "success",
+        });
+      }
+      closeModal();
+    } catch (error) {
+      console.error(error);
+      setSnackbar({
+        open: true,
+        message: `Error: ${error.message}`,
+        severity: "error",
+      });
     }
-    closeModal();
   };
 
   // Delete experience from Firestore
@@ -198,9 +135,8 @@ const ExperiencesPage = () => {
       const experienceToDelete = deleteDialog.experience;
       if (!experienceToDelete) return;
 
-      await deleteDoc(doc(db, "experiences", experienceToDelete.id));
+      await deleteExperience(experienceToDelete.id);
 
-      // Update the experiences state
       setExperiences((prevExperiences) =>
         prevExperiences.filter((exp) => exp.id !== experienceToDelete.id)
       );
@@ -211,7 +147,6 @@ const ExperiencesPage = () => {
         severity: "success",
       });
 
-      // Close the dialog
       closeDeleteDialog();
     } catch (error) {
       console.error("Error deleting experience:", error);
@@ -220,7 +155,6 @@ const ExperiencesPage = () => {
         message: `Error deleting experience: ${error.message}`,
         severity: "error",
       });
-      // Close the dialog even if there's an error
       closeDeleteDialog();
     }
   };
@@ -231,7 +165,14 @@ const ExperiencesPage = () => {
         <h1 className="text-color1 text-2xl md:text-3xl font-bold">
           Experiences
         </h1>
-        <AddButton onClick={() => openModal()} label="Add Experience" />
+        <div className="flex items-center space-x-4">
+          <MdRefresh
+            size={25}
+            className="text-color1 cursor-pointer"
+            onClick={reloadExperiences}
+          />
+          <AddButton onClick={() => openModal()} label="Add Experience" />
+        </div>
       </div>
 
       {isLoading ? (
@@ -312,15 +253,29 @@ const ExperiencesPage = () => {
       >
         <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description" sx={{ color: "#f8f8f8" }}>
+          <DialogContentText
+            id="alert-dialog-description"
+            sx={{ color: "#f8f8f8" }}
+          >
             Are you sure you want to delete this experience? This action cannot
             be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeDeleteDialog}>Cancel</Button>
-          <Button onClick={handleDelete} color="error" autoFocus>
-            Delete
+          <Button onClick={closeDeleteDialog} disabled={loadingDelete}>
+            Cancel
+          </Button>
+          <Button
+            onClick={async () => {
+              setLoadingDelete(true);
+              await handleDelete();
+              setLoadingDelete(false);
+            }}
+            color="error"
+            autoFocus
+            disabled={loadingDelete}
+          >
+            {loadingDelete ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

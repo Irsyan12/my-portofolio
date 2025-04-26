@@ -11,8 +11,10 @@ const AboutSection = () => {
     >
       <div className="grid md:grid-cols-2 gap-12 items-center">
         <div className="space-y-6">
-          <h2 className="text-4xl font-bold text-[#c5f82a]">About Me</h2>
-          <p className="text-lg text-gray-300">
+          <h2 className="text-xl md:text-4xl font-bold text-[#c5f82a]">
+            About Me
+          </h2>
+          <p className="text-sm md:text-md lg:text-lg text-gray-300">
             I&apos;m a Computer Engineering student at Syiah Kuala University
             with skills in Machine Learning, Web Development, and mobile
             development. I enjoy learning new things and sharing knowledge. Open
@@ -21,29 +23,37 @@ const AboutSection = () => {
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
               <FaEnvelope className="text-[#c5f82a]" />
-              <span>irsyanramadhan72@gmail.com</span>
+              <span className="text-sm md:text-md">
+                irsyanramadhan72@gmail.com
+              </span>
             </div>
             <div className="flex items-center space-x-4">
               <FaMapMarkerAlt className="text-[#c5f82a]" />
-              <span>Banda Aceh, Indonesia</span>
+              <span className="text-sm md:text-md">Banda Aceh, Indonesia</span>
             </div>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-2xl font-bold text-[#c5f82a]">ML</h3>
-            <p>Machine Learning Specialist</p>
+            <h3 className="text-xl md:text-2xl font-bold text-[#c5f82a]">ML</h3>
+            <p className="text-sm md:text-md">Machine Learning Specialist</p>
           </div>
           <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-2xl font-bold text-[#c5f82a]">Web</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-[#c5f82a]">
+              Web
+            </h3>
             <p>Full-Stack Developer</p>
           </div>
           <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-2xl font-bold text-[#c5f82a]">Mobile</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-[#c5f82a]">
+              Mobile
+            </h3>
             <p>App Development</p>
           </div>
           <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-2xl font-bold text-[#c5f82a]">10+</h3>
+            <h3 className="text-xl md:text-2xl font-bold text-[#c5f82a]">
+              10+
+            </h3>
             <p>Tech Certifications</p>
           </div>
         </div>
