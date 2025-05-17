@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaLink, FaGithub, FaPlay } from "react-icons/fa";
 import {
   Snackbar,
   Alert,
@@ -110,8 +110,12 @@ const ProjectsPage = () => {
       const projectData = {
         title: project.title,
         type: project.type,
-        description: project.description || "", // Tambahkan description
+        description: project.description || "",
         imageUrl: project.imageUrl || "",
+        projectLink: project.projectLink || "",
+        demoLink: project.demoLink || "", // Add demo link to Firestore
+        certificateInstitution: project.certificateInstitution || "",
+        certificateLink: project.certificateLink || "",
         createdAt: Timestamp.now(),
       };
 
@@ -147,8 +151,12 @@ const ProjectsPage = () => {
       const projectData = {
         title: updatedProject.title,
         type: updatedProject.type,
-        description: updatedProject.description || "", // Tambahkan description
+        description: updatedProject.description || "",
         imageUrl: updatedProject.imageUrl || "",
+        projectLink: updatedProject.projectLink || "",
+        demoLink: updatedProject.demoLink || "", // Update demo link
+        certificateInstitution: updatedProject.certificateInstitution || "",
+        certificateLink: updatedProject.certificateLink || "",
         updatedAt: Timestamp.now(),
       };
 
@@ -218,6 +226,18 @@ const ProjectsPage = () => {
     }
   };
 
+  // Render link icon based on link type
+  const renderLinkIcon = (link, type) => {
+    if (!link) return null;
+
+    if (type === "demo") {
+      return <FaPlay className="text-green-500 hover:text-color1" size={20} />;
+    } else if (link.includes("github.com")) {
+      return <FaGithub className="text-gray-400 hover:text-color1" size={20} />;
+    }
+    return <FaLink className="text-gray-400 hover:text-color1" size={20} />;
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -243,6 +263,7 @@ const ProjectsPage = () => {
                 <th className="p-4 text-left">Title</th>
                 <th className="p-4 text-left">Category</th>
                 <th className="p-4 text-left">Description</th>
+                <th className="p-4 text-left">Links</th>
                 <th className="p-4 text-left">Image</th>
                 <th className="p-4 text-right">Actions</th>
               </tr>
@@ -257,12 +278,88 @@ const ProjectsPage = () => {
                   <td className="p-4">{project.type}</td>
                   <td className="p-4">{project.description || "-"}</td>
                   <td className="p-4">
+                    <div className="flex space-x-3">
+                      {project.type === "Project" && (
+                        <>
+                          {project.projectLink && (
+                            <a
+                              href={project.projectLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:text-color1 transition-colors"
+                              title="Repository Link"
+                            >
+                              {renderLinkIcon(project.projectLink)}
+                            </a>
+                          )}
+
+                          {project.demoLink && (
+                            <a
+                              href={project.demoLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:text-color1 transition-colors"
+                              title="Live Demo"
+                            >
+                              {renderLinkIcon(project.demoLink, "demo")}
+                            </a>
+                          )}
+                        </>
+                      )}
+
+                      {project.type === "Certification" &&
+                        project.certificateLink && (
+                          <a
+                            href={project.certificateLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-color1 transition-colors"
+                            title="Certificate"
+                          >
+                            <FaLink size={20} />
+                          </a>
+                        )}
+
+                      {!project.projectLink &&
+                        !project.demoLink &&
+                        !(
+                          project.type === "Certification" &&
+                          project.certificateLink
+                        ) &&
+                        "-"}
+                    </div>
+                  </td>
+                  <td className="p-4">
                     {project.imageUrl && (
-                      <img
-                        src={project.imageUrl}
-                        alt={project.title}
-                        className="w-16 h-16 object-cover rounded-md"
-                      />
+                      <div className="relative group">
+                        <img
+                          src={project.imageUrl}
+                          alt={project.title}
+                          className="w-16 h-16 object-cover rounded-md"
+                        />
+                        {project.type === "Project" && (
+                          <div className="absolute top-0 right-0 bg-black bg-opacity-70 p-1 rounded-full hidden group-hover:flex gap-1">
+                            {project.projectLink && (
+                              <a
+                                href={project.projectLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {renderLinkIcon(project.projectLink)}
+                              </a>
+                            )}
+                            {project.demoLink && (
+                              <a
+                                href={project.demoLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {renderLinkIcon(project.demoLink, "demo")}
+                              </a>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     )}
                   </td>
                   <td className="p-4 text-right">
