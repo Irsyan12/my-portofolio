@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 const ExperienceModal = ({ experience, onSave, onClose }) => {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 10 }, (_, index) => currentYear - index);
-  
+
   const [formData, setFormData] = useState({
     startMonth: "",
     startYear: "",
@@ -12,6 +12,7 @@ const ExperienceModal = ({ experience, onSave, onClose }) => {
     role: "",
     company: "",
     description: "",
+    order: 0, // Add order to initial state
   });
 
   useEffect(() => {
@@ -22,13 +23,13 @@ const ExperienceModal = ({ experience, onSave, onClose }) => {
         const periodParts = experience.period.split(" - ");
         const startParts = periodParts[0].split(" ");
         const endParts = periodParts[1].split(" ");
-        
+
         setFormData({
           ...experience,
           startMonth: startParts[0],
           startYear: startParts[1],
           endMonth: endParts[0],
-          endYear: endParts[1]
+          endYear: endParts[1],
         });
       } else {
         // If experience already has separate fields
@@ -49,20 +50,21 @@ const ExperienceModal = ({ experience, onSave, onClose }) => {
     e.preventDefault();
     // Combine start and end month/year into a period string
     const period = `${formData.startMonth} ${formData.startYear} - ${formData.endMonth} ${formData.endYear}`;
-    
+
     // Create data object to save without the fields that shouldn't go to Firestore
     const dataToSave = {
       period,
       role: formData.role,
       company: formData.company,
       description: formData.description,
+      order: parseInt(formData.order, 10), // Include order and ensure it's a number
     };
-    
+
     // Only include id if editing an existing experience
     if (experience?.id) {
       dataToSave.id = experience.id;
     }
-    
+
     onSave(dataToSave);
   };
 
@@ -186,6 +188,17 @@ const ExperienceModal = ({ experience, onSave, onClose }) => {
               type="text"
               name="company"
               value={formData.company}
+              onChange={handleChange}
+              className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2">Order</label>
+            <input
+              type="number"
+              name="order"
+              value={formData.order}
               onChange={handleChange}
               className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
               required

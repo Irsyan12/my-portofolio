@@ -15,7 +15,12 @@ import {
 const experiencesRef = collection(db, "experiences");
 
 export const fetchExperiences = async () => {
-  const q = query(experiencesRef, orderBy("createdAt", "desc"));
+  // Sort by order (ascending) then by createdAt (descending)
+  const q = query(
+    experiencesRef,
+    orderBy("order", "asc"),
+    orderBy("createdAt", "desc")
+  );
   const snapshot = await getDocs(q);
   return snapshot.docs.map((doc) => ({
     id: doc.id,
@@ -29,6 +34,7 @@ export const addExperience = async (experience) => {
     role: experience.role,
     company: experience.company,
     description: experience.description,
+    order: experience.order, // Add order field
     createdAt: Timestamp.now(),
   };
   const docRef = await addDoc(experiencesRef, experienceData);
@@ -41,6 +47,7 @@ export const updateExperience = async (updatedExperience) => {
     role: updatedExperience.role,
     company: updatedExperience.company,
     description: updatedExperience.description,
+    order: updatedExperience.order, // Add order field
     updatedAt: Timestamp.now(),
   };
   const experienceRef = doc(db, "experiences", updatedExperience.id);

@@ -48,8 +48,15 @@ const ExperiencesPage = () => {
     const loadExperiences = async () => {
       try {
         setIsLoading(true);
-        const experiencesData = await fetchExperiences();
+        const experiencesData = await fetchExperiences(); // Already sorted by Firestore
         setExperiences(experiencesData);
+      } catch (error) {
+        console.error("Error loading experiences:", error);
+        setSnackbar({
+          open: true,
+          message: `Error loading experiences: ${error.message}`,
+          severity: "error",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -60,7 +67,7 @@ const ExperiencesPage = () => {
   const reloadExperiences = async () => {
     try {
       setIsLoading(true);
-      const experiencesData = await fetchExperiences();
+      const experiencesData = await fetchExperiences(); // Already sorted by Firestore
       setExperiences(experiencesData);
     } catch (error) {
       console.error("Error reloading experiences:", error);
@@ -119,6 +126,8 @@ const ExperiencesPage = () => {
         });
       }
       closeModal();
+      // Reload experiences to reflect the new order
+      reloadExperiences();
     } catch (error) {
       console.error(error);
       setSnackbar({
@@ -126,6 +135,67 @@ const ExperiencesPage = () => {
         message: `Error: ${error.message}`,
         severity: "error",
       });
+    }
+  };
+
+  const handleOrderChange = async (experienceId, newOrderValue) => {
+    setIsLoading(true); // Indicate loading for the whole table
+
+    const currentExp = experiences.find((exp) => exp.id === experienceId);
+    if (!currentExp) {
+      setSnackbar({
+        open: true,
+        message: "Error: Experience not found.",
+        severity: "error",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // Ensure currentExp.order is a number, default to 0 if undefined/null
+    const originalOrderOfCurrentExp =
+      currentExp.order === undefined || currentExp.order === null
+        ? 0
+        : currentExp.order;
+
+    // Find the experience that currently has the newOrderValue (if any)
+    const targetExp = experiences.find(
+      (exp) => exp.id !== experienceId && exp.order === newOrderValue
+    );
+
+    try {
+      const updatePromises = [];
+
+      // Update the current experience to the new order
+      updatePromises.push(
+        updateExperience({ ...currentExp, order: newOrderValue })
+      );
+
+      // If there's a target experience (another item has the newOrderValue),
+      // update its order to the original order of the current experience.
+      if (targetExp) {
+        updatePromises.push(
+          updateExperience({ ...targetExp, order: originalOrderOfCurrentExp })
+        );
+      }
+
+      await Promise.all(updatePromises);
+
+      setSnackbar({
+        open: true,
+        message: "Order updated successfully. Reloading...",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Error updating order:", error);
+      setSnackbar({
+        open: true,
+        message: `Error updating order: ${error.message}`,
+        severity: "error",
+      });
+    } finally {
+      // Reload experiences from Firestore to get the canonical sorted state
+      await reloadExperiences(); // This also sets setIsLoading(false)
     }
   };
 
@@ -190,6 +260,7 @@ const ExperiencesPage = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-800">
+                <th className="p-4 text-left">Order</th>
                 <th className="p-4 text-left">Period</th>
                 <th className="p-4 text-left">Role</th>
                 <th className="p-4 text-left">Company</th>
@@ -202,6 +273,33 @@ const ExperiencesPage = () => {
                   key={experience.id}
                   className="border-b border-gray-800 hover:bg-gray-800 transition-colors"
                 >
+                  <td className="p-4">
+                    <select
+                      value={
+                        experience.order !== undefined &&
+                        experience.order !== null
+                          ? experience.order
+                          : 0
+                      }
+                      onChange={(e) =>
+                        handleOrderChange(
+                          experience.id,
+                          parseInt(e.target.value, 10)
+                        )
+                      }
+                      className="bg-dark text-white border border-gray-700 rounded-md p-1 text-sm focus:ring-color1 focus:border-color1 disabled:opacity-50"
+                      disabled={isLoading}
+                    >
+                      {Array.from(
+                        { length: experiences.length + 1 },
+                        (_, i) => i
+                      ).map((orderValue) => (
+                        <option key={orderValue} value={orderValue}>
+                          {orderValue}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
                   <td className="p-4">{experience.period}</td>
                   <td className="p-4">{experience.role}</td>
                   <td className="p-4">{experience.company}</td>
