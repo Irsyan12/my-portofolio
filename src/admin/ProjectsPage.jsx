@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash, FaLink, FaGithub, FaPlay } from "react-icons/fa";
+import { MdRefresh } from "react-icons/md";
 import {
   Snackbar,
   Alert,
@@ -77,6 +78,36 @@ const ProjectsPage = () => {
 
     fetchProjects();
   }, []);
+
+  const reloadProjects = async () => {
+    try {
+      setIsLoading(true);
+      const projectsRef = collection(db, "projects");
+      const q = query(projectsRef, orderBy("createdAt", "desc"));
+      const snapshot = await getDocs(q);
+
+      const projectsData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setProjects(projectsData);
+      setSnackbar({
+        open: true,
+        message: "Projects reloaded successfully!",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Error reloading projects:", error);
+      setSnackbar({
+        open: true,
+        message: `Error reloading projects: ${error.message}`,
+        severity: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const openModal = (project = null) => {
     setCurrentProject(project);
@@ -242,7 +273,14 @@ const ProjectsPage = () => {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-color1 text-2xl md:text-3xl font-bold">Projects</h1>
-        <AddButton onClick={() => openModal()} label="Add Project" />
+        <div className="flex items-center space-x-4">
+          <MdRefresh
+            size={25}
+            className="text-color1 cursor-pointer"
+            onClick={reloadProjects}
+          />
+          <AddButton onClick={() => openModal()} label="Add Project" />
+        </div>
       </div>
 
       {isLoading ? (
@@ -276,7 +314,12 @@ const ProjectsPage = () => {
                 >
                   <td className="p-4">{project.title}</td>
                   <td className="p-4">{project.type}</td>
-                  <td className="p-4">{project.description || "-"}</td>
+                  <td
+                    className="p-4 sm md:text-xs"
+                    dangerouslySetInnerHTML={{
+                      __html: project.description.replace(/\n/g, "<br />"),
+                    }}
+                  ></td>
                   <td className="p-4">
                     <div className="flex space-x-3">
                       {project.type === "Project" && (
