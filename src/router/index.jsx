@@ -9,6 +9,7 @@ import ProjectsAdminPage from "../admin/ProjectsPage";
 import ProtectedRoute from "../components/ProtectedRoute";
 import DashboardLayout from "../admin/DashboardLayout";
 import MessagesPage from "../admin/MessagesPage";
+import FeedbackPage from "../admin/FeedbackPage";
 
 const router = createBrowserRouter([
   {
@@ -46,7 +47,11 @@ const router = createBrowserRouter([
           {
             path: "messages",
             element: <MessagesPage />,
-          }
+          },
+          {
+            path: "feedback",
+            element: <FeedbackPage />,
+          },
         ],
       },
     ],
