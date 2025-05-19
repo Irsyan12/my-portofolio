@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import OutlinedTextField from "../../components/OutlinedTextField"; // Import OutlinedTextField
 
 const ExperienceModal = ({ experience, onSave, onClose }) => {
   const currentYear = new Date().getFullYear();
@@ -172,46 +173,43 @@ const ExperienceModal = ({ experience, onSave, onClose }) => {
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Role</label>
-            <input
+            <OutlinedTextField
               type="text"
               name="role"
+              label="Role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Company</label>
-            <input
+            <OutlinedTextField
               type="text"
               name="company"
+              label="Company"
               value={formData.company}
               onChange={handleChange}
-              className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Order</label>
-            <input
+            <OutlinedTextField
               type="number"
               name="order"
+              label="Order"
               value={formData.order}
               onChange={handleChange}
-              className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Description</label>
-            <textarea
+            <OutlinedTextField
               name="description"
+              label="Description"
               value={formData.description}
               onChange={handleChange}
-              className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
-              rows="4"
+              rows={4}
+              multiline
               required
             />
           </div>

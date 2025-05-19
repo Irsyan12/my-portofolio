@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
-import {
-  db,
-  doc,
-  getDoc,
-} from "../firebase/firebase";
+import React, { useEffect, useState, useRef } from "react";
+import { db, doc, getDoc } from "../firebase/firebase";
+import { logout } from "../firebase/auth"; // Import logout
 import { Snackbar, Alert } from "@mui/material";
 import VisitsChart from "../components/VisitsChart";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const Dashboard = () => {
   const [totalVisits, setTotalVisits] = useState(0);
@@ -15,6 +13,8 @@ const Dashboard = () => {
     message: "",
     severity: "info",
   });
+  const sessionTimeoutIdRef = useRef(null); // Ref to store timeout ID
+  const navigate = useNavigate(); // Initialize useNavigate
 
   useEffect(() => {
     const fetchVisits = async () => {
@@ -47,6 +47,63 @@ const Dashboard = () => {
 
     fetchVisits();
   }, []);
+
+  // useEffect for session management
+  useEffect(() => {
+    const LOGIN_TIMESTAMP_KEY = "loginTimestamp";
+    const SESSION_DURATION = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+
+    const handleSessionLogout = async () => {
+      try {
+        await logout();
+        localStorage.removeItem(LOGIN_TIMESTAMP_KEY);
+        setSnackbar({
+          open: true,
+          message: "Session expired. You have been logged out.",
+          severity: "warning", // Or 'info'
+        });
+        navigate("/login"); // Correct way to navigate
+      } catch (error) {
+        console.error("Error during session logout:", error);
+        setSnackbar({
+          open: true,
+          message: `Error logging out: ${error.message}`,
+          severity: "error",
+        });
+        localStorage.removeItem(LOGIN_TIMESTAMP_KEY);
+      }
+    };
+
+    const storedTimestampStr = localStorage.getItem(LOGIN_TIMESTAMP_KEY);
+
+    if (storedTimestampStr) {
+      const storedTimestamp = parseInt(storedTimestampStr, 10);
+      const elapsedTime = Date.now() - storedTimestamp;
+
+      if (elapsedTime >= SESSION_DURATION) {
+        handleSessionLogout();
+      } else {
+        const remainingTime = SESSION_DURATION - elapsedTime;
+        sessionTimeoutIdRef.current = setTimeout(
+          handleSessionLogout,
+          remainingTime
+        );
+      }
+    } else {
+      localStorage.setItem(LOGIN_TIMESTAMP_KEY, Date.now().toString());
+      sessionTimeoutIdRef.current = setTimeout(
+        handleSessionLogout,
+        SESSION_DURATION
+      );
+    }
+
+    // Cleanup function to clear the timeout if the component unmounts
+    return () => {
+      if (sessionTimeoutIdRef.current) {
+        clearTimeout(sessionTimeoutIdRef.current);
+      }
+    };
+  }, [navigate]); // Add navigate to dependency array as it's used inside useEffect
 
   return (
     <div>
@@ -84,13 +141,14 @@ const Dashboard = () => {
 
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={3000}
+        autoHideDuration={6000} // Increased duration for session expiry message
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
         <Alert
           onClose={() => setSnackbar({ ...snackbar, open: false })}
           severity={snackbar.severity}
+          sx={{ width: "100%" }} // Ensure alert takes full width of snackbar
         >
           {snackbar.message}
         </Alert>

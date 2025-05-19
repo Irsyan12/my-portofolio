@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaImage, FaLink, FaGithub, FaPlay } from "react-icons/fa";
+import OutlinedTextField from "../../components/OutlinedTextField"; // Import OutlinedTextField
 
 const ProjectModal = ({ project, onSave, onClose }) => {
   const [formData, setFormData] = useState({
@@ -49,7 +50,6 @@ const ProjectModal = ({ project, onSave, onClose }) => {
 
     setIsLoadingPreview(true);
     try {
-      // Menggunakan Open Graph API yang gratis
       const response = await fetch(
         `https://api.microlink.io/?url=${encodeURIComponent(url)}&meta=false`
       );
@@ -58,7 +58,6 @@ const ProjectModal = ({ project, onSave, onClose }) => {
 
       const { data } = await response.json();
 
-      // Menyiapkan data preview
       const previewData = {
         title: data.title || "No Title",
         description: data.description || "",
@@ -68,16 +67,13 @@ const ProjectModal = ({ project, onSave, onClose }) => {
 
       setLinkPreview(previewData);
 
-      // Untuk GitHub repository, gunakan pendekatan khusus
       if (url.includes("github.com")) {
         try {
-          // Contoh URL: https://github.com/username/repo
           const parts = url.split("github.com/")[1]?.split("/");
           if (parts && parts.length >= 2) {
             const username = parts[0];
             const repo = parts[1];
 
-            // Coba dapatkan data repo dari GitHub API
             const githubResponse = await fetch(
               `https://api.github.com/repos/${username}/${repo}`
             );
@@ -85,23 +81,15 @@ const ProjectModal = ({ project, onSave, onClose }) => {
             if (githubResponse.ok) {
               const repoData = await githubResponse.json();
 
-              // Update data preview dengan informasi dari GitHub API
               previewData.description =
                 repoData.description || previewData.description;
               previewData.title = repoData.full_name || previewData.title;
-
-              // Gunakan repo image jika tersedia, atau generate preview image
-              // Repo image dapat berupa:
-              // 1. Social preview image jika ada
-              // 2. Repository banner image (Open Graph)
-              // 3. Fallback ke image dari repository cards
 
               const ogImageUrl = `https://opengraph.githubassets.com/1/${username}/${repo}`;
               previewData.image = ogImageUrl;
 
               setLinkPreview(previewData);
 
-              // Update form data image
               if (!formData.imageUrl) {
                 setFormData((prev) => ({
                   ...prev,
@@ -112,7 +100,6 @@ const ProjectModal = ({ project, onSave, onClose }) => {
           }
         } catch (githubErr) {
           console.error("Error fetching GitHub data:", githubErr);
-          // Fallback masih menggunakan logo GitHub
           if (!previewData.image) {
             previewData.image =
               "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png";
@@ -121,7 +108,6 @@ const ProjectModal = ({ project, onSave, onClose }) => {
         }
       }
 
-      // Jika link preview memiliki gambar dan user belum upload gambar sendiri
       if (previewData.image && !formData.imageUrl) {
         setFormData((prev) => ({
           ...prev,
@@ -131,7 +117,6 @@ const ProjectModal = ({ project, onSave, onClose }) => {
     } catch (error) {
       console.error("Error fetching link preview:", error);
 
-      // Fallback untuk link GitHub tanpa melakukan API call
       if (url.includes("github.com")) {
         const parts = url.split("github.com/")[1]?.split("/");
         if (parts && parts.length >= 2) {
@@ -154,7 +139,6 @@ const ProjectModal = ({ project, onSave, onClose }) => {
             }));
           }
         } else {
-          // Fallback jika URL tidak mengikuti format standar
           const fallbackPreview = {
             title: url.split("/").slice(-2).join("/"),
             description: "GitHub Repository",
@@ -178,7 +162,6 @@ const ProjectModal = ({ project, onSave, onClose }) => {
     }
   };
 
-  // Menampilkan preview link setelah user selesai mengetik
   const handleLinkBlur = () => {
     if (formData.projectLink) {
       fetchLinkPreview(formData.projectLink);
@@ -236,13 +219,11 @@ const ProjectModal = ({ project, onSave, onClose }) => {
       formData.imageUrl ||
       `https://placehold.co/600x400?text=${formattedTitle}`;
 
-    // Tambahkan kondisi untuk sertifikat
     const finalData = {
       ...formData,
       imageUrl: imageUrl,
     };
 
-    // Jika tipe adalah Certification, pastikan field tambahan diisi
     if (formData.type === "Certification") {
       if (!formData.certificateInstitution) {
         alert("Institusi sertifikat harus diisi");
@@ -253,7 +234,6 @@ const ProjectModal = ({ project, onSave, onClose }) => {
     onSave(finalData);
   };
 
-  // Tampilkan icon yang sesuai berdasarkan jenis link
   const getLinkIcon = () => {
     if (formData.projectLink?.includes("github.com")) {
       return <FaGithub className="mr-2 text-gray-400" size={20} />;
@@ -269,13 +249,12 @@ const ProjectModal = ({ project, onSave, onClose }) => {
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-300 mb-2">Title</label>
-            <input
+            <OutlinedTextField
               type="text"
               name="title"
+              label="Title"
               value={formData.title}
               onChange={handleChange}
-              className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
               required
             />
           </div>
@@ -297,19 +276,16 @@ const ProjectModal = ({ project, onSave, onClose }) => {
           {formData.type === "Project" && (
             <>
               <div className="mb-4">
-                <label className="block text-gray-300 mb-2">
-                  Project Link (Optional)
-                </label>
                 <div className="flex items-center">
                   {getLinkIcon()}
-                  <input
+                  <OutlinedTextField
                     type="url"
                     name="projectLink"
+                    label="Project Link (Optional)"
                     value={formData.projectLink}
                     onChange={handleChange}
                     onBlur={handleLinkBlur}
                     placeholder="https://github.com/username/repo"
-                    className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
                   />
                 </div>
                 {linkPreview && (
@@ -332,18 +308,15 @@ const ProjectModal = ({ project, onSave, onClose }) => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-gray-300 mb-2">
-                  Demo Link (Optional)
-                </label>
                 <div className="flex items-center">
                   <FaPlay className="mr-2 text-gray-400" size={20} />
-                  <input
+                  <OutlinedTextField
                     type="url"
                     name="demoLink"
+                    label="Demo Link (Optional)"
                     value={formData.demoLink}
                     onChange={handleChange}
                     placeholder="https://demo-example.com"
-                    className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
                   />
                 </div>
               </div>
@@ -353,32 +326,26 @@ const ProjectModal = ({ project, onSave, onClose }) => {
           {formData.type === "Certification" && (
             <>
               <div className="mb-4">
-                <label className="block text-gray-300 mb-2">
-                  Certificate Institution
-                </label>
-                <input
+                <OutlinedTextField
                   type="text"
                   name="certificateInstitution"
+                  label="Certificate Institution"
                   value={formData.certificateInstitution}
                   onChange={handleChange}
-                  className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
                   required
                 />
               </div>
 
               <div className="mb-4">
-                <label className="block text-gray-300 mb-2">
-                  Certificate Link (Optional)
-                </label>
                 <div className="flex items-center">
                   <FaLink className="mr-2 text-gray-400" size={20} />
-                  <input
+                  <OutlinedTextField
                     type="url"
                     name="certificateLink"
+                    label="Certificate Link (Optional)"
                     value={formData.certificateLink}
                     onChange={handleChange}
                     placeholder="https://example.com/certificate"
-                    className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
                   />
                 </div>
               </div>
@@ -386,15 +353,13 @@ const ProjectModal = ({ project, onSave, onClose }) => {
           )}
 
           <div className="mb-4">
-            <label className="block text-gray-300 mb-2">
-              Description (Optional)
-            </label>
-            <textarea
+            <OutlinedTextField
               name="description"
+              label="Description (Optional)"
               value={formData.description}
               onChange={handleChange}
-              className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
-              rows="4"
+              multiline
+              rows={4}
             />
           </div>
 
