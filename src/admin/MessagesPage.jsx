@@ -147,10 +147,15 @@ const MessagesPage = () => {
         minute: "2-digit",
       })}`;
     } else {
-      return date.toLocaleString("id-ID", {
+      // Keep date in Indonesian, change "pukul" to "at", keep 24-hour time format
+      const formattedDate = date.toLocaleDateString("id-ID", {
         dateStyle: "long",
-        timeStyle: "short",
       });
+      const formattedTime = date.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      return `${formattedDate} at ${formattedTime}`;
     }
   };
 

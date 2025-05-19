@@ -16,12 +16,12 @@ function HelloWorldPage() {
             {/* Left side content */}
             <div className="space-y-3 md:w-1/2 text-center md:text-left cursor-default">
               {/*eslint-disable-next-line react/no-unescaped-entities */}
-              <p className="text-lg text-color1">Hello World, I'm</p>
-              <h1 className="text-4xl md:text-6xl font-bold text-color1">
+              <p className="text-md md:text-lg text-color1">Hello World, I'm</p>
+              <h1 className="text-2xl md:text-6xl font-bold text-color1">
                 Irsyan Ramadhan
               </h1>
               <TypeWriter />
-              <p className="text-lg">
+              <p className="text-md md:text-lg">
                 Welcome to my personal website{" "}
                 <span className="inline-block animate-wave">👋</span>
               </p>

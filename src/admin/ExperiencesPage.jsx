@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { MdRefresh } from "react-icons/md";
 import {
   Snackbar,
   Alert,
@@ -11,20 +12,14 @@ import {
   Button,
   Slide,
 } from "@mui/material";
-import {
-  collection,
-  getDocs,
-  addDoc,
-  doc,
-  updateDoc,
-  deleteDoc,
-  Timestamp,
-  query,
-  orderBy,
-} from "firebase/firestore";
-import { db } from "../firebase/firebase";
 import ExperienceModal from "./modal/ExperiencesModal";
 import AddButton from "../components/AddButton";
+import {
+  fetchExperiences,
+  addExperience,
+  updateExperience,
+  deleteExperience,
+} from "../firebase/experiencesService";
 
 // Slide transition component for the dialog
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -36,6 +31,7 @@ const ExperiencesPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentExperience, setCurrentExperience] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -48,35 +44,42 @@ const ExperiencesPage = () => {
     experience: null,
   });
 
-  // Fetch experiences from Firestore
   useEffect(() => {
-    const fetchExperiences = async () => {
+    const loadExperiences = async () => {
       try {
         setIsLoading(true);
-        const experiencesRef = collection(db, "experiences");
-        const q = query(experiencesRef, orderBy("createdAt", "desc"));
-        const snapshot = await getDocs(q);
-
-        const experiencesData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
+        const experiencesData = await fetchExperiences(); // Already sorted by Firestore
         setExperiences(experiencesData);
       } catch (error) {
-        console.error("Error fetching experiences:", error);
+        console.error("Error loading experiences:", error);
         setSnackbar({
           open: true,
-          message: `Error fetching experiences: ${error.message}`,
+          message: `Error loading experiences: ${error.message}`,
           severity: "error",
         });
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchExperiences();
+    loadExperiences();
   }, []);
+
+  const reloadExperiences = async () => {
+    try {
+      setIsLoading(true);
+      const experiencesData = await fetchExperiences(); // Already sorted by Firestore
+      setExperiences(experiencesData);
+    } catch (error) {
+      console.error("Error reloading experiences:", error);
+      setSnackbar({
+        open: true,
+        message: `Error reloading: ${error.message}`,
+        severity: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const openModal = (experience = null) => {
     setCurrentExperience(experience);
@@ -104,92 +107,96 @@ const ExperiencesPage = () => {
     });
   };
 
-  // Add a new experience to Firestore
-  const addExperience = async (experience) => {
+  // Handle save (add or update)
+  const handleSave = async (experience) => {
     try {
-      // Create a data object without startMonth, startYear, endMonth, endYear
-      const experienceData = {
-        period: experience.period,
-        role: experience.role,
-        company: experience.company,
-        description: experience.description,
-        createdAt: Timestamp.now(),
-      };
-
-      const experiencesRef = collection(db, "experiences");
-      const docRef = await addDoc(experiencesRef, experienceData);
-
-      // Update the experiences state with the new experience including its ID
-      setExperiences((prevExperiences) => [
-        {
-          id: docRef.id,
-          ...experienceData,
-        },
-        ...prevExperiences,
-      ]);
-
-      setSnackbar({
-        open: true,
-        message: "Experience added successfully",
-        severity: "success",
-      });
+      if (experience.id) {
+        await updateExperience(experience);
+        setSnackbar({
+          open: true,
+          message: "Experience updated successfully",
+          severity: "success",
+        });
+      } else {
+        const newExperience = await addExperience(experience);
+        setSnackbar({
+          open: true,
+          message: "Experience added successfully",
+          severity: "success",
+        });
+      }
+      closeModal();
+      // Reload experiences to reflect the new order
+      reloadExperiences();
     } catch (error) {
-      console.error("Error adding experience:", error);
+      console.error(error);
       setSnackbar({
         open: true,
-        message: `Error adding experience: ${error.message}`,
+        message: `Error: ${error.message}`,
         severity: "error",
       });
     }
   };
 
-  // Update an existing experience in Firestore
-  const updateExperience = async (updatedExperience) => {
+  const handleOrderChange = async (experienceId, newOrderValue) => {
+    setIsLoading(true); // Indicate loading for the whole table
+
+    const currentExp = experiences.find((exp) => exp.id === experienceId);
+    if (!currentExp) {
+      setSnackbar({
+        open: true,
+        message: "Error: Experience not found.",
+        severity: "error",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // Ensure currentExp.order is a number, default to 0 if undefined/null
+    const originalOrderOfCurrentExp =
+      currentExp.order === undefined || currentExp.order === null
+        ? 0
+        : currentExp.order;
+
+    // Find the experience that currently has the newOrderValue (if any)
+    const targetExp = experiences.find(
+      (exp) => exp.id !== experienceId && exp.order === newOrderValue
+    );
+
     try {
-      // Create a data object without startMonth, startYear, endMonth, endYear, id
-      const experienceData = {
-        period: updatedExperience.period,
-        role: updatedExperience.role,
-        company: updatedExperience.company,
-        description: updatedExperience.description,
-        updatedAt: Timestamp.now(),
-      };
+      const updatePromises = [];
 
-      const experienceRef = doc(db, "experiences", updatedExperience.id);
-      await updateDoc(experienceRef, experienceData);
-
-      // Update the experiences state
-      setExperiences((prevExperiences) =>
-        prevExperiences.map((exp) =>
-          exp.id === updatedExperience.id
-            ? { ...experienceData, id: updatedExperience.id }
-            : exp
-        )
+      // Update the current experience to the new order
+      updatePromises.push(
+        updateExperience({ ...currentExp, order: newOrderValue })
       );
 
+      // If there's a target experience (another item has the newOrderValue),
+      // update its order to the original order of the current experience.
+      if (targetExp) {
+        updatePromises.push(
+          updateExperience({ ...targetExp, order: originalOrderOfCurrentExp })
+        );
+      }
+
+      await Promise.all(updatePromises);
+
       setSnackbar({
         open: true,
-        message: "Experience updated successfully",
+        message: "Order updated successfully. Reloading...",
         severity: "success",
       });
     } catch (error) {
-      console.error("Error updating experience:", error);
+      console.error("Error updating order:", error);
       setSnackbar({
         open: true,
-        message: `Error updating experience: ${error.message}`,
+        message: `Error updating order: ${error.message}`,
         severity: "error",
       });
+    } finally {
+      // Reload experiences from Firestore to get the canonical sorted state
+      await reloadExperiences(); // This also sets setIsLoading(false)
     }
-  };
-
-  // Handle save (add or update)
-  const handleSave = (experience) => {
-    if (experience.id) {
-      updateExperience(experience);
-    } else {
-      addExperience(experience);
-    }
-    closeModal();
   };
 
   // Delete experience from Firestore
@@ -198,9 +205,8 @@ const ExperiencesPage = () => {
       const experienceToDelete = deleteDialog.experience;
       if (!experienceToDelete) return;
 
-      await deleteDoc(doc(db, "experiences", experienceToDelete.id));
+      await deleteExperience(experienceToDelete.id);
 
-      // Update the experiences state
       setExperiences((prevExperiences) =>
         prevExperiences.filter((exp) => exp.id !== experienceToDelete.id)
       );
@@ -211,7 +217,6 @@ const ExperiencesPage = () => {
         severity: "success",
       });
 
-      // Close the dialog
       closeDeleteDialog();
     } catch (error) {
       console.error("Error deleting experience:", error);
@@ -220,7 +225,6 @@ const ExperiencesPage = () => {
         message: `Error deleting experience: ${error.message}`,
         severity: "error",
       });
-      // Close the dialog even if there's an error
       closeDeleteDialog();
     }
   };
@@ -231,7 +235,14 @@ const ExperiencesPage = () => {
         <h1 className="text-color1 text-2xl md:text-3xl font-bold">
           Experiences
         </h1>
-        <AddButton onClick={() => openModal()} label="Add Experience" />
+        <div className="flex items-center space-x-4">
+          <MdRefresh
+            size={25}
+            className="text-color1 cursor-pointer"
+            onClick={reloadExperiences}
+          />
+          <AddButton onClick={() => openModal()} label="Add Experience" />
+        </div>
       </div>
 
       {isLoading ? (
@@ -249,6 +260,7 @@ const ExperiencesPage = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-800">
+                <th className="p-4 text-left">Order</th>
                 <th className="p-4 text-left">Period</th>
                 <th className="p-4 text-left">Role</th>
                 <th className="p-4 text-left">Company</th>
@@ -261,6 +273,33 @@ const ExperiencesPage = () => {
                   key={experience.id}
                   className="border-b border-gray-800 hover:bg-gray-800 transition-colors"
                 >
+                  <td className="p-4">
+                    <select
+                      value={
+                        experience.order !== undefined &&
+                        experience.order !== null
+                          ? experience.order
+                          : 0
+                      }
+                      onChange={(e) =>
+                        handleOrderChange(
+                          experience.id,
+                          parseInt(e.target.value, 10)
+                        )
+                      }
+                      className="bg-dark text-white border border-gray-700 rounded-md p-1 text-sm focus:ring-color1 focus:border-color1 disabled:opacity-50"
+                      disabled={isLoading}
+                    >
+                      {Array.from(
+                        { length: experiences.length + 1 },
+                        (_, i) => i
+                      ).map((orderValue) => (
+                        <option key={orderValue} value={orderValue}>
+                          {orderValue}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
                   <td className="p-4">{experience.period}</td>
                   <td className="p-4">{experience.role}</td>
                   <td className="p-4">{experience.company}</td>
@@ -312,15 +351,29 @@ const ExperiencesPage = () => {
       >
         <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description" sx={{ color: "#f8f8f8" }}>
+          <DialogContentText
+            id="alert-dialog-description"
+            sx={{ color: "#f8f8f8" }}
+          >
             Are you sure you want to delete this experience? This action cannot
             be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeDeleteDialog}>Cancel</Button>
-          <Button onClick={handleDelete} color="error" autoFocus>
-            Delete
+          <Button onClick={closeDeleteDialog} disabled={loadingDelete}>
+            Cancel
+          </Button>
+          <Button
+            onClick={async () => {
+              setLoadingDelete(true);
+              await handleDelete();
+              setLoadingDelete(false);
+            }}
+            color="error"
+            autoFocus
+            disabled={loadingDelete}
+          >
+            {loadingDelete ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

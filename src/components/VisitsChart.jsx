@@ -22,13 +22,20 @@ ChartJS.register(
 );
 
 const VisitsChart = ({ timestamps }) => {
-  const [processedData, setProcessedData] = useState({ labels: [], counts: [] });
+  const [processedData, setProcessedData] = useState({
+    labels: [],
+    counts: [],
+  });
+  const [selectedRange, setSelectedRange] = useState(7); // Default to 7 days
 
   useEffect(() => {
-    if (!timestamps || timestamps.length === 0) return;
+    if (!timestamps || timestamps.length === 0) {
+      setProcessedData({ labels: [], counts: [] }); // Clear data if no timestamps
+      return;
+    }
 
     // Convert Firestore timestamps to JavaScript Date objects
-    const dates = timestamps.map(timestamp => {
+    let dates = timestamps.map((timestamp) => {
       // Handle both Firestore Timestamp objects and serialized timestamps
       if (timestamp.seconds) {
         return new Date(timestamp.seconds * 1000);
@@ -39,13 +46,28 @@ const VisitsChart = ({ timestamps }) => {
       }
     });
 
+    // Filter dates based on selectedRange
+    if (selectedRange !== "all") {
+      const now = new Date();
+      const cutoffDate = new Date();
+      cutoffDate.setDate(now.getDate() - selectedRange);
+
+      dates = dates.filter((date) => date >= cutoffDate);
+    }
+
+    if (dates.length === 0) {
+      // If no data after filtering
+      setProcessedData({ labels: [], counts: [] });
+      return;
+    }
+
     // Sort dates from oldest to newest
     dates.sort((a, b) => a - b);
 
     // Group by day for a cleaner visualization
     const visitsByDay = {};
-    dates.forEach(date => {
-      const day = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+    dates.forEach((date) => {
+      const day = date.toISOString().split("T")[0]; // YYYY-MM-DD format
       visitsByDay[day] = (visitsByDay[day] || 0) + 1;
     });
 
@@ -56,16 +78,21 @@ const VisitsChart = ({ timestamps }) => {
     // Cumulative count for total visits over time
     let cumulativeCounts = [];
     let total = 0;
-    counts.forEach(count => {
+    counts.forEach((count) => {
       total += count;
       cumulativeCounts.push(total);
     });
 
     setProcessedData({
-      labels: labels.map(date => new Date(date).toLocaleDateString()),
-      counts: cumulativeCounts
+      labels: labels.map((date) => new Date(date).toLocaleDateString()),
+      counts: cumulativeCounts,
     });
-  }, [timestamps]);
+  }, [timestamps, selectedRange]); // Add selectedRange to dependencies
+
+  const handleRangeChange = (event) => {
+    const value = event.target.value;
+    setSelectedRange(value === "all" ? "all" : parseInt(value));
+  };
 
   // Format data for chart
   const chartData = {
@@ -88,16 +115,16 @@ const VisitsChart = ({ timestamps }) => {
       legend: {
         display: true,
         labels: {
-          color: "#fff"
-        }
+          color: "#fff",
+        },
       },
       tooltip: {
         callbacks: {
-          label: function(context) {
+          label: function (context) {
             return `Total Visits: ${context.raw}`;
-          }
-        }
-      }
+          },
+        },
+      },
     },
     scales: {
       x: {
@@ -106,10 +133,10 @@ const VisitsChart = ({ timestamps }) => {
           text: "Date",
           color: "#fff",
         },
-        ticks: { 
+        ticks: {
           color: "#fff",
           maxRotation: 45,
-          minRotation: 45
+          minRotation: 45,
         },
       },
       y: {
@@ -125,13 +152,34 @@ const VisitsChart = ({ timestamps }) => {
 
   return (
     <div className="bg-[#1E1E1E] p-6 rounded-lg col-span-1 md:col-span-2">
-      <h2 className="text-color1 text-xl font-semibold mb-4">
-        Website Visit Chart
-      </h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-color1 text-xl font-semibold">
+          Website Visit Chart
+        </h2>
+        <div>
+          <label htmlFor="range-select" className="text-gray-300 mr-2">
+            View:
+          </label>
+          <select
+            id="range-select"
+            value={selectedRange}
+            onChange={handleRangeChange}
+            className="bg-[#2a2a2a] text-white p-2 rounded border border-gray-600 focus:outline-none focus:border-gray-400"
+          >
+            <option value="7">Last 7 Days</option>
+            <option value="15">Last 15 Days</option>
+            <option value="30">Last 30 Days</option>
+            <option value="90">Last 90 Days</option>
+            <option value="all">All Time</option>
+          </select>
+        </div>
+      </div>
       {processedData.labels.length > 0 ? (
         <Line data={chartData} options={chartOptions} />
       ) : (
-        <p className="text-gray-300">Loading chart data...</p>
+        <p className="text-gray-300">
+          No data available for the selected period.
+        </p>
       )}
     </div>
   );

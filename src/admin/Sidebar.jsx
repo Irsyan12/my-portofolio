@@ -19,7 +19,6 @@ const Sidebar = () => {
     { icon: FaBriefcase, label: "Experiences", href: "/admin/experiences" },
     { icon: FaFile, label: "Projects", href: "/admin/projects" },
     { icon: FaEnvelope, label: "Message", href: "/admin/messages" },
-    { icon: FaCog, label: "Settings", href: "/admin/settings" },
   ];
 
   const toggleMenu = () => {
