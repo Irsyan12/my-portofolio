@@ -1,10 +1,35 @@
 // eslint-disable-next-line no-unused-vars
-import React from "react";
+import React, { useState } from "react"; // Added useState
 import { FaGithub, FaInstagram, FaLinkedin, FaEnvelope } from "react-icons/fa";
 import TypeWriter from "../components/TypeWriter";
 import OptimizedProfileImage from "../components/OptimizedProfileImage";
+import { Snackbar, Alert } from "@mui/material"; // Added Snackbar and Alert
 
 function HelloWorldPage() {
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "info",
+  });
+
+  const handleDownloadCVClick = () => {
+    setSnackbar({
+      open: true,
+      message: "CV is not available at the moment. Please check back later!",
+      severity: "info",
+    });
+    setTimeout(() => {
+      setSnackbar({ ...snackbar, open: false });
+    }, 3000);
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
     <>
       <div
@@ -25,7 +50,10 @@ function HelloWorldPage() {
                 Welcome to my personal website{" "}
                 <span className="inline-block animate-wave">👋</span>
               </p>
-              <button className="bg-color1 text-black px-6 py-3 rounded-md hover:bg-opacity-90 hover:shadow-primary/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1 backdrop-blur">
+              <button
+                onClick={handleDownloadCVClick}
+                className="bg-color1 text-black px-6 py-3 rounded-md hover:bg-opacity-90 hover:shadow-primary/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1 backdrop-blur"
+              >
                 Download CV
               </button>
             </div>
@@ -75,6 +103,20 @@ function HelloWorldPage() {
           </div>
         </div>
       </div>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 }

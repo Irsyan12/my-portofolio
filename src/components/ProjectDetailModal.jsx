@@ -99,6 +99,7 @@ const ProjectDetailModal = ({ project, onClose }) => {
         {project.imageUrl && (
           <div className="mb-6 rounded-lg overflow-hidden">
             <img
+              draggable="false"
               src={project.imageUrl}
               alt={project.title}
               className="w-full h-auto object-cover"

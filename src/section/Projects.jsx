@@ -185,6 +185,9 @@ const Projects = ({ limit = 8 }) => {
           onClose={closeDetailModal}
         />
       )}
+      <p className="text-center text-gray-400 mt-8 italic">
+        Currently, not all projects are available.
+      </p>
     </section>
   );
 };
