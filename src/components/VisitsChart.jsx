@@ -111,6 +111,7 @@ const VisitsChart = ({ timestamps }) => {
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false, // Pastikan ini ada dan diatur ke false
     plugins: {
       legend: {
         display: true,
@@ -175,7 +176,9 @@ const VisitsChart = ({ timestamps }) => {
         </div>
       </div>
       {processedData.labels.length > 0 ? (
-        <Line data={chartData} options={chartOptions} />
+        <div className="relative h-[400px] md:h-[500px]">
+          <Line data={chartData} options={chartOptions} />
+        </div>
       ) : (
         <p className="text-gray-300">
           No data available for the selected period.
