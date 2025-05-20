@@ -65,7 +65,7 @@ const Sidebar = () => {
                     md:translate-x-0`}
       >
         <div className="mb-8 text-center pt-4 md:pt-0">
-          <h1 className="text-color1 text-2xl font-bold">Admin Panel</h1>
+          <h1 className="text-color1 text-2xl font-bold">Admin</h1>
         </div>
 
         <nav>
