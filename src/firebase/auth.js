@@ -10,6 +10,7 @@ const login = (email, password) => {
 };
 
 const logout = () => {
+  localStorage.removeItem("AUTH_");
   return signOut(auth);
 };
 

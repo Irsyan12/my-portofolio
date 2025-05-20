@@ -45,14 +45,18 @@ const LoginPage = () => {
 
     try {
       await login(email, password);
-      // No need to use localStorage for auth state,
-      // Firebase handles this with tokens
       navigate("/admin");
     } catch (error) {
       console.error("Login error:", error);
+      let message = "Login failed: " + error.message;
+      if (error.code === "auth/invalid-credential") {
+        message = "Email and Password is incorrect";
+      } else if (error.code === "auth/internal-error") {
+        message = "Something went wrong. Please try again.";
+      }
       setSnackbar({
         open: true,
-        message: error.message || "Authentication failed",
+        message,
         severity: "error",
       });
     } finally {
