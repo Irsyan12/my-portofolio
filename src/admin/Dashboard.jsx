@@ -1,9 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  db,
-  doc,
-  getDoc,
-} from "../firebase/firebase";
+import React, { useEffect, useState } from "react"; // Removed useRef
+import { db, doc, getDoc } from "../firebase/firebase";
 import { Snackbar, Alert } from "@mui/material";
 import VisitsChart from "../components/VisitsChart";
 
@@ -27,16 +23,12 @@ const Dashboard = () => {
           setTotalVisits(data.total_visits || 0);
 
           if (data.timestamps && Array.isArray(data.timestamps)) {
-            console.log("Timestamps from Firestore:", data.timestamps.length);
             setTimestamps(data.timestamps);
           } else {
-            console.log("No timestamps array found in Firestore document");
+            setTimestamps([]);
           }
-        } else {
-          console.log("Document doesn't exist");
         }
       } catch (error) {
-        console.error("Error fetching visits:", error);
         setSnackbar({
           open: true,
           message: `Error: ${error.message}`,
@@ -84,13 +76,14 @@ const Dashboard = () => {
 
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={3000}
+        autoHideDuration={6000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
         <Alert
           onClose={() => setSnackbar({ ...snackbar, open: false })}
           severity={snackbar.severity}
+          sx={{ width: "100%" }}
         >
           {snackbar.message}
         </Alert>

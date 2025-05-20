@@ -7,7 +7,8 @@ import {
   FaCog,
   FaBars,
   FaTimes,
-  FaEnvelope
+  FaEnvelope,
+  FaCommentAlt, // Import feedback icon
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -19,6 +20,7 @@ const Sidebar = () => {
     { icon: FaBriefcase, label: "Experiences", href: "/admin/experiences" },
     { icon: FaFile, label: "Projects", href: "/admin/projects" },
     { icon: FaEnvelope, label: "Message", href: "/admin/messages" },
+    { icon: FaCommentAlt, label: "Feedback", href: "/admin/feedback" }, // Add Feedback link
   ];
 
   const toggleMenu = () => {
@@ -72,23 +74,27 @@ const Sidebar = () => {
               key={index}
               href={item.href}
               className={`flex items-center p-3 mb-2 rounded-md transition-all duration-200 group
-                         ${isActive(item.href)
-                           ? "bg-gray-800 border-l-4 border-color1" 
-                           : "hover:bg-gray-800"
+                         ${
+                           isActive(item.href)
+                             ? "bg-gray-800 border-l-4 border-color1"
+                             : "hover:bg-gray-800"
                          }`}
             >
               <item.icon
                 className={`mr-3 transition-colors duration-200 
-                           ${isActive(item.href) 
-                             ? "text-color1" 
-                             : "text-gray-400 group-hover:text-color1"
+                           ${
+                             isActive(item.href)
+                               ? "text-color1"
+                               : "text-gray-400 group-hover:text-color1"
                            }`}
                 size={20}
               />
-              <span className={`transition-colors duration-200 
-                               ${isActive(item.href) 
-                                 ? "text-color1 font-medium" 
-                                 : "text-gray-300 group-hover:text-color1"
+              <span
+                className={`transition-colors duration-200 
+                               ${
+                                 isActive(item.href)
+                                   ? "text-color1 font-medium"
+                                   : "text-gray-300 group-hover:text-color1"
                                }`}
               >
                 {item.label}
