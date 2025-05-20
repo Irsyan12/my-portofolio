@@ -23,16 +23,12 @@ const Dashboard = () => {
           setTotalVisits(data.total_visits || 0);
 
           if (data.timestamps && Array.isArray(data.timestamps)) {
-            console.log("Timestamps from Firestore:", data.timestamps.length);
             setTimestamps(data.timestamps);
           } else {
-            console.log("No timestamps array found in Firestore document");
+            setTimestamps([]);
           }
-        } else {
-          console.log("Document doesn't exist");
         }
       } catch (error) {
-        console.error("Error fetching visits:", error);
         setSnackbar({
           open: true,
           message: `Error: ${error.message}`,
@@ -43,8 +39,6 @@ const Dashboard = () => {
 
     fetchVisits();
   }, []);
-
-  
 
   return (
     <div>

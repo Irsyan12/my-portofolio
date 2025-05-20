@@ -1,217 +1,56 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { db } from "../firebase/firebase"; // Adjust path if necessary
+import ProjectDetailModal from "../components/ProjectDetailModal"; // Import the new modal
 
 // eslint-disable-next-line react/prop-types
 const Projects = ({ limit = 8 }) => {
-  const categories = ["All", "Projects", "Certification"];
+  const categories = ["All", "Project", "Certification"];
   const [activeType, setActiveType] = useState("All");
+  const [allProjects, setAllProjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); // State for modal visibility
+  const [selectedProject, setSelectedProject] = useState(null); // State for selected project data
 
-  // Projects data
-  const projectsData = [
-    {
-      id: 1,
-      title: "AirCalling Landing Page Design",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=AirCalling+Landing+Page+Design",
-    },
-    {
-      id: 2,
-      title: "Business Landing Page Design",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Business+Landing+Page+Design",
-    },
-    {
-      id: 3,
-      title: "Ecom Web Page Design",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Ecom+Web+Page+Design",
-    },
-    {
-      id: 4,
-      title: "Portfolio Website",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Portfolio+Website",
-    },
-    {
-      id: 5,
-      title: "Landing Page for SaaS",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Landing+Page+for+SaaS",
-    },
-    {
-      id: 6,
-      title: "E-commerce Store",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=E-commerce+Store",
-    },
-    {
-      id: 7,
-      title: "Personal Blog",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Personal+Blog",
-    },
-    {
-      id: 8,
-      title: "Online Resume",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Online+Resume",
-    },
-    {
-      id: 9,
-      title: "Photography Portfolio",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Photography+Portfolio",
-    },
-    {
-      id: 10,
-      title: "Restaurant Website",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Restaurant+Website",
-    },
-    {
-      id: 11,
-      title: "Event Landing Page",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Event+Landing+Page",
-    },
-    {
-      id: 12,
-      title: "Fitness App Landing Page",
-      type: "Projects",
-      image: "https://placehold.co/600x400?text=Fitness+App+Landing+Page",
-    },
-    {
-      id: 13,
-      title: "Travel Agency Website",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Travel+Agency+Website",
-    },
-    {
-      id: 14,
-      title: "Real Estate Website",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Real+Estate+Website",
-    },
-    {
-      id: 15,
-      title: "Corporate Website",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Corporate+Website",
-    },
-    {
-      id: 16,
-      title: "Mobile App Landing Page",
-      type: "Projects",
-      image: "https://placehold.co/600x400?text=Mobile+App+Landing+Page",
-    },
-    {
-      id: 17,
-      title: "Blog Template",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Blog+Template",
-    },
-    {
-      id: 18,
-      title: "Shop Template",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Shop+Template",
-    },
-    {
-      id: 19,
-      title: "Portfolio Template",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Portfolio+Template",
-    },
-    {
-      id: 20,
-      title: "Landing Page for Non-Profit",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Landing+Page+for+Non-Profit",
-    },
-    {
-      id: 21,
-      title: "Product Showcase",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Product+Showcase",
-    },
-    {
-      id: 22,
-      title: "Fashion Store",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Fashion+Store",
-    },
-    {
-      id: 23,
-      title: "Tech Startup Landing Page",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Tech+Startup+Landing+Page",
-    },
-    {
-      id: 24,
-      title: "Consulting Website",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Consulting+Website",
-    },
-    {
-      id: 25,
-      title: "Online Course Website",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Online+Course+Website",
-    },
-    {
-      id: 26,
-      title: "Health & Wellness Website",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Health+%26+Wellness+Website",
-    },
-    {
-      id: 27,
-      title: "Music Band Website",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Music+Band+Website",
-    },
-    {
-      id: 28,
-      title: "Charity Website",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Charity+Website",
-    },
-    {
-      id: 29,
-      title: "Gaming Website",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Gaming+Website",
-    },
-    {
-      id: 30,
-      title: "Art Gallery Website",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Art+Gallery+Website",
-    },
-    {
-      id: 31,
-      title: "Blogging Platform",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Blogging+Platform",
-    },
-    {
-      id: 32,
-      title: "Online Store",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Online+Store",
-    },
-    {
-      id: 33,
-      title: "Digital Marketing Agency",
-      type: "Certification",
-      image: "https://placehold.co/600x400?text=Digital+Marketing+Agency",
-    },
-  ];
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setIsLoading(true);
+      try {
+        const projectsRef = collection(db, "projects");
+        const q = query(projectsRef, orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        const projectsData = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setAllProjects(projectsData);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  const openDetailModal = (project) => {
+    setSelectedProject(project);
+    setIsDetailModalOpen(true);
+    document.body.style.overflow = "hidden"; // Prevent background scroll
+  };
+
+  const closeDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedProject(null);
+    document.body.style.overflow = "auto"; // Restore background scroll
+  };
 
   const classColorforType = (type) => {
     switch (type) {
-      case "Projects":
+      case "Project":
         return "bg-color1";
       case "Certification":
         return "bg-teal-400";
@@ -220,30 +59,37 @@ const Projects = ({ limit = 8 }) => {
     }
   };
 
-  // Filter projects based on active type
-  const filteredProjects = projectsData.filter((project) =>
-    activeType === "All" ? true : project.type === activeType
-  );
+  let itemsToDisplay = [];
+  if (!isLoading && allProjects.length > 0) {
+    const projectsForCategoryFilter = allProjects.filter((project) =>
+      activeType === "All" ? true : project.type === activeType
+    );
 
-  // Ambil 4 Projects
-  const projectItems = filteredProjects
-    .filter((project) => project.type === "Projects")
-    .slice(0, 4);
-
-  // Ambil 4 Certification
-  const certificationItems = filteredProjects
-    .filter((project) => project.type === "Certification")
-    .slice(0, 4);
-
-  // Gabungkan hasilnya
-  const displayedProjects = [...projectItems, ...certificationItems];
+    if (limit >= 999) {
+      itemsToDisplay = projectsForCategoryFilter;
+    } else {
+      if (activeType === "All") {
+        const projectItems = allProjects
+          .filter((p) => p.type === "Project")
+          .slice(0, 4);
+        const certificationItems = allProjects
+          .filter((p) => p.type === "Certification")
+          .slice(0, 4);
+        itemsToDisplay = [...projectItems, ...certificationItems].slice(
+          0,
+          limit
+        );
+      } else {
+        itemsToDisplay = projectsForCategoryFilter.slice(0, limit);
+      }
+    }
+  }
 
   return (
     <section
       className="py-20 w-11/12 md:w-5/6 mx-auto text-white"
       id="projects"
     >
-      {/* Section Header */}
       <div className="text-center mb-12 cursor-default">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
           My Projects & Certifications
@@ -254,7 +100,6 @@ const Projects = ({ limit = 8 }) => {
         </p>
       </div>
 
-      {/* Type Filters */}
       <div className="flex flex-wrap justify-center gap-4 mb-12">
         {categories.map((type) => (
           <button
@@ -272,51 +117,58 @@ const Projects = ({ limit = 8 }) => {
         ))}
       </div>
 
-      {/* Projects Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {displayedProjects.map((project) => (
-          <div
-            key={project.id}
-            className="group relative rounded-xl overflow-hidden bg-white/5 hover:bg-white/10 transition-colors"
-          >
-            {/* Project Image */}
-            <div className="relative aspect-[4/3] overflow-hidden">
-              <img
-                src={project.image}
-                alt={project.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </div>
+      {isLoading ? (
+        <div className="text-center text-gray-400">Loading projects...</div>
+      ) : itemsToDisplay.length === 0 ? (
+        <div className="text-center text-gray-400">
+          No projects found for this category.
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          {itemsToDisplay.map((project) => (
+            <div
+              key={project.id}
+              className="group relative rounded-xl overflow-hidden bg-white/5 hover:bg-white/10 transition-colors"
+            >
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <img
+                  src={
+                    project.imageUrl ||
+                    "https://placehold.co/600x400?text=No+Image"
+                  }
+                  alt={project.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
 
-            {/* Project Info */}
-            <div className="p-6">
-              <span
-                className={`${classColorforType(
-                  project.type
-                )} text-dark font-semibold rounded-full px-2 py-1 text-xs`}
-              >
-                {project.type}
-              </span>
-              <h3 className="text-md md:text-lg font-semibold mt-2 text-color2">
-                {project.title}
-              </h3>
-            </div>
+              <div className="p-6">
+                <span
+                  className={`${classColorforType(
+                    project.type
+                  )} text-dark font-semibold rounded-full px-2 py-1 text-xs`}
+                >
+                  {project.type}
+                </span>
+                <h3 className="text-md md:text-lg font-semibold mt-2 text-color2">
+                  {project.title}
+                </h3>
+              </div>
 
-            {/* Hover Overlay */}
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <button
-                className={`px-6 py-3 text-sm md:text-md ${classColorforType(
-                  project.type
-                )} text-black rounded-full transform -translate-y-4 group-hover:translate-y-0 transition-transform`}
-              >
-                View Details
-              </button>
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <button
+                  onClick={() => openDetailModal(project)} // Updated onClick
+                  className={`px-6 py-3 text-sm md:text-md ${classColorforType(
+                    project.type
+                  )} text-black rounded-full transform -translate-y-4 group-hover:translate-y-0 transition-transform`}
+                >
+                  View Details
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-      {/* See More Button */}
-      {projectsData.length > limit && (
+          ))}
+        </div>
+      )}
+      {!isLoading && allProjects.length > limit && limit < 999 && (
         <div className="text-center mt-12">
           <Link
             to="/projects"
@@ -326,6 +178,12 @@ const Projects = ({ limit = 8 }) => {
             See More Projects
           </Link>
         </div>
+      )}
+      {isDetailModalOpen && selectedProject && (
+        <ProjectDetailModal
+          project={selectedProject}
+          onClose={closeDetailModal}
+        />
       )}
     </section>
   );
