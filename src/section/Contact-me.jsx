@@ -60,7 +60,7 @@ const ContactSection = () => {
               placeholder="Your Name"
               value={formData.name}
               onChange={handleChange}
-              className="bg-white/5 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-color1"
+              className="bg-white/5 rounded-lg px-4 py-3 focus:outline-hidden focus:ring-2 focus:ring-color1"
             />
             <input
               type="email"
@@ -68,7 +68,7 @@ const ContactSection = () => {
               placeholder="Your Email"
               value={formData.email}
               onChange={handleChange}
-              className="bg-white/5 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-color1"
+              className="bg-white/5 rounded-lg px-4 py-3 focus:outline-hidden focus:ring-2 focus:ring-color1"
             />
           </div>
           <input
@@ -77,7 +77,7 @@ const ContactSection = () => {
             placeholder="Subject"
             value={formData.subject}
             onChange={handleChange}
-            className="w-full bg-white/5 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-color1"
+            className="w-full bg-white/5 rounded-lg px-4 py-3 focus:outline-hidden focus:ring-2 focus:ring-color1"
           />
           <textarea
             name="message"
@@ -85,7 +85,7 @@ const ContactSection = () => {
             rows="6"
             value={formData.message}
             onChange={handleChange}
-            className="w-full bg-white/5 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-color1"
+            className="w-full bg-white/5 rounded-lg px-4 py-3 focus:outline-hidden focus:ring-2 focus:ring-color1"
           />
           <button
             type="submit"

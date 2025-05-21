@@ -130,7 +130,7 @@ const Projects = ({ limit = 8 }) => {
               key={project.id}
               className="group relative rounded-xl overflow-hidden bg-white/5 hover:bg-white/10 transition-colors"
             >
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-4/3 overflow-hidden">
                 <img
                   src={
                     project.imageUrl ||

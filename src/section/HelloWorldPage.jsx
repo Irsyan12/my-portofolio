@@ -52,7 +52,7 @@ function HelloWorldPage() {
               </p>
               <button
                 onClick={handleDownloadCVClick}
-                className="bg-color1 text-black px-6 py-3 rounded-md hover:bg-opacity-90 hover:shadow-primary/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1 backdrop-blur"
+                className="bg-color1 text-black px-6 py-3 rounded-md hover:bg-opacity-90 hover:shadow-primary/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm"
               >
                 Download CV
               </button>

@@ -28,7 +28,7 @@ const OptimizedProfileImage = () => {
         src={placeholderImageUrl}
         alt="Profile placeholder"
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-          imageLoaded ? "opacity-0" : "opacity-100 scale-[1.02] blur-sm"
+          imageLoaded ? "opacity-0" : "opacity-100 scale-[1.02] blur-xs"
         }`}
       />
 

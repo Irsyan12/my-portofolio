@@ -67,7 +67,7 @@ const ProjectDetailModal = ({ project, onClose }) => {
 
   return (
     <div
-      className={`fixed inset-0 bg-black flex justify-end z-[100] transition-opacity duration-300 ease-in-out ${
+      className={`fixed inset-0 bg-black flex justify-end z-100 transition-opacity duration-300 ease-in-out ${
         isVisible ? "bg-opacity-75" : "bg-opacity-0 pointer-events-none"
       }`}
       onClick={handleCloseRequest} // Close on backdrop click
