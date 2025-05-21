@@ -153,7 +153,7 @@ const ProjectDetailModal = ({ project, onClose }) => {
 
         <button
           onClick={handleCloseRequest}
-          className="w-full mt-8 px-6 py-3 bg-color1 text-black rounded-md hover:bg-opacity-90 transition-colors font-semibold"
+          className="w-full px-6 py-3 bg-color1 text-black rounded-md hover:bg-opacity-90 transition-colors font-semibold"
         >
           Close
         </button>
