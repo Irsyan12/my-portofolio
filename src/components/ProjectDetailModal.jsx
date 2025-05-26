@@ -67,8 +67,8 @@ const ProjectDetailModal = ({ project, onClose }) => {
 
   return (
     <div
-      className={`fixed inset-0 bg-black flex justify-end z-100 transition-opacity duration-300 ease-in-out ${
-        isVisible ? "bg-opacity-75" : "bg-opacity-0 pointer-events-none"
+      className={`fixed inset-0 flex justify-end z-100 transition-opacity duration-300 ease-in-out ${
+        isVisible ? "bg-black/75 " : "pointer-events-none"
       }`}
       onClick={handleCloseRequest} // Close on backdrop click
     >
@@ -82,7 +82,7 @@ const ProjectDetailModal = ({ project, onClose }) => {
           <h2 className="text-2xl font-bold text-color1">{project.title}</h2>
           <button
             onClick={handleCloseRequest}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-gray-400 cursor-pointer hover:text-white transition-colors"
           >
             <FaTimes size={24} />
           </button>
@@ -153,7 +153,7 @@ const ProjectDetailModal = ({ project, onClose }) => {
 
         <button
           onClick={handleCloseRequest}
-          className="w-full px-6 py-3 bg-color1 text-black rounded-md hover:bg-opacity-90 transition-colors font-semibold"
+          className="w-full px-6 py-3 bg-color1 text-black cursor-pointer rounded-md hover:bg-opacity-90 transition-colors font-semibold"
         >
           Close
         </button>

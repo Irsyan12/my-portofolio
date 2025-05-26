@@ -105,7 +105,7 @@ const Projects = ({ limit = 8 }) => {
           <button
             key={type}
             onClick={() => setActiveType(type)}
-            className={`px-6 py-2 rounded-full transition-colors 
+            className={`px-6 py-2 cursor-pointer rounded-full transition-colors 
               ${
                 activeType === type
                   ? "bg-color1 text-black"
@@ -157,7 +157,7 @@ const Projects = ({ limit = 8 }) => {
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <button
                   onClick={() => openDetailModal(project)} // Updated onClick
-                  className={`px-6 py-3 text-sm md:text-md ${classColorforType(
+                  className={`px-6 py-3 cursor-pointer text-sm md:text-md ${classColorforType(
                     project.type
                   )} text-black rounded-full transform -translate-y-4 group-hover:translate-y-0 transition-transform`}
                 >
