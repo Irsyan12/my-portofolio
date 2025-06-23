@@ -71,7 +71,7 @@ function Home() {
   }, []);
 
   return (
-    <div className="bg-dark font-poppins selection:bg-color1 selection:text-black">
+    <div className="bg-dark font-poppins selection:bg-color1 selection:text-black overflow-x-hidden">
       <div className="z-[-50]">
         <CursorGlow />
       </div>
