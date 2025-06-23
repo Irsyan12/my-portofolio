@@ -42,8 +42,14 @@ const ContactSection = () => {
     <section
       className="py-24 w-11/12 md:w-5/6 mx-auto text-white"
       id="contactMe"
+      data-aos="fade-up"
+      data-aos-duration="1000"
     >
-      <div className="text-center mb-12 cursor-default">
+      <div
+        className="text-center mb-12 cursor-default"
+        data-aos="fade-up"
+        data-aos-delay="0"
+      >
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
           Get In Touch
         </h2>
@@ -51,9 +57,18 @@ const ContactSection = () => {
           Have a project in mind? Let&apos;s work together!
         </p>
       </div>
-      <div className="max-w-2xl mx-auto">
+
+      <div
+        className="max-w-2xl mx-auto"
+        data-aos="zoom-in"
+        data-aos-delay="100"
+      >
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div
+            className="grid md:grid-cols-2 gap-6"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
             <input
               type="text"
               name="name"
@@ -78,6 +93,8 @@ const ContactSection = () => {
             value={formData.subject}
             onChange={handleChange}
             className="w-full bg-white/5 rounded-lg px-4 py-3 focus:outline-hidden focus:ring-2 focus:ring-color1"
+            data-aos="fade-up"
+            data-aos-delay="300"
           />
           <textarea
             name="message"
@@ -86,6 +103,8 @@ const ContactSection = () => {
             value={formData.message}
             onChange={handleChange}
             className="w-full bg-white/5 rounded-lg px-4 py-3 focus:outline-hidden focus:ring-2 focus:ring-color1"
+            data-aos="fade-up"
+            data-aos-delay="400"
           />
           <button
             type="submit"
@@ -93,6 +112,8 @@ const ContactSection = () => {
               loading ? "bg-opacity-70 cursor-progress" : ""
             } w-full bg-color1 text-black py-3 cursor-pointer rounded-lg hover:bg-opacity-90 transition-colors`}
             disabled={loading}
+            data-aos="zoom-in"
+            data-aos-delay="500"
           >
             {loading ? "Sending..." : "Send Message"}
           </button>

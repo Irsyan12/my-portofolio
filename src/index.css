@@ -137,3 +137,9 @@ layer(base);
 div[ref="scrollRef"]::-webkit-scrollbar {
   display: none;
 }
+
+/* Custom blur utility for Tailwind CSS v4 */
+.blur{
+  --tw-blur: blur(80px);
+  filter: var(--tw-filter);
+}

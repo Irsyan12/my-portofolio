@@ -9,17 +9,16 @@ const AboutSection = () => {
     <section
       className="py-20 w-11/12 md:w-5/6 mx-auto text-white cursor-default"
       id="about"
+      data-aos="fade-up"
+      data-aos-duration="1000"
     >
       <div className="grid md:grid-cols-2 gap-12 items-center">
-        <div className="space-y-6">
+        <div className="space-y-6" data-aos="fade-right" data-aos-delay="100">
           <h2 className="text-xl md:text-4xl font-bold text-color1">
             About Me
           </h2>
           <p className="text-sm md:text-md lg:text-lg text-gray-300">
-            I&apos;m a Computer Engineering student at Syiah Kuala University
-            with skills in Machine Learning, Web Development, and mobile
-            development. I enjoy learning new things and sharing knowledge. Open
-            to collaboration and discussions on technology.
+            I'm a Computer Engineering student at Syiah Kuala University...
           </p>
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
@@ -35,28 +34,24 @@ const AboutSection = () => {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-xl md:text-2xl font-bold text-color1">ML</h3>
-            <p className="text-sm md:text-md">Machine Learning Specialist</p>
-          </div>
-          <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-xl md:text-2xl font-bold text-color1">
-              Web
-            </h3>
-            <p>Full-Stack Developer</p>
-          </div>
-          <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-xl md:text-2xl font-bold text-color1">
-              Mobile
-            </h3>
-            <p>App Development</p>
-          </div>
-          <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-xl md:text-2xl font-bold text-color1">
-              10+
-            </h3>
-            <p>Tech Certifications</p>
-          </div>
+          {[
+            { title: "ML", desc: "Machine Learning Specialist", delay: 0 },
+            { title: "Web", desc: "Full-Stack Developer", delay: 100 },
+            { title: "Mobile", desc: "App Development", delay: 200 },
+            { title: "10+", desc: "Tech Certifications", delay: 300 },
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+              data-aos="zoom-in"
+              data-aos-delay={item.delay}
+            >
+              <h3 className="text-xl md:text-2xl font-bold text-color1">
+                {item.title}
+              </h3>
+              <p>{item.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -76,7 +71,11 @@ const SkillsSection = () => {
 
   return (
     <div className="mb-20 cursor-default">
-      <section className="mt-20 w-11/12 md:w-5/6 mx-auto text-white ">
+      <section
+        className="mt-20 w-11/12 md:w-5/6 mx-auto text-white"
+        data-aos="fade-up"
+        data-aos-duration="1000"
+      >
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
             Skills & Technologies
@@ -86,10 +85,12 @@ const SkillsSection = () => {
           </p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 cursor-default">
-          {skills.map((skillGroup) => (
+          {skills.map((skillGroup, i) => (
             <div
               key={skillGroup.category}
               className="p-6 rounded-lg bg-white/5 hover:shadow-color1/10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm"
+              data-aos="fade-up"
+              data-aos-delay={i * 100}
             >
               <h3 className="text-xl font-bold mb-4 text-color1">
                 {skillGroup.category}
@@ -106,6 +107,7 @@ const SkillsSection = () => {
           ))}
         </div>
       </section>
+
       <TechStack />
     </div>
   );
@@ -140,7 +142,11 @@ const ExperienceSection = () => {
   }, []);
 
   return (
-    <section className="py-20  w-11/12 md:w-5/6 cursor-default mx-auto text-white">
+    <section
+      className="py-20 w-11/12 md:w-5/6 cursor-default mx-auto text-white"
+      data-aos="fade-up"
+      data-aos-duration="1000"
+    >
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
           Experience
@@ -172,6 +178,8 @@ const ExperienceSection = () => {
               <div
                 key={exp.id || index} // Use exp.id if available, otherwise index
                 className="flex flex-col md:flex-row gap-10 relative"
+                data-aos="fade-up"
+                data-aos-delay={index * 100}
               >
                 <div className="md:w-1/4 flex items-center md:items-start md:justify-end">
                   {/* Timeline dot */}

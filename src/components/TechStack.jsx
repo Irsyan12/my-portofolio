@@ -9,7 +9,6 @@ const TechStack = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
     const iconIds = [
       "xnnvgq5aswuihh8qzta4",
       "nly9im2daeprsv8wxebf",
@@ -57,12 +56,14 @@ const TechStack = () => {
 
   return (
     <div className="mt-20 w-full bg-transparent">
-      <Marquee
-        speed={40}
-        autoFill={true}
-      >
+      <Marquee speed={40} autoFill={true}>
         {icons.map((iconUrl, index) => (
-          <div key={`icon-${index}`} className="mx-5 md:mx-8">
+          <div
+            key={`icon-${index}`}
+            className="mx-5 md:mx-8"
+            data-aos="zoom-in"
+            data-aos-delay={index * 150}
+          >
             <img
               src={iconUrl}
               alt={`Tech Icon ${index + 1}`}
