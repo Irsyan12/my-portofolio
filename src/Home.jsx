@@ -72,7 +72,7 @@ function Home() {
 
   return (
     <div className="bg-dark font-poppins selection:bg-color1 selection:text-black overflow-x-hidden">
-      <div className="z-[-50]">
+      <div className="z-50 fixed top-0 left-0 w-full h-full pointer-events-none">
         <CursorGlow />
       </div>
       <Navbar />
