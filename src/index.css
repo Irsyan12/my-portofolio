@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap')
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap")
 layer(base);
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @theme {
   --breakpoint-*: initial;
@@ -66,23 +66,39 @@ layer(base);
 }
 
 @layer base {
-    * {
-      @apply font-poppins;
-    }
-    html {
-      @apply scroll-smooth;
-    }
+  * {
+    @apply font-poppins;
   }
+  html {
+    @apply scroll-smooth;
+  }
+}
 
-  @keyframes wave {
-  0% { transform: rotate(0deg); }
-  10% { transform: rotate(14deg); }
-  20% { transform: rotate(-8deg); }
-  30% { transform: rotate(14deg); }
-  40% { transform: rotate(-4deg); }
-  50% { transform: rotate(10deg); }
-  60% { transform: rotate(0deg); }
-  100% { transform: rotate(0deg); }
+@keyframes wave {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(14deg);
+  }
+  20% {
+    transform: rotate(-8deg);
+  }
+  30% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 .animate-wave {
@@ -91,9 +107,15 @@ layer(base);
 }
 
 @keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .animate-cursor {
@@ -129,7 +151,8 @@ layer(base);
 }
 
 @media (max-width: 640px) {
-  .animate-marquee, .animate-marquee2 {
+  .animate-marquee,
+  .animate-marquee2 {
     animation-duration: 30s;
   }
 }
