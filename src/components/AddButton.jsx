@@ -6,7 +6,7 @@ const AddButton = ({ onClick, label = "Add" }) => {
   return (
     <button
       onClick={onClick}
-      className="bg-color1 text-black text-sm md:text-md px-4 py-2 rounded-md hover:opacity-90 transition-opacity flex items-center"
+      className="bg-color1 text-black text-sm md:text-md px-4 py-2 rounded-md hover:opacity-90 transition-opacity flex items-center hover:cursor-pointer"
     >
       <FaPlus className="mr-2" size={15} />
       {label}

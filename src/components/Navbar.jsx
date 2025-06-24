@@ -34,11 +34,11 @@ function Navbar() {
           : "w-full bg-transparent md:my-9 md:w-5/6 py-4"
       }`}
     >
-      <div className="px-4 md:px-6 mx-auto flex justify-between items-center">
+      <div className="px-4 md:px-6 mx-auto flex justify-between items-center ">
         <a onClick={() => window.scrollTo(0, 0)}>
           <img
             src={logo}
-            className="w-[70px] md:w-[100px]"
+            className="w-[70px] md:w-[100px] cursor-pointer"
             alt="Irsyan Ramadhan Logo"
             draggable="false"
           />
@@ -46,7 +46,7 @@ function Navbar() {
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex items-center text-white text-base space-x-10">
-          <li className="hover:text-[#c5f82a] relative group cursor-pointer">
+          <li className="hover:text-color1 relative group cursor-pointer">
             <a
             
               onClick={() => window.scrollTo(0, 0)}
@@ -54,37 +54,37 @@ function Navbar() {
             >
               Home
             </a>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#c5f82a] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-color1 transition-all duration-300 group-hover:w-full"></span>
           </li>
-          <li className="hover:text-[#c5f82a] relative group cursor-pointer">
+          <li className="hover:text-color1 relative group cursor-pointer">
             <a href="#about" className="transition-colors">
               About
             </a>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#c5f82a] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-color1 transition-all duration-300 group-hover:w-full"></span>
           </li>
-          <li className="hover:text-[#c5f82a] relative group cursor-pointer">
+          <li className="hover:text-color1 relative group cursor-pointer">
             <a href="#projects" className="transition-colors">
               Projects
             </a>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#c5f82a] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-color1 transition-all duration-300 group-hover:w-full"></span>
           </li>
-          <li className="hover:text-[#c5f82a] relative group cursor-pointer">
+          <li className="hover:text-color1 relative group cursor-pointer">
             <a href="#contactMe" className="transition-colors">
               Contact Me
             </a>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#c5f82a] transition-all duration-300 group-hover:w-full"></span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-color1 transition-all duration-300 group-hover:w-full"></span>
           </li>
         </ul>
 
         {/* Mobile Menu - Simple Text Links */}
         <ul className="md:hidden flex items-center text-white text-sm space-x-3">
-          <li className="hover:text-[#c5f82a]">
+          <li className="hover:text-color1">
             <a href="#about">About</a>
           </li>
-          <li className="hover:text-[#c5f82a]">
+          <li className="hover:text-color1">
             <a href="#projects">Projects</a>
           </li>
-          <li className="hover:text-[#c5f82a]">
+          <li className="hover:text-color1">
             <a href="#contactMe">Contact Me</a>
           </li>
         </ul>

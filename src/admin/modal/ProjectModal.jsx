@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { FaImage, FaLink, FaGithub, FaPlay } from "react-icons/fa";
+import { FaImage, FaLink, FaGithub, FaPlay, FaTimes } from "react-icons/fa";
 import OutlinedTextField from "../../components/OutlinedTextField"; // Import OutlinedTextField
+import { iconDict } from "../../utils/getTechIcons";
 
 const ProjectModal = ({ project, onSave, onClose }) => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const ProjectModal = ({ project, onSave, onClose }) => {
     imageUrl: "",
     projectLink: "", // Project repository link
     demoLink: "", // New demo link field
+    techStack: [], // New tech stack field
     certificateInstitution: "",
     certificateLink: "",
     ...project,
@@ -18,6 +20,9 @@ const ProjectModal = ({ project, onSave, onClose }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
   const [linkPreview, setLinkPreview] = useState(null);
+  const [techStackInput, setTechStackInput] = useState("");
+
+  const techStackOptions = Object.keys(iconDict);
 
   useEffect(() => {
     if (project) {
@@ -29,6 +34,7 @@ const ProjectModal = ({ project, onSave, onClose }) => {
         imageUrl: project.imageUrl || "",
         projectLink: project.projectLink || "",
         demoLink: project.demoLink || "", // Include demo link
+        techStack: project.techStack || [],
         certificateInstitution: project.certificateInstitution || "",
         certificateLink: project.certificateLink || "",
       });
@@ -43,6 +49,38 @@ const ProjectModal = ({ project, onSave, onClose }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle tech stack input
+  const handleTechStackInputChange = (e) => {
+    setTechStackInput(e.target.value);
+  };
+
+  // Add tech stack from input
+  const addTechStack = (tech) => {
+    if (tech && !formData.techStack.includes(tech)) {
+      setFormData((prev) => ({
+        ...prev,
+        techStack: [...prev.techStack, tech],
+      }));
+    }
+    setTechStackInput("");
+  };
+
+  // Handle tech stack input key press
+  const handleTechStackKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addTechStack(techStackInput.trim());
+    }
+  };
+
+  // Remove tech stack
+  const removeTechStack = (techToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      techStack: prev.techStack.filter((tech) => tech !== techToRemove),
+    }));
   };
 
   const fetchLinkPreview = async (url) => {
@@ -243,7 +281,7 @@ const ProjectModal = ({ project, onSave, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[#1E1E1E] rounded-lg p-6 w-full max-w-md">
+      <div className="bg-dark rounded-lg p-6 w-[95%] max-w-3xl max-h-[90vh] overflow-y-auto">
         <h2 className="text-color1 text-2xl font-bold mb-4">
           {project ? "Edit Project" : "Add New Project"}
         </h2>
@@ -307,18 +345,89 @@ const ProjectModal = ({ project, onSave, onClose }) => {
                 )}
               </div>
 
+              {/* Tech Stack Section */}
               <div className="mb-4">
-                <div className="flex items-center">
-                  <FaPlay className="mr-2 text-gray-400" size={20} />
-                  <OutlinedTextField
-                    type="url"
-                    name="demoLink"
-                    label="Demo Link (Optional)"
-                    value={formData.demoLink}
-                    onChange={handleChange}
-                    placeholder="https://demo-example.com"
+                <label className="block text-gray-300 mb-2">Tech Stack</label>
+
+                {/* Input for adding new tech stack */}
+                <div className="mb-2">
+                  <input
+                    type="text"
+                    value={techStackInput}
+                    onChange={handleTechStackInputChange}
+                    onKeyPress={handleTechStackKeyPress}
+                    placeholder="Add technology (press Enter)"
+                    className="w-full bg-dark text-white border border-gray-700 rounded-md p-2 text-sm"
                   />
                 </div>
+
+                {/* Quick add buttons for common tech stacks */}
+                <div className="mb-3">
+                  <p className="text-xs text-gray-400 mb-2">Quick Add:</p>
+                  <div className="flex flex-wrap gap-2 max-h-24 overflow-y-auto">
+                    {techStackOptions.map((tech) => (
+                      <button
+                        key={tech}
+                        type="button"
+                        onClick={() => addTechStack(tech)}
+                        disabled={formData.techStack.includes(tech)}
+                        className={`px-2 py-1 text-xs rounded-md transition-colors ${
+                          formData.techStack.includes(tech)
+                            ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                            : "bg-gray-700 text-gray-300 hover:bg-color1 hover:text-black"
+                        }`}
+                      >
+                        {tech}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <div className="flex items-center">
+                    <FaPlay className="mr-2 text-gray-400" size={20} />
+                    <OutlinedTextField
+                      type="url"
+                      name="demoLink"
+                      label="Demo Link (Optional)"
+                      value={formData.demoLink}
+                      onChange={handleChange}
+                      placeholder="https://demo-example.com"
+                    />
+                  </div>
+                </div>
+
+                {/* Display selected tech stack */}
+                {formData.techStack.length > 0 && (
+                  <div className="border border-gray-700 rounded-md p-3 bg-gray-800">
+                    <p className="text-xs text-gray-400 mb-2">
+                      Selected Technologies:
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {formData.techStack.map((tech) => (
+                        <span
+                          key={tech}
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-color1 text-black text-xs rounded-md"
+                        >
+                          {iconDict[tech] && (
+                            <img
+                              src={iconDict[tech]}
+                              alt={tech}
+                              className="w-4 h-4 object-contain"
+                            />
+                          )}
+                          {tech}
+                          <button
+                            type="button"
+                            onClick={() => removeTechStack(tech)}
+                            className="ml-1 text-black hover:text-red-600"
+                          >
+                            <FaTimes size={10} />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -397,13 +506,13 @@ const ProjectModal = ({ project, onSave, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="text-gray-300 hover:text-white transition-colors"
+              className="text-gray-300 hover:text-white transition-colors hover:cursor-pointer"
             >
               Batal
             </button>
             <button
               type="submit"
-              className="bg-color1 text-black px-4 py-2 rounded-md hover:opacity-90 transition-opacity"
+              className="bg-color1 text-black px-4 py-2 rounded-md hover:opacity-90 transition-opacity hover:cursor-pointer"
               disabled={isUploading || isLoadingPreview}
             >
               Simpan

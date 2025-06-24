@@ -74,7 +74,7 @@ const Footer = () => {
           <input
             type="text"
             placeholder="Enter feedback..."
-            className="px-4 py-2 w-full md:w-64 text-black rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 md:mb-0"
+            className="px-4 py-2 w-full md:w-64 text-white rounded-md border border-gray-300 focus:outline-hidden focus:ring-2 focus:ring-gray-500 md:mb-0"
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
           />
@@ -82,10 +82,14 @@ const Footer = () => {
             type="submit"
             className={`${
               loading ? "bg-opacity-70" : ""
-            } md:ml-2 bg-color1 hover:bg-opacity-90 text-black px-4 py-2 rounded-md md:w-auto`}
+            } md:ml-2 bg-color1 hover:bg-opacity-90 text-black px-4 py-2 rounded-md md:w-auto flex items-center justify-center`}
             disabled={loading}
           >
-            {loading ? "Sending..." : "Send"}
+            {loading ? (
+              <span className="inline-block w-5 h-5 border-2 border-t-2 border-t-transparent border-black rounded-full animate-spin"></span>
+            ) : (
+              "Send"
+            )}
           </button>
         </form>
       </div>

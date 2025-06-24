@@ -43,7 +43,7 @@ const ContactSection = () => {
       className="py-24 w-11/12 md:w-5/6 mx-auto text-white"
       id="contactMe"
     >
-      <div className="text-center mb-12 cursor-default">
+      <div className="text-center mb-12 cursor-default" data-aos="fade-up">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
           Get In Touch
         </h2>
@@ -51,16 +51,21 @@ const ContactSection = () => {
           Have a project in mind? Let&apos;s work together!
         </p>
       </div>
+
       <div className="max-w-2xl mx-auto">
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div
+            className="grid md:grid-cols-2 gap-6"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
             <input
               type="text"
               name="name"
               placeholder="Your Name"
               value={formData.name}
               onChange={handleChange}
-              className="bg-white/5 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-color1"
+              className="bg-white/5 rounded-lg px-4 py-3 focus:outline-hidden focus:ring-2 focus:ring-color1"
             />
             <input
               type="email"
@@ -68,7 +73,7 @@ const ContactSection = () => {
               placeholder="Your Email"
               value={formData.email}
               onChange={handleChange}
-              className="bg-white/5 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-color1"
+              className="bg-white/5 rounded-lg px-4 py-3 focus:outline-hidden focus:ring-2 focus:ring-color1"
             />
           </div>
           <input
@@ -77,7 +82,9 @@ const ContactSection = () => {
             placeholder="Subject"
             value={formData.subject}
             onChange={handleChange}
-            className="w-full bg-white/5 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-color1"
+            className="w-full bg-white/5 rounded-lg px-4 py-3 focus:outline-hidden focus:ring-2 focus:ring-color1"
+            data-aos="fade-up"
+            data-aos-delay="300"
           />
           <textarea
             name="message"
@@ -85,16 +92,22 @@ const ContactSection = () => {
             rows="6"
             value={formData.message}
             onChange={handleChange}
-            className="w-full bg-white/5 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-color1"
+            className="w-full bg-white/5 rounded-lg px-4 py-3 focus:outline-hidden focus:ring-2 focus:ring-color1"
+            data-aos="fade-up"
+            data-aos-delay="400"
           />
           <button
             type="submit"
             className={`${
-              loading ? "bg-opacity-70 cursor-not-allowed" : ""
-            } w-full bg-color1 text-black py-3 rounded-lg hover:bg-opacity-90 transition-colors`}
+              loading ? "bg-opacity-70 cursor-progress" : ""
+            } w-full bg-color1 text-black py-3 cursor-pointer rounded-lg hover:bg-opacity-90 transition-colors`}
             disabled={loading}
           >
-            {loading ? "Sending..." : "Send Message"}
+            {loading ? (
+              <span className="inline-block w-5 h-5 border-2 border-t-2 border-t-transparent border-black rounded-full animate-spin"></span>
+            ) : (
+              "Send Message"
+            )}
           </button>
         </form>
       </div>

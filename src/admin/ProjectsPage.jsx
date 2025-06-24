@@ -145,6 +145,7 @@ const ProjectsPage = () => {
         imageUrl: project.imageUrl || "",
         projectLink: project.projectLink || "",
         demoLink: project.demoLink || "", // Add demo link to Firestore
+        techStack: project.techStack || [], // Add tech stack to Firestore
         certificateInstitution: project.certificateInstitution || "",
         certificateLink: project.certificateLink || "",
         createdAt: Timestamp.now(),
@@ -186,6 +187,7 @@ const ProjectsPage = () => {
         imageUrl: updatedProject.imageUrl || "",
         projectLink: updatedProject.projectLink || "",
         demoLink: updatedProject.demoLink || "", // Update demo link
+        techStack: updatedProject.techStack || [], // Update tech stack
         certificateInstitution: updatedProject.certificateInstitution || "",
         certificateLink: updatedProject.certificateLink || "",
         updatedAt: Timestamp.now(),
@@ -269,14 +271,39 @@ const ProjectsPage = () => {
     return <FaLink className="text-gray-400 hover:text-color1" size={20} />;
   };
 
+  // Render tech stack badges
+  const renderTechStack = (techStack) => {
+    if (!techStack || !Array.isArray(techStack) || techStack.length === 0) {
+      return <span className="text-gray-500 text-sm">-</span>;
+    }
+
+    return (
+      <div className="flex flex-wrap gap-1">
+        {techStack.slice(0, 3).map((tech, index) => (
+          <span
+            key={index}
+            className="inline-block px-2 py-1 bg-color1 text-black text-xs rounded-md font-medium"
+          >
+            {tech}
+          </span>
+        ))}
+        {techStack.length > 3 && (
+          <span className="inline-block px-2 py-1 bg-gray-600 text-gray-300 text-xs rounded-md">
+            +{techStack.length - 3}
+          </span>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-color1 text-2xl md:text-3xl font-bold">Projects</h1>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 cursor-pointer">
           <MdRefresh
             size={25}
-            className="text-color1 cursor-pointer"
+            className="text-color1 "
             onClick={reloadProjects}
           />
           <AddButton onClick={() => openModal()} label="Add Project" />
@@ -301,6 +328,7 @@ const ProjectsPage = () => {
                 <th className="p-4 text-left">Title</th>
                 <th className="p-4 text-left">Category</th>
                 <th className="p-4 text-left">Description</th>
+                <th className="p-4 text-left">Tech Stack</th>
                 <th className="p-4 text-left">Links</th>
                 <th className="p-4 text-left">Image</th>
                 <th className="p-4 text-right">Actions</th>
@@ -320,6 +348,11 @@ const ProjectsPage = () => {
                       __html: project.description.replace(/\n/g, "<br />"),
                     }}
                   ></td>
+                  <td className="p-4">
+                    {project.type === "Project"
+                      ? renderTechStack(project.techStack)
+                      : "-"}
+                  </td>
                   <td className="p-4">
                     <div className="flex space-x-3">
                       {project.type === "Project" && (

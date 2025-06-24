@@ -165,7 +165,7 @@ const VisitsChart = ({ timestamps }) => {
             id="range-select"
             value={selectedRange}
             onChange={handleRangeChange}
-            className="bg-[#2a2a2a] text-white p-2 rounded border border-gray-600 focus:outline-none focus:border-gray-400"
+            className="bg-[#2a2a2a] text-white p-2 rounded-sm border border-gray-600 focus:outline-hidden focus:border-gray-400"
           >
             <option value="7">Last 7 Days</option>
             <option value="15">Last 15 Days</option>

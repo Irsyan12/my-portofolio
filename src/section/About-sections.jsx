@@ -7,56 +7,67 @@ import { fetchExperiences } from "../firebase/experiencesService"; // Assuming t
 const AboutSection = () => {
   return (
     <section
-      className="py-20 w-11/12 md:w-5/6 mx-auto text-white cursor-default"
+      className="py-24 w-11/12 md:w-5/6 mx-auto text-white cursor-default"
       id="about"
+      data-aos="fade-up"
+      data-aos-duration="1000"
     >
-      <div className="grid md:grid-cols-2 gap-12 items-center">
-        <div className="space-y-6">
-          <h2 className="text-xl md:text-4xl font-bold text-[#c5f82a]">
+      <div className="grid md:grid-cols-2 gap-16 items-center">
+        {/* Left: About Me */}
+        <div className="space-y-7" data-aos="fade-right" data-aos-delay="100">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-color1 mb-2">
             About Me
           </h2>
-          <p className="text-sm md:text-md lg:text-lg text-gray-300">
-            I&apos;m a Computer Engineering student at Syiah Kuala University
-            with skills in Machine Learning, Web Development, and mobile
-            development. I enjoy learning new things and sharing knowledge. Open
-            to collaboration and discussions on technology.
+          <p className="text-base md:text-lg text-gray-300 leading-relaxed">
+            Hi! I'm a passionate Computer Engineering student at Syiah Kuala
+            University, driven by curiosity and a love for building impactful
+            digital solutions. I thrive at the intersection of{" "}
+            <span className="text-color1 font-semibold">Machine Learning</span>,{" "}
+            <span className="text-color1 font-semibold">Web</span>, and{" "}
+            <span className="text-color1 font-semibold">
+              Mobile Development
+            </span>
+            . I enjoy solving real-world problems and continuously learning new
+            technologies.
           </p>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <FaEnvelope className="text-[#c5f82a]" />
-              <span className="text-sm md:text-md">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <FaEnvelope className="text-color1" />
+              <a
+                href="mailto:irsyanramadhan72@gmail.com"
+                className="text-sm md:text-base hover:underline"
+              >
                 irsyanramadhan72@gmail.com
-              </span>
+              </a>
             </div>
-            <div className="flex items-center space-x-4">
-              <FaMapMarkerAlt className="text-[#c5f82a]" />
-              <span className="text-sm md:text-md">Banda Aceh, Indonesia</span>
+            <div className="flex items-center gap-3">
+              <FaMapMarkerAlt className="text-color1" />
+              <span className="text-sm md:text-base">
+                Banda Aceh, Indonesia
+              </span>
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-xl md:text-2xl font-bold text-[#c5f82a]">ML</h3>
-            <p className="text-sm md:text-md">Machine Learning Specialist</p>
-          </div>
-          <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-xl md:text-2xl font-bold text-[#c5f82a]">
-              Web
-            </h3>
-            <p>Full-Stack Developer</p>
-          </div>
-          <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-xl md:text-2xl font-bold text-[#c5f82a]">
-              Mobile
-            </h3>
-            <p>App Development</p>
-          </div>
-          <div className="bg-white/5 p-6 rounded-lg hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-            <h3 className="text-xl md:text-2xl font-bold text-[#c5f82a]">
-              10+
-            </h3>
-            <p>Tech Certifications</p>
-          </div>
+        {/* Right: Highlights */}
+        <div className="grid grid-cols-2 gap-6">
+          {[
+            { title: "ML", desc: "Machine Learning Specialist", delay: 0 },
+            { title: "Web", desc: "Full-Stack Developer", delay: 100 },
+            { title: "Mobile", desc: "App Development", delay: 200 },
+            { title: "10+", desc: "Tech Certifications", delay: 300 },
+          ].map((item, idx) => (
+            <div
+              key={idx}
+              className="bg-white/10 p-7 rounded-xl hover:shadow-color1/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
+              data-aos="zoom-in"
+              data-aos-delay={item.delay}
+            >
+              <h3 className="text-2xl md:text-3xl font-bold text-color1 mb-1">
+                {item.title}
+              </h3>
+              <p className="text-gray-200 text-sm md:text-base">{item.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -76,9 +87,13 @@ const SkillsSection = () => {
 
   return (
     <div className="mb-20 cursor-default">
-      <section className="mt-20 w-11/12 md:w-5/6 mx-auto text-white ">
+      <section
+        className="mt-20 w-11/12 md:w-5/6 mx-auto text-white"
+        data-aos="fade-up"
+        data-aos-duration="1000"
+      >
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#c5f82a]">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
             Skills & Technologies
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
@@ -86,18 +101,20 @@ const SkillsSection = () => {
           </p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 cursor-default">
-          {skills.map((skillGroup) => (
+          {skills.map((skillGroup, i) => (
             <div
               key={skillGroup.category}
-              className="p-6 rounded-lg bg-white/5 hover:shadow-color1/10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 backdrop-blur"
+              className="p-6 rounded-lg bg-white/5 hover:shadow-color1/10 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm"
+              data-aos="fade-up"
+              data-aos-delay={i * 100}
             >
-              <h3 className="text-xl font-bold mb-4 text-[#c5f82a]">
+              <h3 className="text-xl font-bold mb-4 text-color1">
                 {skillGroup.category}
               </h3>
               <ul className="space-y-2">
                 {skillGroup.items.map((skill) => (
                   <li key={skill} className="flex items-center">
-                    <div className="w-2 h-2 bg-[#c5f82a] rounded-full mr-2" />
+                    <div className="w-2 h-2 bg-color1 rounded-full mr-2" />
                     {skill}
                   </li>
                 ))}
@@ -106,6 +123,7 @@ const SkillsSection = () => {
           ))}
         </div>
       </section>
+
       <TechStack />
     </div>
   );
@@ -140,7 +158,11 @@ const ExperienceSection = () => {
   }, []);
 
   return (
-    <section className="py-20  w-11/12 md:w-5/6 cursor-default mx-auto text-white">
+    <section
+      className="py-20 w-11/12 md:w-5/6 cursor-default mx-auto text-white"
+      data-aos="fade-up"
+      data-aos-duration="1000"
+    >
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
           Experience
@@ -172,6 +194,8 @@ const ExperienceSection = () => {
               <div
                 key={exp.id || index} // Use exp.id if available, otherwise index
                 className="flex flex-col md:flex-row gap-10 relative"
+                data-aos="fade-up"
+                data-aos-delay={index * 100}
               >
                 <div className="md:w-1/4 flex items-center md:items-start md:justify-end">
                   {/* Timeline dot */}
@@ -184,12 +208,12 @@ const ExperienceSection = () => {
                     <div className="w-2 h-2 bg-black rounded-full"></div>
                   </div>
 
-                  <span className="text-color1 md:me-10 font-medium bg-white/5 px-4 py-2 rounded-full hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm border border-white/5">
+                  <span className="text-color1 md:me-10 font-medium bg-white/5 px-4 py-2 rounded-full hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1 backdrop-blur-xs border border-white/5">
                     {exp.period}
                   </span>
                 </div>
 
-                <div className="md:w-3/5 bg-white/5 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-color1/10 hover:shadow-lg hover:-translate-y-1 backdrop-blur-sm border border-white/10">
+                <div className="md:w-3/5 bg-white/5 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-color1/10 hover:shadow-lg hover:-translate-y-1 backdrop-blur-xs border border-white/10">
                   <h3 className="text-xl font-bold mb-2">{exp.role}</h3>
                   <h4 className="text-lg text-color1 mb-4 flex items-center gap-2">
                     <span className="w-3 h-3 bg-color1 rounded-full inline-block"></span>

@@ -1,51 +1,14 @@
 import { useEffect, useState } from "react";
 import Marquee from "react-fast-marquee";
-
-const cloudinaryBaseUrl = "https://res.cloudinary.com/dxwmph7tj/image/upload";
-const cloudinaryFolder = "icons";
+import { getAllIcons } from "../utils/getTechIcons";
 
 const TechStack = () => {
   const [icons, setIcons] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
-    const iconIds = [
-      "xnnvgq5aswuihh8qzta4",
-      "nly9im2daeprsv8wxebf",
-      "pz3uxsmdfclx65pmx9ls",
-      "zpmkeuzpbmn4daejecwl",
-      "q703u1nytlnjrw642jdq",
-      "nirkkkolnc1pegcay2sw",
-      "ayrwxgcemrspfgfjgmwz",
-      "owjeoe0fmddzsztpugmb",
-      "wtnnvetxyqycl3ljolot",
-      "axsekpus1o7h06rbvobt",
-    ];
-
-    // eslint-disable-next-line no-unused-vars
-    const techIcons = [
-      "firebase",
-      "flutter",
-      "laravel",
-      "mysql",
-      "node",
-      "react",
-      "typescript",
-      "python",
-      "tensorflow",
-      "php",
-    ];
-
-    setIcons(
-      iconIds.map(
-        (id) => `${cloudinaryBaseUrl}/v1741494343/${cloudinaryFolder}/${id}.png`
-      )
-    );
-
-    // ATAU, jika Anda tahu pattern URL dan ID bisa diprediksi berdasarkan nama teknologi:
-    // setIcons(techIcons.map(tech => `${cloudinaryBaseUrl}/v1741494343/${cloudinaryFolder}/${tech}.png`));
-
+    const icons = getAllIcons();
+    setIcons(icons);
     setLoading(false);
   }, []);
 
@@ -56,18 +19,22 @@ const TechStack = () => {
   }
 
   return (
-    <div className="mt-20 w-full bg-transparent">
-      <Marquee
-        speed={40}
-        autoFill={true}
-      >
-        {icons.map((iconUrl, index) => (
-          <div key={`icon-${index}`} className="mx-5 md:mx-8">
-            <img
-              src={iconUrl}
-              alt={`Tech Icon ${index + 1}`}
-              className="h-10 md:h-12 object-contain"
-            />
+    <div className="mt-20 w-full bg-transparent relative overflow-hidden">
+      {/* Left Fade */}
+      <div className="absolute left-0 top-0 h-full w-96 bg-gradient-to-r from-dark via-transparent to-transparent z-10 pointer-events-none" />
+
+      {/* Right Fade */}
+      <div className="absolute right-0 top-0 h-full w-96 bg-gradient-to-l from-dark via-transparent to-transparent z-10 pointer-events-none" />
+
+      <Marquee speed={40} autoFill={true}>
+        {icons.map(({ name, url }, index) => (
+          <div
+            key={name}
+            className="mx-5 md:mx-8"
+            data-aos="zoom-in"
+            data-aos-delay={index * 150}
+          >
+            <img src={url} alt={name} className="h-10 md:h-12 object-contain" />
           </div>
         ))}
       </Marquee>

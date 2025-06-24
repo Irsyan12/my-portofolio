@@ -90,8 +90,16 @@ const Projects = ({ limit = 8 }) => {
       className="py-20 w-11/12 md:w-5/6 mx-auto text-white"
       id="projects"
     >
-      <div className="text-center mb-12 cursor-default">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
+      <div
+        className="text-center mb-12 cursor-default"
+        data-aos="fade-right"
+        data-aos-delay={500}
+      >
+        <h2
+          className="text-3xl md:text-4xl font-bold mb-4 text-color1"
+          data-aos="fade-left"
+          data-aos-delay={500}
+        >
           My Projects & Certifications
         </h2>
         <p className="text-text-gray-400 max-w-2xl mx-auto">
@@ -101,16 +109,18 @@ const Projects = ({ limit = 8 }) => {
       </div>
 
       <div className="flex flex-wrap justify-center gap-4 mb-12">
-        {categories.map((type) => (
+        {categories.map((type, index) => (
           <button
             key={type}
             onClick={() => setActiveType(type)}
-            className={`px-6 py-2 rounded-full transition-colors 
+            className={`px-6 py-2 cursor-pointer rounded-full transition-colors 
               ${
                 activeType === type
                   ? "bg-color1 text-black"
                   : "bg-white/10 hover:bg-white/20"
               }`}
+            data-aos="fade-right"
+            data-aos-delay={index * 100}
           >
             {type}
           </button>
@@ -125,12 +135,14 @@ const Projects = ({ limit = 8 }) => {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {itemsToDisplay.map((project) => (
+          {itemsToDisplay.map((project, index) => (
             <div
               key={project.id}
               className="group relative rounded-xl overflow-hidden bg-white/5 hover:bg-white/10 transition-colors"
+              data-aos="fade-up"
+              data-aos-delay={index * 150}
             >
-              <div className="relative aspect-[4/3] overflow-hidden">
+              <div className="relative aspect-4/3 overflow-hidden">
                 <img
                   src={
                     project.imageUrl ||
@@ -157,7 +169,7 @@ const Projects = ({ limit = 8 }) => {
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <button
                   onClick={() => openDetailModal(project)} // Updated onClick
-                  className={`px-6 py-3 text-sm md:text-md ${classColorforType(
+                  className={`px-6 py-3 cursor-pointer text-sm md:text-md ${classColorforType(
                     project.type
                   )} text-black rounded-full transform -translate-y-4 group-hover:translate-y-0 transition-transform`}
                 >
@@ -185,7 +197,11 @@ const Projects = ({ limit = 8 }) => {
           onClose={closeDetailModal}
         />
       )}
-      <p className="text-center text-gray-400 mt-8 italic">
+      <p
+        className="text-center text-gray-400 mt-8 italic"
+        data-aos="fade-left"
+        data-aos-delay="200"
+      >
         Currently, not all projects are available.
       </p>
     </section>

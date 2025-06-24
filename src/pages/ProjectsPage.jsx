@@ -21,7 +21,7 @@ const ProjectsPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#1e1e1e]">
+    <div className="min-h-screen bg-dark">
       <button
         className={`fixed ${
           scrolled ? "top-5 left-5" : "top-20 left-28"

@@ -6,6 +6,7 @@ import {
   FaPlay,
   FaCertificate,
 } from "react-icons/fa";
+import { iconDict } from "../utils/getTechIcons"; // Sesuaikan path ke file icon
 
 const ProjectDetailModal = ({ project, onClose }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -67,8 +68,8 @@ const ProjectDetailModal = ({ project, onClose }) => {
 
   return (
     <div
-      className={`fixed inset-0 bg-black flex justify-end z-[100] transition-opacity duration-300 ease-in-out ${
-        isVisible ? "bg-opacity-75" : "bg-opacity-0 pointer-events-none"
+      className={`fixed inset-0 flex justify-end z-100 transition-opacity duration-300 ease-in-out ${
+        isVisible ? "bg-black/75 " : "pointer-events-none"
       }`}
       onClick={handleCloseRequest} // Close on backdrop click
     >
@@ -82,7 +83,7 @@ const ProjectDetailModal = ({ project, onClose }) => {
           <h2 className="text-2xl font-bold text-color1">{project.title}</h2>
           <button
             onClick={handleCloseRequest}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-gray-400 cursor-pointer hover:text-white transition-colors"
           >
             <FaTimes size={24} />
           </button>
@@ -142,6 +143,30 @@ const ProjectDetailModal = ({ project, onClose }) => {
           </div>
         )}
 
+        {project.techStack && project.techStack.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-color2 mb-2">
+              Tech Stacks
+            </h3>
+            <div className="flex flex-wrap gap-0.5 select-none" draggable="false">
+              {project.techStack.map((tech) => (
+                <span
+                  key={tech}
+                  className="inline-flex items-center text-black px-2 py-1 rounded-md"
+                >
+                  {iconDict[tech] && (
+                    <img
+                      src={iconDict[tech]}
+                      alt={tech}
+                      className="w-5 h-5 object-contain"
+                    />
+                  )}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         {project.type === "Certification" && project.certificateInstitution && (
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-color2 mb-2">
@@ -153,7 +178,7 @@ const ProjectDetailModal = ({ project, onClose }) => {
 
         <button
           onClick={handleCloseRequest}
-          className="w-full mt-8 px-6 py-3 bg-color1 text-black rounded-md hover:bg-opacity-90 transition-colors font-semibold"
+          className="w-full px-6 py-3 bg-color1 text-black cursor-pointer rounded-md hover:bg-opacity-90 transition-colors font-semibold"
         >
           Close
         </button>
