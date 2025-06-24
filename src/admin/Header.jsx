@@ -14,7 +14,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-[#1E1E1E] border-b border-gray-800 p-4 flex justify-end items-center">
+    <header className="bg-dark border-b border-gray-800 p-4 flex justify-end items-center">
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2 mr-4">
           <User className="text-gray-400" size={20} />

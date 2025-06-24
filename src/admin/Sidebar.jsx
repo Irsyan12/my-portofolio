@@ -52,14 +52,14 @@ const Sidebar = () => {
       {/* Overlay for mobile */}
       <div
         onClick={toggleMenu}
-        className={`fixed inset-0 bg-black bg-opacity-50 z-30 transition-opacity duration-300 ease-in-out md:hidden ${
+        className={`fixed inset-0 bg-dark bg-opacity-50 z-30 transition-opacity duration-300 ease-in-out md:hidden ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       />
 
       {/* Sidebar */}
       <div
-        className={`fixed md:static inset-y-0 left-0 w-64 bg-[#1E1E1E] border-r border-gray-800 p-4 z-30
+        className={`fixed md:static inset-y-0 left-0 w-64 bg-dark border-r border-gray-800 p-4 z-30
                     transform transition-transform duration-300 ease-in-out
                     ${isOpen ? "translate-x-0" : "-translate-x-full"} 
                     md:translate-x-0`}

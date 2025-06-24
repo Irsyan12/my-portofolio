@@ -6,6 +6,7 @@ import {
   FaPlay,
   FaCertificate,
 } from "react-icons/fa";
+import { iconDict } from "../utils/getTechIcons"; // Sesuaikan path ke file icon
 
 const ProjectDetailModal = ({ project, onClose }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -138,6 +139,30 @@ const ProjectDetailModal = ({ project, onClose }) => {
                   {renderLinkIcon(project.certificateLink, "certificate")}
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {project.techStack && project.techStack.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-color2 mb-2">
+              Tech Stacks
+            </h3>
+            <div className="flex flex-wrap gap-0.5 select-none" draggable="false">
+              {project.techStack.map((tech) => (
+                <span
+                  key={tech}
+                  className="inline-flex items-center text-black px-2 py-1 rounded-md"
+                >
+                  {iconDict[tech] && (
+                    <img
+                      src={iconDict[tech]}
+                      alt={tech}
+                      className="w-5 h-5 object-contain"
+                    />
+                  )}
+                </span>
+              ))}
             </div>
           </div>
         )}

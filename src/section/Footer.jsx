@@ -82,10 +82,14 @@ const Footer = () => {
             type="submit"
             className={`${
               loading ? "bg-opacity-70" : ""
-            } md:ml-2 bg-color1 hover:bg-opacity-90 text-black px-4 py-2 rounded-md md:w-auto`}
+            } md:ml-2 bg-color1 hover:bg-opacity-90 text-black px-4 py-2 rounded-md md:w-auto flex items-center justify-center`}
             disabled={loading}
           >
-            {loading ? "Sending..." : "Send"}
+            {loading ? (
+              <span className="inline-block w-5 h-5 border-2 border-t-2 border-t-transparent border-black rounded-full animate-spin"></span>
+            ) : (
+              "Send"
+            )}
           </button>
         </form>
       </div>

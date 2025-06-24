@@ -34,11 +34,11 @@ function Navbar() {
           : "w-full bg-transparent md:my-9 md:w-5/6 py-4"
       }`}
     >
-      <div className="px-4 md:px-6 mx-auto flex justify-between items-center">
+      <div className="px-4 md:px-6 mx-auto flex justify-between items-center ">
         <a onClick={() => window.scrollTo(0, 0)}>
           <img
             src={logo}
-            className="w-[70px] md:w-[100px]"
+            className="w-[70px] md:w-[100px] cursor-pointer"
             alt="Irsyan Ramadhan Logo"
             draggable="false"
           />

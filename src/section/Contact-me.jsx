@@ -42,14 +42,8 @@ const ContactSection = () => {
     <section
       className="py-24 w-11/12 md:w-5/6 mx-auto text-white"
       id="contactMe"
-      data-aos="fade-up"
-      data-aos-duration="1000"
     >
-      <div
-        className="text-center mb-12 cursor-default"
-        data-aos="fade-up"
-        data-aos-delay="0"
-      >
+      <div className="text-center mb-12 cursor-default" data-aos="fade-up">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
           Get In Touch
         </h2>
@@ -58,11 +52,7 @@ const ContactSection = () => {
         </p>
       </div>
 
-      <div
-        className="max-w-2xl mx-auto"
-        data-aos="zoom-in"
-        data-aos-delay="100"
-      >
+      <div className="max-w-2xl mx-auto">
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div
             className="grid md:grid-cols-2 gap-6"
@@ -112,10 +102,12 @@ const ContactSection = () => {
               loading ? "bg-opacity-70 cursor-progress" : ""
             } w-full bg-color1 text-black py-3 cursor-pointer rounded-lg hover:bg-opacity-90 transition-colors`}
             disabled={loading}
-            data-aos="zoom-in"
-            data-aos-delay="500"
           >
-            {loading ? "Sending..." : "Send Message"}
+            {loading ? (
+              <span className="inline-block w-5 h-5 border-2 border-t-2 border-t-transparent border-black rounded-full animate-spin"></span>
+            ) : (
+              "Send Message"
+            )}
           </button>
         </form>
       </div>
