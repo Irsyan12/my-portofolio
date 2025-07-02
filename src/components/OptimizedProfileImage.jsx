@@ -6,11 +6,9 @@ const OptimizedProfileImage = () => {
 
   // Cloudinary URLs
   const baseImageUrl = "https://res.cloudinary.com/dxwmph7tj/image/upload/";
-  const profileImageUrl =
-    `${baseImageUrl}v1741492349/pgnbo5f6ndeuepcqevsr.png`;
+  const profileImageUrl = `${baseImageUrl}v1741492349/pgnbo5f6ndeuepcqevsr.png`;
   // For placeholder, you can generate a tiny version using Cloudinary transformations
-  const placeholderImageUrl =
-    `${baseImageUrl}w_20,e_blur:100/v1741492349/pgnbo5f6ndeuepcqevsr.png`;
+  const placeholderImageUrl = `${baseImageUrl}w_20,e_blur:100/v1741492349/pgnbo5f6ndeuepcqevsr.png`;
 
   useEffect(() => {
     // Preload gambar utama
@@ -26,6 +24,7 @@ const OptimizedProfileImage = () => {
       {/* Placeholder atau gambar blur yang sangat kecil */}
       <img
         src={placeholderImageUrl}
+        draggable="false"
         alt="Profile placeholder"
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
           imageLoaded ? "opacity-0" : "opacity-100 scale-[1.02] blur-xs"
@@ -36,6 +35,7 @@ const OptimizedProfileImage = () => {
       <img
         src={profileImageUrl}
         alt="Irsyan Ramadhan"
+        draggable="false"
         className={`w-full h-full object-cover transition-opacity duration-500 ${
           imageLoaded ? "opacity-100" : "opacity-0"
         }`}

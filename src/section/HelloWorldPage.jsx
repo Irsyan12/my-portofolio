@@ -4,6 +4,7 @@ import { FaGithub, FaInstagram, FaLinkedin, FaEnvelope } from "react-icons/fa";
 import TypeWriter from "../components/TypeWriter";
 import OptimizedProfileImage from "../components/OptimizedProfileImage";
 import { Snackbar, Alert } from "@mui/material"; // Added Snackbar and Alert
+import TiltedCard from "../components/TiltedCard"; // Assuming TiltedCard is a custom component
 
 function HelloWorldPage() {
   const [snackbar, setSnackbar] = useState({
@@ -80,7 +81,15 @@ function HelloWorldPage() {
               data-aos-duration="1000"
             >
               <div className="relative ms-auto">
-                <OptimizedProfileImage />
+                <TiltedCard
+                  containerWidth="300px"
+                  containerHeight="300px"
+                  rotateAmplitude={12}
+                  scaleOnHover={1}
+                >
+                  <OptimizedProfileImage />
+                </TiltedCard>
+
                 <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
                   <div className="flex space-x-4">
                     <a

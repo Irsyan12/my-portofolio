@@ -17,6 +17,7 @@ const iconMap = {
   python: "zpmkeuzpbmn4daejecwl",
   tensorflow: "pz3uxsmdfclx65pmx9ls",
   firebase: "nirkkkolnc1pegcay2sw",
+  tailwind: "tailwind_br85lu",
 };
 
 // ✅ Ambil semua icon sebagai objek lengkap { name, url }
