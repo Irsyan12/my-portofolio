@@ -90,47 +90,48 @@ function HelloWorldPage() {
                   <OptimizedProfileImage />
                 </TiltedCard>
 
-                <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
-                  <div className="flex space-x-4">
+                {/* Social Media Icons - Responsive overlay */}
+                <div className="absolute bottom-3 md:-bottom-6 left-1/2 transform -translate-x-1/2 z-10">
+                  <div className="flex space-x-3 md:space-x-4">
                     <a
-                      className="bg-white p-2 rounded-full text-black hover:bg-color1 transition-colors"
+                      className="bg-white p-1.5 md:p-2 rounded-full text-black hover:bg-color1 transition-colors shadow-md"
                       href="mailto:irsyanramadhan72@gmail.com"
                       target="_blank"
                       rel="noopener noreferrer"
                       data-aos="fade-up"
                       data-aos-delay="800"
                     >
-                      <FaEnvelope size={20} />
+                      <FaEnvelope className="w-4 h-4 md:w-5 md:h-5" />
                     </a>
                     <a
                       href="https://github.com/Irsyan12"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-white p-2 rounded-full text-black hover:bg-color1 transition-colors"
+                      className="bg-white p-1.5 md:p-2 rounded-full text-black hover:bg-color1 transition-colors shadow-md"
                       data-aos="fade-up"
                       data-aos-delay="700"
                     >
-                      <FaGithub size={20} />
+                      <FaGithub className="w-4 h-4 md:w-5 md:h-5" />
                     </a>
                     <a
                       href="https://instagram.com/irsan.rmd_"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-white p-2 rounded-full text-black hover:bg-color1 transition-colors"
+                      className="bg-white p-1.5 md:p-2 rounded-full text-black hover:bg-color1 transition-colors shadow-md"
                       data-aos="fade-up"
                       data-aos-delay="600"
                     >
-                      <FaInstagram size={20} />
+                      <FaInstagram className="w-4 h-4 md:w-5 md:h-5" />
                     </a>
                     <a
                       href="https://www.linkedin.com/in/irsyanramadhan/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-white p-2 rounded-full text-black hover:bg-color1 transition-colors"
+                      className="bg-white p-1.5 md:p-2 rounded-full text-black hover:bg-color1 transition-colors shadow-md"
                       data-aos="fade-up"
                       data-aos-delay="500"
                     >
-                      <FaLinkedin size={20} />
+                      <FaLinkedin className="w-4 h-4 md:w-5 md:h-5" />
                     </a>
                   </div>
                 </div>
