@@ -51,10 +51,10 @@ const AboutSection = () => {
         {/* Right: Highlights */}
         <div className="grid grid-cols-2 gap-6">
           {[
-            { title: "ML", desc: "Machine Learning Specialist", delay: 0 },
+            { title: "ML", desc: "Machine Learning Specialist", delay: 10 },
             { title: "Web", desc: "Full-Stack Developer", delay: 100 },
-            { title: "Mobile", desc: "App Development", delay: 200 },
-            { title: "10+", desc: "Tech Certifications", delay: 300 },
+            { title: "Mobile", desc: "App Development", delay: 150 },
+            { title: "10+", desc: "Tech Certifications", delay: 200 },
           ].map((item, idx) => (
             <div
               key={idx}
@@ -90,7 +90,7 @@ const SkillsSection = () => {
       <section
         className="mt-20 w-11/12 md:w-5/6 mx-auto text-white"
         data-aos="fade-up"
-        data-aos-duration="1000"
+        data-aos-duration="500"
       >
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
@@ -161,7 +161,7 @@ const ExperienceSection = () => {
     <section
       className="py-20 w-11/12 md:w-5/6 cursor-default mx-auto text-white"
       data-aos="fade-up"
-      data-aos-duration="1000"
+      data-aos-duration="600"
     >
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">

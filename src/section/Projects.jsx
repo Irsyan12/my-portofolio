@@ -87,7 +87,7 @@ const Projects = ({ limit = 8 }) => {
 
   return (
     <section
-      className="py-20 w-11/12 md:w-5/6 mx-auto text-white"
+      className="pt-20 pb-10 w-11/12 md:w-5/6 mx-auto text-white"
       id="projects"
     >
       <div
@@ -120,7 +120,7 @@ const Projects = ({ limit = 8 }) => {
                   : "bg-white/10 hover:bg-white/20"
               }`}
             data-aos="fade-right"
-            data-aos-delay={index * 100}
+            data-aos-delay={index * 70}
           >
             {type}
           </button>
