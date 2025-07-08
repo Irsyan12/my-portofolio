@@ -160,7 +160,7 @@ const MessagesPage = () => {
   };
 
   return (
-    <div>
+    <div className="w-full max-w-5xl mx-auto px-2 sm:px-4">
       <h1 className="text-color1 text-2xl md:text-3xl font-bold mb-6">
         Messages
       </h1>
@@ -174,67 +174,105 @@ const MessagesPage = () => {
           <p className="text-gray-300">No messages found.</p>
         </div>
       ) : (
-        <div className="rounded-lg p-4 overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-800">
-                <th className="p-4 text-left">Name</th>
-                <th className="p-4 text-left">Email</th>
-                <th className="p-4 text-left">Subject</th>
-                <th className="p-4 text-left">Message</th>
-                <th className="p-4 text-left">Time Received</th>
-                <th className="p-4 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {messages.map((message) => (
-                <tr
-                  key={message.id}
-                  className="border-b border-gray-800 hover:bg-gray-800 transition-colors text-sm"
+        <div className="grid gap-6 md:grid-cols-2">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className="relative bg-[#18181b] rounded-xl shadow-lg border border-gray-800 p-6 flex flex-col gap-4 transition-transform hover:-translate-y-1 hover:shadow-2xl overflow-x-auto md:overflow-visible"
+            >
+              {/* Time at top right */}
+              <div className="absolute top-4 right-6 flex items-center gap-1 text-xs text-gray-400">
+                <svg width="16" height="16" fill="none" className="mr-1">
+                  <path
+                    d="M8 3v5l4 2"
+                    stroke="#c5f82a"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle
+                    cx="8"
+                    cy="8"
+                    r="6.25"
+                    stroke="#c5f82a"
+                    strokeWidth="1.5"
+                  />
+                </svg>
+                {formatTimestamp(message.timestamp)}
+              </div>
+
+              {/* Card Header */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+                <div className="flex-shrink-0 bg-color1/10 rounded-full p-3">
+                  <FaEnvelope size={28} className="text-color1" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="font-semibold text-lg text-white break-words">
+                    {message.name}
+                  </span>
+                  <div className="text-color1 font-semibold text-sm mt-1 break-words">
+                    {message.subject}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-gray-400">
+                    <FaEnvelope size={14} className="mr-1" />
+                    <span className="break-all">{message.email}</span>
+                    <Tooltip title={`Mail to ${message.email}`}>
+                      <IconButton
+                        size="small"
+                        onClick={() =>
+                          window.open(`mailto:${message.email}`, "_blank")
+                        }
+                        sx={{ color: "#c5f82a" }}
+                      >
+                        <FaEnvelope size={16} />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                </div>
+                {/* Delete button */}
+                <Tooltip title="Delete message">
+                  <button
+                    className="ml-2 cursor-pointer text-red-500 hover:bg-red-900/30 rounded-full p-2 transition"
+                    onClick={() => openDeleteDialog(message)}
+                  >
+                    <FaTrash size={18} />
+                  </button>
+                </Tooltip>
+              </div>
+
+              {/* Message Content Card */}
+              <div className="bg-[#23232a] rounded-lg p-4 mt-2 border border-gray-700 flex items-start gap-3 overflow-x-auto md:overflow-visible">
+                <svg
+                  width="24"
+                  height="24"
+                  fill="none"
+                  className="flex-shrink-0 text-color1"
                 >
-                  <td className="p-4">{message.name}</td>
-                  <td className="p-4 text-xs">
-                    <div className="flex items-center">
-                      {message.email}{" "}
-                      <span>
-                        <Tooltip
-                          placement="top"
-                          title={`Mail to ${message.email}`}
-                          className="justify-center "
-                        >
-                          <IconButton
-                            size="small"
-                            onClick={() =>
-                              window.open(`mailto:${message.email}`, "_blank")
-                            }
-                            sx={{ color: "#6b7280" }} // Change the color here
-                          >
-                            <FaEnvelope size={20} />
-                          </IconButton>
-                        </Tooltip>
-                      </span>
-                    </div>
-                  </td>
-                  <td className="p-4">{message.subject}</td>
-                  <td
-                    className="p-4"
-                    dangerouslySetInnerHTML={{
-                      __html: message.message.replace(/\n/g, "<br />"),
-                    }}
-                  ></td>
-                  <td className="p-4">{formatTimestamp(message.timestamp)}</td>
-                  <td className="p-4">
-                    <button
-                      className="text-red-500 px-4 py-2 rounded-md hover:opacity-90 transition-opacity"
-                      onClick={() => openDeleteDialog(message)}
-                    >
-                      <FaTrash size={20} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  <rect
+                    x="2"
+                    y="6"
+                    width="20"
+                    height="12"
+                    rx="3"
+                    stroke="#c5f82a"
+                    strokeWidth="1.5"
+                  />
+                  <path
+                    d="M2 7l10 6 10-6"
+                    stroke="#c5f82a"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <div
+                  className="text-gray-200 text-base break-words"
+                  dangerouslySetInnerHTML={{
+                    __html: message.message.replace(/\n/g, "<br />"),
+                  }}
+                ></div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
@@ -242,7 +280,7 @@ const MessagesPage = () => {
       <Dialog
         sx={{
           "& .MuiDialog-paper": {
-            backgroundColor: "#121212", // Dark background
+            backgroundColor: "#121212",
             color: "#c5f82a",
           },
         }}
