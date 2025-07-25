@@ -1,10 +1,11 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState } from "react"; // Added useState
+import React, { useState } from "react";
 import { FaGithub, FaInstagram, FaLinkedin, FaEnvelope } from "react-icons/fa";
 import TypeWriter from "../components/TypeWriter";
 import OptimizedProfileImage from "../components/OptimizedProfileImage";
 import { Snackbar, Alert } from "@mui/material"; // Added Snackbar and Alert
 import TiltedCard from "../components/TiltedCard"; // Assuming TiltedCard is a custom component
+import cvFile from "../assets/cv.pdf"; // Import the CV file
 
 function HelloWorldPage() {
   const [snackbar, setSnackbar] = useState({
@@ -14,14 +15,28 @@ function HelloWorldPage() {
   });
 
   const handleDownloadCVClick = () => {
-    setSnackbar({
-      open: true,
-      message: "CV is not available at the moment. Please check back later!",
-      severity: "info",
-    });
-    setTimeout(() => {
-      setSnackbar({ ...snackbar, open: false });
-    }, 3000);
+    try {
+      // Create a temporary anchor element to trigger download
+      const link = document.createElement("a");
+      link.href = cvFile;
+      link.download = "Irsyan_Ramadhan_CV.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setSnackbar({
+        open: true,
+        message: "CV download started!",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Error downloading CV:", error);
+      setSnackbar({
+        open: true,
+        message: "Sorry, CV download failed. Please try again later.",
+        severity: "error",
+      });
+    }
   };
 
   const handleCloseSnackbar = (event, reason) => {
