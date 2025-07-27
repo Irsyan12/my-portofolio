@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { FiMessageSquare } from "react-icons/fi";
+import { FiMessageSquare, FiArrowUp} from "react-icons/fi";
 import { v4 as uuidv4 } from "uuid";
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from "react-markdown";
 
 export default function ChatbotPopup() {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,11 +32,14 @@ export default function ChatbotPopup() {
     setInput("");
 
     try {
-      const response = await fetch("https://chatbot-portofolio-production-a867.up.railway.app/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input, session_id: sessionId }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_APP_CHATBOT_API_URL}/chat`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: input, session_id: sessionId }),
+        }
+      );
 
       const data = await response.json();
       setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
@@ -130,9 +133,9 @@ export default function ChatbotPopup() {
           />
           <button
             onClick={sendMessage}
-            className="ml-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 rounded-lg transition-all text-sm"
+            className="ml-2 px-3 py-1 bg-color1 text-dark hover:bg-color1/80 cursor-pointer rounded-lg transition-all text-md"
           >
-            Kirim
+            <FiArrowUp />
           </button>
         </div>
       </div>
