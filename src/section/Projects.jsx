@@ -184,7 +184,7 @@ const Projects = ({ limit = 8 }) => {
         <div className="text-center mt-12">
           <Link
             to="/projects"
-            className="inline-block px-8 py-3 bg-color1 text-black rounded-full hover:bg-opacity-90 animate-bounce transition-colors"
+            className="inline-block px-8 py-3 bg-color1 text-black rounded-full hover:bg-opacity-90 transition-transform duration-300 hover:-translate-y-1"
             onClick={() => window.scrollTo(0, 0)}
           >
             See More Projects
@@ -197,13 +197,6 @@ const Projects = ({ limit = 8 }) => {
           onClose={closeDetailModal}
         />
       )}
-      <p
-        className="text-center text-gray-400 mt-8 italic"
-        data-aos="fade-left"
-        data-aos-delay="200"
-      >
-        Currently, not all projects are available.
-      </p>
     </section>
   );
 };

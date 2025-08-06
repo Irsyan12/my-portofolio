@@ -74,7 +74,7 @@ const Footer = () => {
           <input
             type="text"
             placeholder="Enter feedback..."
-            className="px-4 py-2 w-full md:w-64 text-white rounded-md border border-gray-300 focus:outline-hidden focus:ring-2 focus:ring-gray-500 md:mb-0"
+            className="px-4 py-2 w-full md:w-64 text-white rounded-md border border-gray-500 focus:outline-hidden focus:ring-2 focus:ring-gray-500 md:mb-0"
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
           />
