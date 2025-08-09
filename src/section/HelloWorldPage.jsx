@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import { FaGithub, FaInstagram, FaLinkedin, FaEnvelope } from "react-icons/fa";
 import TypeWriter from "../components/TypeWriter";
 import OptimizedProfileImage from "../components/OptimizedProfileImage";
-import { Snackbar, Alert } from "@mui/material"; // Added Snackbar and Alert
-import TiltedCard from "../components/TiltedCard"; // Assuming TiltedCard is a custom component
+import { Snackbar, Alert } from "@mui/material";
+import TiltedCard from "../components/TiltedCard";
 import cvFile from "../assets/cv.pdf"; // Import the CV file
+import Particles from "../components/Particles"; 
 
 function HelloWorldPage() {
   const [snackbar, setSnackbar] = useState({
@@ -49,10 +50,24 @@ function HelloWorldPage() {
   return (
     <>
       <div
-        className="w-11/12 pt-20 md:pt-24 min-h-screen mx-auto text-white bg-dark"
+        className="w-11/12 pt-20 md:pt-24 min-h-screen mx-auto text-white bg-dark relative"
         id="home"
       >
-        <div className="md:w-5/6 mx-auto ">
+        {/* Particles Background */}
+        <div className="absolute inset-0 w-full h-full">
+          <Particles
+            particleColors={["#d8dc8d", "#ffffff"]}
+            particleCount={70}
+            particleSpread={10}
+            speed={0.1}
+            particleBaseSize={100}
+            moveParticlesOnHover={false}
+            alphaParticles={false}
+            disableRotation={false}
+          />
+        </div>
+        
+        <div className="md:w-5/6 mx-auto relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-center pt-16 md:pt-32">
             {/* Left side content */}
             <div

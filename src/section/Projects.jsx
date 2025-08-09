@@ -128,7 +128,9 @@ const Projects = ({ limit = 8 }) => {
       </div>
 
       {isLoading ? (
-        <div className="text-center text-gray-400">Loading projects...</div>
+        <div className="flex justify-center items-center h-40">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-color1"></div>
+        </div>
       ) : itemsToDisplay.length === 0 ? (
         <div className="text-center text-gray-400">
           No projects found for this category.
@@ -140,7 +142,7 @@ const Projects = ({ limit = 8 }) => {
               key={project.id}
               className="group relative rounded-xl overflow-hidden bg-white/5 hover:bg-white/10 transition-colors"
               data-aos="fade-up"
-              data-aos-delay={index * 150}
+              data-aos-delay={index * 100}
             >
               <div className="relative aspect-4/3 overflow-hidden">
                 <img
@@ -168,7 +170,7 @@ const Projects = ({ limit = 8 }) => {
 
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <button
-                  onClick={() => openDetailModal(project)} // Updated onClick
+                  onClick={() => openDetailModal(project)}
                   className={`px-6 py-3 cursor-pointer text-sm md:text-md ${classColorforType(
                     project.type
                   )} text-black rounded-full transform -translate-y-4 group-hover:translate-y-0 transition-transform`}
