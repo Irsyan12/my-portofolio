@@ -82,7 +82,7 @@ function Home() {
       <Projects />
       <ContactSection />
       <Footer />
-      {/* <ChatbotPopup /> */}
+      <ChatbotPopup />
     </div>
   );
 }
