@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { FiMessageSquare, FiArrowUp} from "react-icons/fi";
+import { FiMessageSquare, FiArrowUp } from "react-icons/fi";
 import { v4 as uuidv4 } from "uuid";
 import ReactMarkdown from "react-markdown";
 
@@ -8,6 +8,7 @@ export default function ChatbotPopup() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [sessionId, setSessionId] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const chatBodyRef = useRef(null);
 
   // Inisialisasi session_id saat komponen mount
@@ -30,6 +31,7 @@ export default function ChatbotPopup() {
     const newMessages = [...messages, { sender: "user", text: input }];
     setMessages(newMessages);
     setInput("");
+    setIsTyping(true);
 
     try {
       const response = await fetch(
@@ -42,8 +44,12 @@ export default function ChatbotPopup() {
       );
 
       const data = await response.json();
+      setIsTyping(false);
+
+      // Langsung tampilkan response
       setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
     } catch (err) {
+      setIsTyping(false);
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: "Terjadi kesalahan saat menghubungi server." },
@@ -56,7 +62,27 @@ export default function ChatbotPopup() {
       top: chatBodyRef.current.scrollHeight,
       behavior: "smooth",
     });
-  }, [messages]);
+  }, [messages, isTyping]);
+
+  // Komponen typing indicator
+  const TypingIndicator = () => (
+    <div className="max-w-[75%] px-3 py-2 rounded-xl mr-auto bg-white/10 text-white border border-white/10">
+      <div className="flex items-center space-x-1">
+        <span>Bot is typing...</span>
+        <div className="flex space-x-1">
+          <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
+          <div
+            className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"
+            style={{ animationDelay: "0.1s" }}
+          ></div>
+          <div
+            className="w-1.5 h-1.5 bg-white rounded-full animate-bounce"
+            style={{ animationDelay: "0.2s" }}
+          ></div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -108,15 +134,19 @@ export default function ChatbotPopup() {
               <ReactMarkdown>{msg.text}</ReactMarkdown>
             </div>
           ))}
+          {isTyping && <TypingIndicator />}
         </div>
 
         {/* Input */}
         <div className="flex items-end border-t border-white/10 bg-white/5 px-3 py-2 pb-3">
           <textarea
-            className="flex-1 bg-transparent outline-none text-white placeholder:text-gray-300 resize-none max-h-40"
-            placeholder="Type your message..."
+            className="flex-1 bg-transparent outline-none text-white placeholder:text-gray-300 resize-none max-h-40 disabled:opacity-50"
+            placeholder={
+              isTyping ? "Bot sedang mengetik..." : "Type your message..."
+            }
             value={input}
             rows={1}
+            disabled={isTyping}
             style={{ height: "auto", overflow: "hidden" }}
             onChange={(e) => {
               setInput(e.target.value);
@@ -125,7 +155,7 @@ export default function ChatbotPopup() {
               textarea.style.height = textarea.scrollHeight + "px";
             }}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
+              if (e.key === "Enter" && !e.shiftKey && !isTyping) {
                 e.preventDefault();
                 sendMessage();
               }
@@ -133,7 +163,8 @@ export default function ChatbotPopup() {
           />
           <button
             onClick={sendMessage}
-            className="ml-2 px-3 py-1 bg-color1 text-dark hover:bg-color1/80 cursor-pointer rounded-lg transition-all text-md"
+            disabled={isTyping || !input.trim()}
+            className="ml-2 px-3 py-1 bg-color1 text-dark hover:bg-color1/80 cursor-pointer rounded-lg transition-all text-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <FiArrowUp />
           </button>
