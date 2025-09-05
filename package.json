@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://irsyan12.github.io/",
+  "homepage": "https://irsyanramadhan.my.id/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
