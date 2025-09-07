@@ -128,8 +128,19 @@ const Projects = ({ limit = 8 }) => {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-40">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-color1"></div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          {Array.from({ length: limit }).map((_, idx) => (
+            <div
+              key={idx}
+              className="rounded-xl overflow-hidden bg-white/5 animate-pulse"
+            >
+              <div className="relative aspect-4/3 bg-gray-700/40" />
+              <div className="p-6">
+                <div className="h-4 w-16 bg-gray-700/40 rounded-full mb-2" />
+                <div className="h-6 w-32 bg-gray-700/40 rounded mb-2" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : itemsToDisplay.length === 0 ? (
         <div className="text-center text-gray-400">

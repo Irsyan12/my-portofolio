@@ -173,8 +173,25 @@ const ExperienceSection = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-40">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-color1"></div>
+        <div className="space-y-6">
+          {[...Array(3)].map((_, idx) => (
+            <div
+              key={idx}
+              className="flex flex-col md:flex-row gap-10 relative animate-pulse"
+            >
+              <div className="md:w-1/4 flex items-center md:items-start md:justify-end">
+                <div className="sm:absolute left-0 md:left-1/4 w-8 h-8 rounded-full bg-color1/30 -ml-3 mt-1 hidden md:hidden" />
+                <div className="w-6 h-6 rounded-full bg-color1/30 mr-4 md:flex" />
+                <span className="bg-white/10 text-transparent px-4 py-2 rounded-full w-24 h-6 block" />
+              </div>
+              <div className="md:w-3/5 bg-white/10 p-6 rounded-lg">
+                <div className="h-6 bg-white/20 rounded w-1/2 mb-2" />
+                <div className="h-5 bg-color1/20 rounded w-1/3 mb-4" />
+                <div className="h-4 bg-gray-400/20 rounded w-full mb-1" />
+                <div className="h-4 bg-gray-400/20 rounded w-5/6" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : error ? (
         <div className="text-center text-red-400 bg-red-900/20 p-4 rounded-md">
@@ -192,27 +209,22 @@ const ExperienceSection = () => {
           <div className="space-y-6 relative">
             {experiences.map((exp, index) => (
               <div
-                key={exp.id || index} // Use exp.id if available, otherwise index
+                key={exp.id || index}
                 className="flex flex-col md:flex-row gap-10 relative"
                 data-aos="fade-up"
                 data-aos-delay={index * 100}
               >
                 <div className="md:w-1/4 flex items-center md:items-start md:justify-end">
-                  {/* Timeline dot */}
                   <div className="absolute left-0 md:left-1/4 w-8 h-8 rounded-full bg-color1 items-center justify-center -ml-3 mt-1 shadow-lg shadow-color1/20 hidden md:flex">
                     <div className="w-3 h-3 bg-dark rounded-full"></div>
                   </div>
-
-                  {/* Mobile timeline indicator */}
                   <div className="w-6 h-6 rounded-full bg-color1 flex items-center justify-center mr-4 shadow-lg shadow-color1/20 md:hidden">
                     <div className="w-2 h-2 bg-black rounded-full"></div>
                   </div>
-
                   <span className="text-color1 md:me-10 font-medium bg-white/5 px-4 py-2 rounded-full hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1 backdrop-blur-xs border border-white/5">
                     {exp.period}
                   </span>
                 </div>
-
                 <div className="md:w-3/5 bg-white/5 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-color1/10 hover:shadow-lg hover:-translate-y-1 backdrop-blur-xs border border-white/10">
                   <h3 className="text-xl font-bold mb-2">{exp.role}</h3>
                   <h4 className="text-lg text-color1 mb-4 flex items-center gap-2">
