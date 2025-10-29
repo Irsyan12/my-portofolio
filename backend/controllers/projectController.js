@@ -8,6 +8,7 @@ export const getProjects = async (req, res) => {
       featured,
       status,
       search,
+      type,
       page = 1,
       limit = 10,
       sortBy = "createdAt",
@@ -17,6 +18,7 @@ export const getProjects = async (req, res) => {
     // Build filter object
     let filter = { isPublic: true };
 
+    if (type) filter.type = type; // filter by 'project' or 'certification'
     if (category) filter.category = category;
     if (featured !== undefined) filter.featured = featured === "true";
     if (status) filter.status = status;
@@ -67,6 +69,7 @@ export const getAllProjectsAdmin = async (req, res) => {
       category,
       status,
       search,
+      type,
       page = 1,
       limit = 10,
       sortBy = "createdAt",
@@ -76,6 +79,7 @@ export const getAllProjectsAdmin = async (req, res) => {
     // Build filter object
     let filter = {};
 
+    if (type) filter.type = type;
     if (category) filter.category = category;
     if (status) filter.status = status;
 
@@ -180,10 +184,45 @@ export const createProject = async (req, res) => {
   try {
     const projectData = req.body;
 
-    // Set order if not provided
-    if (!projectData.order) {
-      const lastProject = await Project.findOne().sort({ order: -1 });
-      projectData.order = lastProject ? lastProject.order + 1 : 1;
+    // Validate type
+    const type = projectData.type || "project";
+
+    if (!["project", "certification"].includes(type)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid type",
+        error: "type must be either 'project' or 'certification'",
+      });
+    }
+
+    // Per-type required field checks
+    if (type === "project") {
+      if (!projectData.title || !projectData.description) {
+        return res.status(400).json({
+          success: false,
+          message: "Missing required fields for project",
+          error: "title and description are required for type 'project'",
+        });
+      }
+
+      // Set order if not provided (projects ordering)
+      if (!projectData.order) {
+        const lastProject = await Project.findOne({ type: "project" }).sort({
+          order: -1,
+        });
+        projectData.order = lastProject ? lastProject.order + 1 : 1;
+      }
+    }
+
+    if (type === "certification") {
+      // For certificates, title and createdAt (handled by timestamps) are typically enough.
+      if (!projectData.title) {
+        return res.status(400).json({
+          success: false,
+          message: "Missing required fields for certification",
+          error: "title is required for type 'certification'",
+        });
+      }
     }
 
     const newProject = new Project(projectData);
@@ -191,7 +230,7 @@ export const createProject = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Project created successfully",
+      message: "Item created successfully",
       data: newProject,
     });
   } catch (error) {
@@ -206,6 +245,18 @@ export const createProject = async (req, res) => {
 // Update project (Admin only)
 export const updateProject = async (req, res) => {
   try {
+    // If type is being changed, validate it
+    if (
+      req.body.type &&
+      !["project", "certification"].includes(req.body.type)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid type",
+        error: "type must be either 'project' or 'certification'",
+      });
+    }
+
     const project = await Project.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,

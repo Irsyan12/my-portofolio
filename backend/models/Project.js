@@ -2,24 +2,29 @@ import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema(
   {
+    // type: either a regular project or a certificate (as requested - "certification")
+    type: {
+      type: String,
+      enum: ["project", "certification"],
+      default: "project",
+    },
     title: {
       type: String,
       required: true,
       trim: true,
     },
+    // description is optional for certificates, keep optional here and validate in controller per-type
     description: {
       type: String,
-      required: true,
     },
     shortDescription: {
       type: String,
-      required: true,
       maxlength: 200,
     },
+    // keep technologies as optional; certificates may use techStack instead
     technologies: [
       {
         type: String,
-        required: true,
       },
     ],
     images: [
@@ -30,7 +35,6 @@ const projectSchema = new mongoose.Schema(
     ],
     thumbnailImage: {
       type: String,
-      required: true,
     },
     demoUrl: {
       type: String,
@@ -66,7 +70,6 @@ const projectSchema = new mongoose.Schema(
     },
     startDate: {
       type: Date,
-      required: true,
     },
     endDate: {
       type: Date,
@@ -79,6 +82,55 @@ const projectSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    // Certificate-specific fields (for documents with type === 'certification')
+    certificateInstitution: {
+      type: String,
+      trim: true,
+    },
+    certificateLink: {
+      type: String,
+      validate: {
+        validator: function (v) {
+          return !v || /^https?:\/\//.test(v);
+        },
+        message: "Certificate link must be a valid URL",
+      },
+    },
+    // imageUrl is commonly used in the Firebase example
+    imageUrl: {
+      type: String,
+      validate: {
+        validator: function (v) {
+          return !v || /^https?:\/\//.test(v);
+        },
+        message: "Image URL must be a valid URL",
+      },
+    },
+    // alternate fields sometimes provided
+    projectLink: {
+      type: String,
+      validate: {
+        validator: function (v) {
+          return !v || /^https?:\/\//.test(v);
+        },
+        message: "Project link must be a valid URL",
+      },
+    },
+    demoLink: {
+      type: String,
+      validate: {
+        validator: function (v) {
+          return !v || /^https?:\/\//.test(v);
+        },
+        message: "Demo link must be a valid URL",
+      },
+    },
+    // alternate naming for tech stack arrays
+    techStack: [
+      {
+        type: String,
+      },
+    ],
   },
   {
     timestamps: true,
