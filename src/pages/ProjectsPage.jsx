@@ -25,7 +25,7 @@ const ProjectsPage = () => {
       <button
         className={`fixed ${
           scrolled ? "top-5 left-5" : "top-20 left-28"
-        } transition-all duration-500 bg-color1 text-slate font-medium px-6 py-3 rounded-full z-50`}
+        } transition-all duration-500 bg-color1 text-slate font-medium px-6 py-3 cursor-pointer rounded-full z-50`}
         onClick={() => window.history.back()}
       >
         {scrolled ? "Back" : "Back to Home"}
@@ -34,11 +34,10 @@ const ProjectsPage = () => {
       <button
         className={`${
           scrolled ? "block animate-slide-up" : "hidden"
-        } fixed bottom-5 right-5 p-5 bg-color1 rounded-full transition-all duration-500  animate-fade-in`}
+        } fixed bottom-5 right-5 p-5 bg-color1 rounded-full transition-all duration-500 cursor-pointer animate-fade-in`}
+        onClick={() => window.scrollTo({ top: 0 })}
       >
-        <FaLongArrowAltUp
-          onClick={() => window.scrollTo({ top: 0 })}
-        ></FaLongArrowAltUp>
+        <FaLongArrowAltUp></FaLongArrowAltUp>
       </button>
     </div>
   );

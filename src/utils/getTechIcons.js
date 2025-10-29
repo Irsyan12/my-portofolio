@@ -18,13 +18,15 @@ const iconMap = {
   tensorflow: "pz3uxsmdfclx65pmx9ls",
   firebase: "nirkkkolnc1pegcay2sw",
   tailwind: "tailwind_br85lu",
+  vue: "Vue_ocgcpe",
+  supabase: "supabase_uhipak",
 };
 
 // ✅ Ambil semua icon sebagai objek lengkap { name, url }
 export const getAllIcons = () => {
   return Object.entries(iconMap).map(([name, id]) => ({
     name,
-    url: `${cloudinaryBaseUrl}/v1750763435/${cloudinaryFolder}/${id}.png`,
+    url: `${cloudinaryBaseUrl}/v1759761622/${cloudinaryFolder}/${id}.png`,
   }));
 };
 
@@ -33,13 +35,13 @@ export const getIconByName = (name) => {
   const id = iconMap[name];
   if (!id) return null;
 
-  return `${cloudinaryBaseUrl}/v1750763435/${cloudinaryFolder}/${id}.png`;
+  return `${cloudinaryBaseUrl}/v1759761622/${cloudinaryFolder}/${id}.png`;
 };
 
 // ✅ Jika perlu, ekspor juga seluruh dictionary URL langsung
 export const iconDict = Object.fromEntries(
   Object.entries(iconMap).map(([name, id]) => [
     name,
-    `${cloudinaryBaseUrl}/v1750763435/${cloudinaryFolder}/${id}.png`,
+    `${cloudinaryBaseUrl}/v1759761622/${cloudinaryFolder}/${id}.png`,
   ])
 );

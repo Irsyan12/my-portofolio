@@ -1,11 +1,10 @@
-import axios from "axios";
 import { db } from "../firebase/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import axios from "axios";
 
 const sendMessage = async (formData, setSnackbar) => {
-  const apiKey = "4790698";
-  const phoneNumber = "6288214717802";
   const { name, email, subject, message } = formData;
+  const web3formAccessKey = "896a421d-8d9e-40b3-973a-a3e01c6d08cf"; // Ganti dengan key kamu
 
   if (!name || !email || !subject || !message) {
     setSnackbar({
@@ -13,10 +12,11 @@ const sendMessage = async (formData, setSnackbar) => {
       message: "Please fill out all fields!",
       severity: "warning",
     });
-    return false; // Indikasi gagal
+    return false;
   }
 
   try {
+    // Simpan ke Firestore
     await addDoc(collection(db, "messages"), {
       name,
       email,
@@ -25,20 +25,14 @@ const sendMessage = async (formData, setSnackbar) => {
       timestamp: serverTimestamp(),
     });
 
-    const text = `New Message from Contact Form:%0AName: ${name}%0AEmail: ${email}%0ASubject: ${subject}%0AMessage: ${message}`;
-    const apiUrl = `https://api.callmebot.com/whatsapp.php`;
-
-    try {
-      await axios.get(apiUrl, {
-        params: {
-          phone: phoneNumber,
-          text: text,
-          apikey: apiKey,
-        },
-      });
-    } catch (error) {
-      // console.warn("CORS error ignored:", error);
-    }
+    // Kirim ke Web3Forms
+    await axios.post("https://api.web3forms.com/submit", {
+      access_key: web3formAccessKey,
+      name,
+      email,
+      subject: `New message from portfolio web: ${subject}`,
+      message,
+    });
 
     setSnackbar({
       open: true,
@@ -46,15 +40,14 @@ const sendMessage = async (formData, setSnackbar) => {
       severity: "success",
     });
 
-    return true; // Indikasi sukses
+    return true;
   } catch (error) {
-    // console.error("Error sending message:", error);
     setSnackbar({
       open: true,
       message: "Failed to send message!",
       severity: "error",
     });
-    return false; // Indikasi gagal
+    return false;
   }
 };
 

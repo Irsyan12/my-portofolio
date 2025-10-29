@@ -84,7 +84,7 @@ const ContactSection = () => {
             onChange={handleChange}
             className="w-full bg-white/5 rounded-lg px-4 py-3 focus:outline-hidden focus:ring-2 focus:ring-color1"
             data-aos="fade-up"
-            data-aos-delay="300"
+            data-aos-delay="250"
           />
           <textarea
             name="message"
@@ -94,7 +94,7 @@ const ContactSection = () => {
             onChange={handleChange}
             className="w-full bg-white/5 rounded-lg px-4 py-3 focus:outline-hidden focus:ring-2 focus:ring-color1"
             data-aos="fade-up"
-            data-aos-delay="400"
+            data-aos-delay="300"
           />
           <button
             type="submit"
