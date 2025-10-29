@@ -23,8 +23,8 @@ const projectSchema = new mongoose.Schema(
       type: String,
       maxlength: 200,
     },
-    // keep technologies as optional; certificates may use techStack instead
-    technologies: [
+    // Tech stack array - unified field for all technologies
+    techStack: [
       {
         type: String,
       },
@@ -127,12 +127,6 @@ const projectSchema = new mongoose.Schema(
         message: "Demo link must be a valid URL",
       },
     },
-    // alternate naming for tech stack arrays
-    techStack: [
-      {
-        type: String,
-      },
-    ],
   },
   {
     timestamps: true,

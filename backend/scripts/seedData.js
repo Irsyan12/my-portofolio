@@ -19,7 +19,7 @@ const seedData = async () => {
         description:
           "A modern, responsive portfolio website built with React and Node.js. Features include project showcases, contact forms, admin dashboard, and analytics.",
         shortDescription: "Modern portfolio website with React and Node.js",
-        technologies: ["React", "Node.js", "MongoDB", "Express", "JWT"],
+        techStack: ["React", "Node.js", "MongoDB", "Express", "JWT"],
         images: [
           {
             url: "https://via.placeholder.com/800x600/4F46E5/white?text=Portfolio+Homepage",
@@ -44,7 +44,7 @@ const seedData = async () => {
         description:
           "A comprehensive admin dashboard for e-commerce management with real-time analytics, inventory management, and order processing.",
         shortDescription: "E-commerce admin dashboard with analytics",
-        technologies: ["React", "TypeScript", "Firebase", "Chart.js"],
+        techStack: ["React", "TypeScript", "Firebase", "Chart.js"],
         images: [
           {
             url: "https://via.placeholder.com/800x600/10B981/white?text=Dashboard",
@@ -70,7 +70,7 @@ const seedData = async () => {
           "A collaborative task management application with real-time updates, team collaboration features, and progress tracking.",
         shortDescription:
           "Collaborative task management with real-time updates",
-        technologies: ["Vue.js", "Laravel", "MySQL", "Socket.io"],
+        techStack: ["Vue.js", "Laravel", "MySQL", "Socket.io"],
         images: [
           {
             url: "https://via.placeholder.com/800x600/F59E0B/white?text=Task+App",

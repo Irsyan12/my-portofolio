@@ -1,5 +1,14 @@
 import Project from "../models/Project.js";
 
+/**
+ * Helper: ensure type field exists for legacy documents
+ */
+function ensureType(project) {
+  const obj = project.toObject ? project.toObject() : project;
+  if (!obj.type) obj.type = "project";
+  return obj;
+}
+
 // Get all projects with filtering and pagination
 export const getProjects = async (req, res) => {
   try {
@@ -68,11 +77,7 @@ export const getProjects = async (req, res) => {
     const total = await Project.countDocuments(filter);
 
     // Ensure response includes `type` for older documents that did not have the field
-    const projectsResp = projects.map((p) => {
-      const obj = p.toObject ? p.toObject() : p;
-      if (!obj.type) obj.type = "project";
-      return obj;
-    });
+    const projectsResp = projects.map(ensureType);
 
     res.json({
       success: true,
@@ -154,11 +159,7 @@ export const getAllProjectsAdmin = async (req, res) => {
     const total = await Project.countDocuments(filter);
 
     // Ensure response includes `type` for older documents that did not have the field
-    const projectsResp = projects.map((p) => {
-      const obj = p.toObject ? p.toObject() : p;
-      if (!obj.type) obj.type = "project";
-      return obj;
-    });
+    const projectsResp = projects.map(ensureType);
 
     res.json({
       success: true,
@@ -191,11 +192,7 @@ export const getFeaturedProjects = async (req, res) => {
       .limit(6);
 
     // Ensure `type` exists in response for legacy documents
-    const projectsResp = projects.map((p) => {
-      const obj = p.toObject ? p.toObject() : p;
-      if (!obj.type) obj.type = "project";
-      return obj;
-    });
+    const projectsResp = projects.map(ensureType);
 
     res.json({
       success: true,
@@ -231,8 +228,7 @@ export const getProjectById = async (req, res) => {
       });
     }
 
-    const projectObj = project.toObject ? project.toObject() : project;
-    if (!projectObj.type) projectObj.type = "project";
+    const projectObj = ensureType(project);
 
     res.json({
       success: true,
