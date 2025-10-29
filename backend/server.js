@@ -61,17 +61,41 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("combined"));
 }
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
+// MongoDB connection options for Vercel serverless
+const mongooseOptions = {
+  bufferCommands: false,
+  maxPoolSize: 10,
+  serverSelectionTimeoutMS: 5000,
+  socketTimeoutMS: 45000,
+};
+
+// Connect to MongoDB with better error handling for serverless
+let isConnected = false;
+
+const connectDB = async () => {
+  if (isConnected) {
+    console.log("Using existing MongoDB connection");
+    return;
+  }
+
+  try {
+    const db = await mongoose.connect(process.env.MONGO_URI, mongooseOptions);
+    isConnected = db.connections[0].readyState === 1;
     console.log("✅ MongoDB Connected Successfully");
     console.log(`📊 Database: ${mongoose.connection.name}`);
-  })
-  .catch((err) => {
+  } catch (err) {
     console.error("❌ MongoDB Connection Error:", err.message);
-    process.exit(1);
-  });
+    if (process.env.VERCEL) {
+      // Don't exit in serverless
+      throw err;
+    } else {
+      process.exit(1);
+    }
+  }
+};
+
+// Initial connection
+connectDB();
 
 // MongoDB connection events
 mongoose.connection.on("disconnected", () => {
@@ -119,6 +143,38 @@ app.get("/api/status", (req, res) => {
     memory: process.memoryUsage(),
     timestamp: new Date().toISOString(),
   });
+});
+
+// Debug endpoint to check project types in DB
+app.get("/api/debug/projects-types", async (req, res) => {
+  try {
+    const Project = mongoose.model("Project");
+    const allProjects = await Project.find(
+      {},
+      { title: 1, type: 1, _id: 1 }
+    ).limit(50);
+    const typeCounts = await Project.aggregate([
+      { $group: { _id: "$type", count: { $sum: 1 } } },
+    ]);
+    const missingType = await Project.countDocuments({
+      type: { $exists: false },
+    });
+
+    res.json({
+      success: true,
+      data: {
+        projects: allProjects,
+        typeCounts,
+        missingType,
+        total: allProjects.length,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
 });
 
 // Error handling for undefined routes

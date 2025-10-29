@@ -24,6 +24,16 @@ export const getProjects = async (req, res) => {
       sortOrder = "desc",
     } = req.query;
 
+    // Debug logging for Vercel
+    console.log("Query params:", {
+      type,
+      category,
+      featured,
+      status,
+      page,
+      limit,
+    });
+
     // Build filter object
     let filter = { isPublic: true };
 
@@ -37,6 +47,9 @@ export const getProjects = async (req, res) => {
         filter.type = type;
       }
     }
+
+    console.log("MongoDB filter:", JSON.stringify(filter));
+
     if (category) filter.category = category;
     if (featured !== undefined) filter.featured = featured === "true";
     if (status) filter.status = status;
