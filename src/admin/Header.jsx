@@ -1,16 +1,15 @@
-import React from 'react';
-import { LogOut, User } from 'lucide-react';
-import { logout } from "../firebase/auth"; 
-import { useNavigate } from 'react-router-dom';
-
+import React from "react";
+import { LogOut, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
   const navigate = useNavigate();
+  const { logout, currentUser } = useAuth();
 
   const handleLogout = () => {
-    // Implement logout logic
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -18,9 +17,11 @@ const Header = () => {
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2 mr-4">
           <User className="text-gray-400" size={20} />
-          <span className="text-gray-300">Admin</span>
+          <span className="text-gray-300">
+            {currentUser?.name || currentUser?.email || "Admin"}
+          </span>
         </div>
-        <button 
+        <button
           onClick={handleLogout}
           className="text-gray-300 hover:text-color1 transition-colors flex items-center space-x-2"
         >

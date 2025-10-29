@@ -29,14 +29,14 @@ const projectSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    images: [
-      {
-        url: String,
-        alt: String,
-      },
-    ],
-    thumbnailImage: {
+    imageUrl: {
       type: String,
+      validate: {
+        validator: function (v) {
+          return !v || /^https?:\/\//.test(v);
+        },
+        message: "Image URL must be a valid URL",
+      },
     },
     demoUrl: {
       type: String,
@@ -80,10 +80,6 @@ const projectSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    order: {
-      type: Number,
-      default: 0,
-    },
     // Certificate-specific fields (for documents with type === 'certification')
     certificateInstitution: {
       type: String,
@@ -96,16 +92,6 @@ const projectSchema = new mongoose.Schema(
           return !v || /^https?:\/\//.test(v);
         },
         message: "Certificate link must be a valid URL",
-      },
-    },
-    // imageUrl is commonly used in the Firebase example
-    imageUrl: {
-      type: String,
-      validate: {
-        validator: function (v) {
-          return !v || /^https?:\/\//.test(v);
-        },
-        message: "Image URL must be a valid URL",
       },
     },
     // alternate fields sometimes provided
@@ -136,6 +122,6 @@ const projectSchema = new mongoose.Schema(
 // Index untuk pencarian
 projectSchema.index({ title: "text", description: "text" });
 projectSchema.index({ category: 1 });
-projectSchema.index({ featured: -1, order: 1 });
+projectSchema.index({ featured: -1, createdAt: -1 });
 
 export default mongoose.model("Project", projectSchema);

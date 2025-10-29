@@ -229,14 +229,8 @@ You can also store certificates in the same collection by setting `type` to `cer
   "title": "Portfolio Website",
   "description": "A modern portfolio website built with React and Node.js",
   "shortDescription": "Modern portfolio website with React",
-  "technologies": ["React", "Node.js", "MongoDB", "Express"],
-  "images": [
-    {
-      "url": "https://example.com/image1.jpg",
-      "alt": "Homepage screenshot"
-    }
-  ],
-  "thumbnailImage": "https://example.com/thumbnail.jpg",
+  "techStack": ["React", "Node.js", "MongoDB", "Express"],
+  "imageUrl": "https://example.com/project-image.jpg",
   "demoUrl": "https://portfolio-demo.com",
   "githubUrl": "https://github.com/user/portfolio",
   "category": "web",
@@ -244,8 +238,7 @@ You can also store certificates in the same collection by setting `type` to `cer
   "featured": true,
   "startDate": "2024-01-01",
   "endDate": "2024-02-01",
-  "isPublic": true,
-  "order": 1
+  "isPublic": true
 }
 ```
 
@@ -285,7 +278,6 @@ Certificate example (store as `type: "certification"`):
 
 **Query Parameters:**
 
-- `employmentType` - Filter by type (full-time, part-time, contract, internship, freelance)
 - `company` - Filter by company name
 - `sortBy` - Sort field (default: startDate)
 - `sortOrder` - Sort order (asc/desc, default: desc)
@@ -316,25 +308,10 @@ Certificate example (store as `type: "certification"`):
 {
   "title": "Senior Full Stack Developer",
   "company": "Tech Company Ltd",
-  "location": "Jakarta, Indonesia",
-  "description": "Leading development of web applications using modern technologies",
-  "responsibilities": [
-    "Develop and maintain web applications",
-    "Lead a team of junior developers",
-    "Code review and mentoring"
-  ],
-  "technologies": ["React", "Node.js", "PostgreSQL", "AWS"],
-  "achievements": [
-    "Improved application performance by 40%",
-    "Led migration to microservices architecture"
-  ],
-  "employmentType": "full-time",
+  "description": "Leading development of web applications using modern technologies and managing a team of junior developers",
   "startDate": "2023-01-01",
   "endDate": null,
-  "isCurrentRole": true,
-  "companyLogo": "https://example.com/logo.png",
-  "companyWebsite": "https://company.com",
-  "order": 1
+  "isCurrentRole": true
 }
 ```
 
@@ -391,9 +368,7 @@ Certificate example (store as `type: "certification"`):
 
 ```json
 {
-  "status": "replied",
-  "adminNotes": "Replied via email",
-  "tags": ["web-development", "urgent"]
+  "status": "replied"
 }
 ```
 
@@ -653,7 +628,7 @@ if (pm.response.code === 200) {
    ```
    PATCH {{api_url}}/messages/{message_id}/status
    Headers: Authorization: Bearer {{admin_token}}
-   Body: {"status": "replied", "adminNotes": "Responded via email"}
+   Body: {"status": "replied"}
    ```
 
 ---

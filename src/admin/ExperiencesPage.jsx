@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaGripVertical } from "react-icons/fa";
 import { MdRefresh } from "react-icons/md";
 import {
   Snackbar,
@@ -12,19 +12,86 @@ import {
   Button,
   Slide,
 } from "@mui/material";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import ExperienceModal from "./modal/ExperiencesModal";
 import AddButton from "../components/AddButton";
-import {
-  fetchExperiences,
-  addExperience,
-  updateExperience,
-  deleteExperience,
-} from "../firebase/experiencesService";
+import { experiencesAPI } from "../api";
 
 // Slide transition component for the dialog
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
+
+// Sortable Table Row Component
+const SortableRow = ({ experience, onEdit, onDelete }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: experience._id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      className="border-b border-gray-800 hover:bg-gray-800 transition-colors"
+    >
+      <td className="p-4">
+        <div
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing text-gray-500 hover:text-color1"
+        >
+          <FaGripVertical size={20} />
+        </div>
+      </td>
+      <td className="p-4 text-center">{experience.order + 1}</td>
+      <td className="p-4">{experience.period || "N/A"}</td>
+      <td className="p-4">{experience.title}</td>
+      <td className="p-4">{experience.company}</td>
+      <td className="p-4 text-right">
+        <div className="flex justify-end space-x-4">
+          <button
+            onClick={() => onEdit(experience)}
+            className="text-gray-400 hover:text-color1 transition-colors cursor-pointer"
+          >
+            <FaEdit size={25} />
+          </button>
+          <button
+            onClick={() => onDelete(experience)}
+            className="text-red-500 hover:opacity-80 transition-opacity cursor-pointer"
+          >
+            <FaTrash size={25} />
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+};
 
 const ExperiencesPage = () => {
   const [experiences, setExperiences] = useState([]);
@@ -44,12 +111,70 @@ const ExperiencesPage = () => {
     experience: null,
   });
 
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Handle drag end
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    const oldIndex = experiences.findIndex((exp) => exp._id === active.id);
+    const newIndex = experiences.findIndex((exp) => exp._id === over.id);
+
+    // Update local state immediately for better UX
+    const newExperiences = arrayMove(experiences, oldIndex, newIndex);
+    setExperiences(newExperiences);
+
+    // Update orders in the database
+    try {
+      const updatedOrders = newExperiences.map((exp, index) => ({
+        _id: exp._id,
+        order: index,
+      }));
+
+      const response = await experiencesAPI.updateOrder(updatedOrders);
+
+      if (response.success) {
+        setSnackbar({
+          open: true,
+          message: "Order updated successfully",
+          severity: "success",
+        });
+        // Update with server response to ensure consistency
+        setExperiences(response.data);
+      }
+    } catch (error) {
+      console.error("Error updating order:", error);
+      setSnackbar({
+        open: true,
+        message: `Error updating order: ${error.message}`,
+        severity: "error",
+      });
+      // Revert to previous state on error
+      reloadExperiences();
+    }
+  };
+
   useEffect(() => {
     const loadExperiences = async () => {
       try {
         setIsLoading(true);
-        const experiencesData = await fetchExperiences(); // Already sorted by Firestore
-        setExperiences(experiencesData);
+        const response = await experiencesAPI.getAll({
+          sortBy: "order",
+          sortOrder: "asc",
+        });
+        if (response.success) {
+          setExperiences(response.data);
+        }
       } catch (error) {
         console.error("Error loading experiences:", error);
         setSnackbar({
@@ -67,8 +192,13 @@ const ExperiencesPage = () => {
   const reloadExperiences = async () => {
     try {
       setIsLoading(true);
-      const experiencesData = await fetchExperiences(); // Already sorted by Firestore
-      setExperiences(experiencesData);
+      const response = await experiencesAPI.getAll({
+        sortBy: "order",
+        sortOrder: "asc",
+      });
+      if (response.success) {
+        setExperiences(response.data);
+      }
     } catch (error) {
       console.error("Error reloading experiences:", error);
       setSnackbar({
@@ -110,15 +240,18 @@ const ExperiencesPage = () => {
   // Handle save (add or update)
   const handleSave = async (experience) => {
     try {
-      if (experience.id) {
-        await updateExperience(experience);
+      let response;
+      if (experience._id) {
+        // Update existing experience
+        response = await experiencesAPI.update(experience._id, experience);
         setSnackbar({
           open: true,
           message: "Experience updated successfully",
           severity: "success",
         });
       } else {
-        const newExperience = await addExperience(experience);
+        // Create new experience
+        response = await experiencesAPI.create(experience);
         setSnackbar({
           open: true,
           message: "Experience added successfully",
@@ -138,84 +271,27 @@ const ExperiencesPage = () => {
     }
   };
 
-  const handleOrderChange = async (experienceId, newOrderValue) => {
-    setIsLoading(true); // Indicate loading for the whole table
-
-    const currentExp = experiences.find((exp) => exp.id === experienceId);
-    if (!currentExp) {
-      setSnackbar({
-        open: true,
-        message: "Error: Experience not found.",
-        severity: "error",
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    // Ensure currentExp.order is a number, default to 0 if undefined/null
-    const originalOrderOfCurrentExp =
-      currentExp.order === undefined || currentExp.order === null
-        ? 0
-        : currentExp.order;
-
-    // Find the experience that currently has the newOrderValue (if any)
-    const targetExp = experiences.find(
-      (exp) => exp.id !== experienceId && exp.order === newOrderValue
-    );
-
-    try {
-      const updatePromises = [];
-
-      // Update the current experience to the new order
-      updatePromises.push(
-        updateExperience({ ...currentExp, order: newOrderValue })
-      );
-
-      // If there's a target experience (another item has the newOrderValue),
-      // update its order to the original order of the current experience.
-      if (targetExp) {
-        updatePromises.push(
-          updateExperience({ ...targetExp, order: originalOrderOfCurrentExp })
-        );
-      }
-
-      await Promise.all(updatePromises);
-
-      setSnackbar({
-        open: true,
-        message: "Order updated successfully. Reloading...",
-        severity: "success",
-      });
-    } catch (error) {
-      console.error("Error updating order:", error);
-      setSnackbar({
-        open: true,
-        message: `Error updating order: ${error.message}`,
-        severity: "error",
-      });
-    } finally {
-      // Reload experiences from Firestore to get the canonical sorted state
-      await reloadExperiences(); // This also sets setIsLoading(false)
-    }
-  };
-
-  // Delete experience from Firestore
+  // Delete experience
   const handleDelete = async () => {
     try {
       const experienceToDelete = deleteDialog.experience;
       if (!experienceToDelete) return;
 
-      await deleteExperience(experienceToDelete.id);
+      const response = await experiencesAPI.delete(experienceToDelete._id);
 
-      setExperiences((prevExperiences) =>
-        prevExperiences.filter((exp) => exp.id !== experienceToDelete.id)
-      );
+      if (response.success) {
+        setExperiences((prevExperiences) =>
+          prevExperiences.filter((exp) => exp._id !== experienceToDelete._id)
+        );
 
-      setSnackbar({
-        open: true,
-        message: "Experience deleted successfully",
-        severity: "success",
-      });
+        setSnackbar({
+          open: true,
+          message: "Experience deleted successfully",
+          severity: "success",
+        });
+      } else {
+        throw new Error(response.message || "Delete failed");
+      }
 
       closeDeleteDialog();
     } catch (error) {
@@ -256,74 +332,41 @@ const ExperiencesPage = () => {
           </p>
         </div>
       ) : (
-        <div className="bg-[#1E1E1E] rounded-lg scrollbar p-4 overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-800">
-                <th className="p-4 text-left">Order</th>
-                <th className="p-4 text-left">Period</th>
-                <th className="p-4 text-left">Role</th>
-                <th className="p-4 text-left">Company</th>
-                <th className="p-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {experiences.map((experience) => (
-                <tr
-                  key={experience.id}
-                  className="border-b border-gray-800 hover:bg-gray-800 transition-colors"
-                >
-                  <td className="p-4">
-                    <select
-                      value={
-                        experience.order !== undefined &&
-                        experience.order !== null
-                          ? experience.order
-                          : 0
-                      }
-                      onChange={(e) =>
-                        handleOrderChange(
-                          experience.id,
-                          parseInt(e.target.value, 10)
-                        )
-                      }
-                      className="bg-dark text-white border border-gray-700 rounded-md p-1 text-sm focus:ring-color1 focus:border-color1 disabled:opacity-50"
-                      disabled={isLoading}
-                    >
-                      {Array.from(
-                        { length: experiences.length + 1 },
-                        (_, i) => i
-                      ).map((orderValue) => (
-                        <option key={orderValue} value={orderValue}>
-                          {orderValue}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="p-4">{experience.period}</td>
-                  <td className="p-4">{experience.role}</td>
-                  <td className="p-4">{experience.company}</td>
-                  <td className="p-4 text-right">
-                    <div className="flex justify-end space-x-4">
-                      <button
-                        onClick={() => openModal(experience)}
-                        className="text-gray-400 hover:text-color1 transition-colors"
-                      >
-                        <FaEdit size={25} />
-                      </button>
-                      <button
-                        onClick={() => openDeleteDialog(experience)}
-                        className="text-red-500 hover:opacity-80 transition-opacity"
-                      >
-                        <FaTrash size={25} />
-                      </button>
-                    </div>
-                  </td>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="bg-[#1E1E1E] rounded-lg scrollbar p-4 overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-800">
+                  <th className="p-4"></th>
+                  <th className="p-4 text-center">Order</th>
+                  <th className="p-4 text-left">Period</th>
+                  <th className="p-4 text-left">Role</th>
+                  <th className="p-4 text-left">Company</th>
+                  <th className="p-4 text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                <SortableContext
+                  items={experiences.map((exp) => exp._id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {experiences.map((experience) => (
+                    <SortableRow
+                      key={experience._id}
+                      experience={experience}
+                      onEdit={openModal}
+                      onDelete={openDeleteDialog}
+                    />
+                  ))}
+                </SortableContext>
+              </tbody>
+            </table>
+          </div>
+        </DndContext>
       )}
 
       {isModalOpen && (

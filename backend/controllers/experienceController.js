@@ -3,17 +3,11 @@ import Experience from "../models/Experience.js";
 // Get all experiences
 export const getExperiences = async (req, res) => {
   try {
-    const {
-      employmentType,
-      company,
-      sortBy = "startDate",
-      sortOrder = "desc",
-    } = req.query;
+    const { company, sortBy = "order", sortOrder = "asc" } = req.query;
 
     // Build filter object
     let filter = {};
 
-    if (employmentType) filter.employmentType = employmentType;
     if (company) filter.company = new RegExp(company, "i");
 
     // Build sort object
@@ -68,9 +62,9 @@ export const createExperience = async (req, res) => {
     const experienceData = req.body;
 
     // Set order if not provided
-    if (!experienceData.order) {
+    if (experienceData.order === undefined || experienceData.order === null) {
       const lastExperience = await Experience.findOne().sort({ order: -1 });
-      experienceData.order = lastExperience ? lastExperience.order + 1 : 1;
+      experienceData.order = lastExperience ? lastExperience.order + 1 : 0;
     }
 
     // If this is marked as current role, update other experiences
@@ -188,14 +182,48 @@ export const getCurrentExperience = async (req, res) => {
   }
 };
 
+// Batch update orders after drag and drop
+export const updateExperiencesOrder = async (req, res) => {
+  try {
+    const { experiences } = req.body; // Array of { _id, order }
+
+    if (!Array.isArray(experiences)) {
+      return res.status(400).json({
+        success: false,
+        message: "experiences must be an array",
+      });
+    }
+
+    // Update all experiences in parallel
+    const updatePromises = experiences.map(({ _id, order }) =>
+      Experience.findByIdAndUpdate(_id, { order }, { new: true })
+    );
+
+    await Promise.all(updatePromises);
+
+    // Fetch updated list
+    const updatedExperiences = await Experience.find().sort({ order: 1 });
+
+    res.json({
+      success: true,
+      message: "Experience orders updated successfully",
+      data: updatedExperiences,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating experience orders",
+      error: error.message,
+    });
+  }
+};
+
 // Get experience timeline
 export const getExperienceTimeline = async (req, res) => {
   try {
     const experiences = await Experience.find()
-      .sort({ startDate: -1 })
-      .select(
-        "title company location startDate endDate isCurrentRole employmentType technologies"
-      );
+      .sort({ order: 1 })
+      .select("title company period isCurrentRole");
 
     res.json({
       success: true,
@@ -215,9 +243,6 @@ export const getExperienceTimeline = async (req, res) => {
 export const getExperienceStats = async (req, res) => {
   try {
     const totalExperiences = await Experience.countDocuments();
-    const experiencesByType = await Experience.aggregate([
-      { $group: { _id: "$employmentType", count: { $sum: 1 } } },
-    ]);
 
     const experiencesByYear = await Experience.aggregate([
       {
@@ -253,7 +278,6 @@ export const getExperienceStats = async (req, res) => {
         currentExperiences: await Experience.countDocuments({
           isCurrentRole: true,
         }),
-        experiencesByType,
         experiencesByYear,
       },
     });

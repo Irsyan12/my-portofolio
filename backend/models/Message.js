@@ -41,24 +41,6 @@ const messageSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    tags: [
-      {
-        type: String,
-        trim: true,
-      },
-    ],
-    ipAddress: {
-      type: String,
-      required: true,
-    },
-    userAgent: {
-      type: String,
-      required: true,
-    },
-    adminNotes: {
-      type: String,
-      default: "",
-    },
   },
   {
     timestamps: true,

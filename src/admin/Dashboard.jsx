@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"; // Removed useRef
+import React, { useEffect, useState } from "react";
 import { db, doc, getDoc } from "../firebase/firebase";
 import { Snackbar, Alert } from "@mui/material";
 import VisitsChart from "../components/VisitsChart";

@@ -8,6 +8,7 @@ import {
   getCurrentExperience,
   getExperienceTimeline,
   getExperienceStats,
+  updateExperiencesOrder,
 } from "../controllers/experienceController.js";
 import {
   authenticateToken,
@@ -32,6 +33,7 @@ router.post(
   rateLimiter(20),
   createExperience
 );
+router.put("/reorder", authenticateToken, requireAdmin, updateExperiencesOrder);
 router.put("/:id", authenticateToken, requireAdmin, updateExperience);
 router.delete("/:id", authenticateToken, requireAdmin, deleteExperience);
 

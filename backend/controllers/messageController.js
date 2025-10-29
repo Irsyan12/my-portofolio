@@ -118,8 +118,6 @@ export const createMessage = async (req, res) => {
       email: email.trim().toLowerCase(),
       subject: subject.trim(),
       message: message.trim(),
-      ipAddress: req.ip || req.connection.remoteAddress,
-      userAgent: req.get("User-Agent") || "Unknown",
     };
 
     const newMessage = new Message(messageData);
@@ -162,14 +160,12 @@ export const createMessage = async (req, res) => {
 // Update message status (Admin only)
 export const updateMessageStatus = async (req, res) => {
   try {
-    const { status, adminNotes, tags } = req.body;
+    const { status } = req.body;
 
     const message = await Message.findByIdAndUpdate(
       req.params.id,
       {
         status,
-        adminNotes: adminNotes || "",
-        tags: tags || [],
         updatedAt: new Date(),
       },
       { new: true, runValidators: true }

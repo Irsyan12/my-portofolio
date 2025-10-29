@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import CustomTextField from "../components/OutlinedTextField";
-import { login } from "../firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Snackbar, Alert } from "@mui/material";
@@ -17,7 +16,7 @@ const LoginPage = () => {
   });
 
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+  const { currentUser, login } = useAuth();
 
   // If already logged in, redirect to admin
   useEffect(() => {
@@ -44,16 +43,40 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      await login(email, password);
-      navigate("/admin");
+      // Use login from AuthContext to update state immediately
+      const response = await login(email, password);
+
+      if (response.success) {
+        setSnackbar({
+          open: true,
+          message: "Login successful! Redirecting...",
+          severity: "success",
+        });
+
+        // Navigate immediately after login updates context
+        setTimeout(() => {
+          navigate("/admin");
+        }, 500);
+      }
     } catch (error) {
       console.error("Login error:", error);
-      let message = "Login failed: " + error.message;
-      if (error.code === "auth/invalid-credential") {
-        message = "Email and Password is incorrect";
-      } else if (error.code === "auth/internal-error") {
-        message = "Something went wrong. Please try again.";
+
+      let message = "Login failed. Please try again.";
+
+      // Handle specific error messages from API
+      if (error.message) {
+        if (
+          error.message.includes("Invalid credentials") ||
+          error.message.includes("incorrect")
+        ) {
+          message = "Email or password is incorrect";
+        } else if (error.message.includes("not found")) {
+          message = "User not found";
+        } else {
+          message = error.message;
+        }
       }
+
       setSnackbar({
         open: true,
         message,
