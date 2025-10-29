@@ -225,6 +225,7 @@ You can also store certificates in the same collection by setting `type` to `cer
 
 ```json
 {
+  "type": "project",
   "title": "Portfolio Website",
   "description": "A modern portfolio website built with React and Node.js",
   "shortDescription": "Modern portfolio website with React",

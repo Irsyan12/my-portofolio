@@ -2,11 +2,13 @@ import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema(
   {
-    // type: either a regular project or a certificate (as requested - "certification")
+    // type: either a regular project or a certificate (certification)
+    // This field is required at creation time; code will still treat legacy docs without
+    // the field as 'project' when returning results to avoid breaking existing data.
     type: {
       type: String,
       enum: ["project", "certification"],
-      default: "project",
+      required: true,
     },
     title: {
       type: String,

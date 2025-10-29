@@ -18,7 +18,32 @@ export const getProjects = async (req, res) => {
     // Build filter object
     let filter = { isPublic: true };
 
-    if (type) filter.type = type; // filter by 'project' or 'certification'
+    if (type) {
+      // Backwards compatibility and heuristics:
+      // - If type=project: include documents with explicit type 'project' or missing `type` (legacy)
+      // - If type=certification: include documents with explicit type 'certification' OR
+      //   documents that have certificate-like fields (certificateInstitution, certificateLink, imageUrl)
+      //   or text hints in shortDescription (coursera, certificate, certif...). This helps surface
+      //   previously-imported/seeded certificate entries that were labeled as 'project'.
+      if (type === "project") {
+        filter.$or = [{ type: "project" }, { type: { $exists: false } }];
+      } else if (type === "certification") {
+        filter.$or = [
+          { type: "certification" },
+          { certificateInstitution: { $exists: true, $ne: "" } },
+          { certificateLink: { $exists: true, $ne: "" } },
+          { imageUrl: { $exists: true, $ne: "" } },
+          {
+            shortDescription: {
+              $regex: "certif|certificate|coursera",
+              $options: "i",
+            },
+          },
+        ];
+      } else {
+        filter.type = type;
+      }
+    }
     if (category) filter.category = category;
     if (featured !== undefined) filter.featured = featured === "true";
     if (status) filter.status = status;
@@ -42,9 +67,16 @@ export const getProjects = async (req, res) => {
 
     const total = await Project.countDocuments(filter);
 
+    // Ensure response includes `type` for older documents that did not have the field
+    const projectsResp = projects.map((p) => {
+      const obj = p.toObject ? p.toObject() : p;
+      if (!obj.type) obj.type = "project";
+      return obj;
+    });
+
     res.json({
       success: true,
-      data: projects,
+      data: projectsResp,
       pagination: {
         currentPage: parseInt(page),
         totalPages: Math.ceil(total / parseInt(limit)),
@@ -79,7 +111,26 @@ export const getAllProjectsAdmin = async (req, res) => {
     // Build filter object
     let filter = {};
 
-    if (type) filter.type = type;
+    if (type) {
+      if (type === "project") {
+        filter.$or = [{ type: "project" }, { type: { $exists: false } }];
+      } else if (type === "certification") {
+        filter.$or = [
+          { type: "certification" },
+          { certificateInstitution: { $exists: true, $ne: "" } },
+          { certificateLink: { $exists: true, $ne: "" } },
+          { imageUrl: { $exists: true, $ne: "" } },
+          {
+            shortDescription: {
+              $regex: "certif|certificate|coursera",
+              $options: "i",
+            },
+          },
+        ];
+      } else {
+        filter.type = type;
+      }
+    }
     if (category) filter.category = category;
     if (status) filter.status = status;
 
@@ -102,9 +153,16 @@ export const getAllProjectsAdmin = async (req, res) => {
 
     const total = await Project.countDocuments(filter);
 
+    // Ensure response includes `type` for older documents that did not have the field
+    const projectsResp = projects.map((p) => {
+      const obj = p.toObject ? p.toObject() : p;
+      if (!obj.type) obj.type = "project";
+      return obj;
+    });
+
     res.json({
       success: true,
-      data: projects,
+      data: projectsResp,
       pagination: {
         currentPage: parseInt(page),
         totalPages: Math.ceil(total / parseInt(limit)),
@@ -132,10 +190,17 @@ export const getFeaturedProjects = async (req, res) => {
       .sort({ order: 1, createdAt: -1 })
       .limit(6);
 
+    // Ensure `type` exists in response for legacy documents
+    const projectsResp = projects.map((p) => {
+      const obj = p.toObject ? p.toObject() : p;
+      if (!obj.type) obj.type = "project";
+      return obj;
+    });
+
     res.json({
       success: true,
-      data: projects,
-      count: projects.length,
+      data: projectsResp,
+      count: projectsResp.length,
     });
   } catch (error) {
     res.status(500).json({
@@ -166,9 +231,12 @@ export const getProjectById = async (req, res) => {
       });
     }
 
+    const projectObj = project.toObject ? project.toObject() : project;
+    if (!projectObj.type) projectObj.type = "project";
+
     res.json({
       success: true,
-      data: project,
+      data: projectObj,
     });
   } catch (error) {
     res.status(500).json({
@@ -184,9 +252,17 @@ export const createProject = async (req, res) => {
   try {
     const projectData = req.body;
 
-    // Validate type
-    const type = projectData.type || "project";
+    // Require type in request body
+    if (!projectData.type) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required field: type",
+        error:
+          "Field 'type' is required and must be either 'project' or 'certification'",
+      });
+    }
 
+    const type = projectData.type;
     if (!["project", "certification"].includes(type)) {
       return res.status(400).json({
         success: false,

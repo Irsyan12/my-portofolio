@@ -14,6 +14,7 @@ const seedData = async () => {
     // Sample Projects
     const sampleProjects = [
       {
+        type: "project",
         title: "Portfolio Website",
         description:
           "A modern, responsive portfolio website built with React and Node.js. Features include project showcases, contact forms, admin dashboard, and analytics.",
@@ -38,6 +39,7 @@ const seedData = async () => {
         order: 1,
       },
       {
+        type: "project",
         title: "E-Commerce Dashboard",
         description:
           "A comprehensive admin dashboard for e-commerce management with real-time analytics, inventory management, and order processing.",
@@ -62,6 +64,7 @@ const seedData = async () => {
         order: 2,
       },
       {
+        type: "project",
         title: "Task Management App",
         description:
           "A collaborative task management application with real-time updates, team collaboration features, and progress tracking.",
