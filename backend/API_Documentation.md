@@ -199,6 +199,8 @@ Authorization: Bearer <admin_token>
 GET /api/projects?category=web&featured=true&page=1&limit=5
 ```
 
+You can also store certificates in the same collection by setting `type` to `certification`. Use the `type` query parameter to filter results (e.g. `?type=certification`).
+
 ### 2. Get Featured Projects (Public)
 
 **GET** `/api/projects/featured`
@@ -223,6 +225,7 @@ GET /api/projects?category=web&featured=true&page=1&limit=5
 
 ```json
 {
+  "type": "project",
   "title": "Portfolio Website",
   "description": "A modern portfolio website built with React and Node.js",
   "shortDescription": "Modern portfolio website with React",
@@ -243,6 +246,20 @@ GET /api/projects?category=web&featured=true&page=1&limit=5
   "endDate": "2024-02-01",
   "isPublic": true,
   "order": 1
+}
+```
+
+Certificate example (store as `type: "certification"`):
+
+```json
+{
+  "type": "certification",
+  "title": "Certificate in Advanced Flutter",
+  "certificateInstitution": "Example Academy",
+  "certificateLink": "https://example.com/cert/abcd1234",
+  "imageUrl": "https://res.cloudinary.com/.../certificate.png",
+  "techStack": ["flutter"],
+  "isPublic": true
 }
 ```
 
