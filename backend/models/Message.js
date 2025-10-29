@@ -34,7 +34,7 @@ const messageSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["new", "read", "replied", "archived"],
+      enum: ["new", "read", "archived"],
       default: "new",
     },
     isStarred: {

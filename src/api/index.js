@@ -96,6 +96,15 @@ class ApiClient {
     });
   }
 
+  // PATCH request
+  async patch(endpoint, data, options = {}) {
+    return this.request(endpoint, {
+      ...options,
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  }
+
   // DELETE request
   async delete(endpoint, options = {}) {
     return this.request(endpoint, {
@@ -209,6 +218,8 @@ export const projectsAPI = {
     return apiClient.get(`/projects${queryString ? `?${queryString}` : ""}`);
   },
 
+  getAllAdmin: () => apiClient.get("/projects/admin/all"),
+
   getFeatured: () => apiClient.get("/projects/featured"),
 
   getById: (id) => apiClient.get(`/projects/${id}`),
@@ -220,6 +231,8 @@ export const projectsAPI = {
   delete: (id) => apiClient.delete(`/projects/${id}`),
 
   toggleFeatured: (id) => apiClient.post(`/projects/${id}/featured`),
+
+  getStats: () => apiClient.get("/projects/admin/stats"),
 };
 
 // Experiences API
@@ -243,6 +256,8 @@ export const experiencesAPI = {
     apiClient.put("/experiences/reorder", { experiences }),
 
   delete: (id) => apiClient.delete(`/experiences/${id}`),
+
+  getStats: () => apiClient.get("/experiences/admin/stats"),
 };
 
 // Messages API
@@ -257,9 +272,9 @@ export const messagesAPI = {
   getById: (id) => apiClient.get(`/messages/${id}`),
 
   updateStatus: (id, status, adminNotes = "", tags = []) =>
-    apiClient.post(`/messages/${id}/status`, { status, adminNotes, tags }),
+    apiClient.patch(`/messages/${id}/status`, { status, adminNotes, tags }),
 
-  toggleStar: (id) => apiClient.post(`/messages/${id}/star`),
+  toggleStar: (id) => apiClient.patch(`/messages/${id}/star`),
 
   delete: (id) => apiClient.delete(`/messages/${id}`),
 

@@ -6,7 +6,7 @@ import { iconDict } from "../../utils/getTechIcons";
 const ProjectModal = ({ project, onSave, onClose }) => {
   const [formData, setFormData] = useState({
     title: "",
-    type: "Project", // Default value
+    type: "project", // Default value (lowercase for backend)
     description: "",
     imageUrl: "",
     projectLink: "", // Project repository link
@@ -27,21 +27,21 @@ const ProjectModal = ({ project, onSave, onClose }) => {
   useEffect(() => {
     if (project) {
       setFormData({
-        id: project.id,
+        _id: project._id,
         title: project.title,
-        type: project.type || "Project",
+        type: project.type || "project",
         description: project.description || "",
         imageUrl: project.imageUrl || "",
-        projectLink: project.projectLink || "",
-        demoLink: project.demoLink || "", // Include demo link
+        projectLink: project.projectLink || project.githubUrl || "",
+        demoLink: project.demoLink || project.demoUrl || "", // Include demo link
         techStack: project.techStack || [],
         certificateInstitution: project.certificateInstitution || "",
         certificateLink: project.certificateLink || "",
       });
 
       // Load link preview if project link exists
-      if (project.projectLink) {
-        fetchLinkPreview(project.projectLink);
+      if (project.projectLink || project.githubUrl) {
+        fetchLinkPreview(project.projectLink || project.githubUrl);
       }
     }
   }, [project]);
@@ -257,12 +257,25 @@ const ProjectModal = ({ project, onSave, onClose }) => {
       formData.imageUrl ||
       `https://placehold.co/600x400?text=${formattedTitle}`;
 
+    // Map frontend field names to backend field names
     const finalData = {
-      ...formData,
+      _id: formData._id,
+      title: formData.title,
+      type: formData.type, // Already lowercase
+      description: formData.description,
       imageUrl: imageUrl,
+      techStack: formData.techStack,
+      // Map to backend field names
+      githubUrl: formData.projectLink, // Backend uses githubUrl
+      demoUrl: formData.demoLink, // Backend uses demoUrl
+      // Keep legacy fields for compatibility
+      projectLink: formData.projectLink,
+      demoLink: formData.demoLink,
+      certificateInstitution: formData.certificateInstitution,
+      certificateLink: formData.certificateLink,
     };
 
-    if (formData.type === "Certification") {
+    if (formData.type === "certification") {
       if (!formData.certificateInstitution) {
         alert("Institusi sertifikat harus diisi");
         return;
@@ -306,12 +319,12 @@ const ProjectModal = ({ project, onSave, onClose }) => {
               className="w-full bg-dark text-white border border-gray-700 rounded-md p-2"
               required
             >
-              <option value="Project">Project</option>
-              <option value="Certification">Certification</option>
+              <option value="project">Project</option>
+              <option value="certification">Certification</option>
             </select>
           </div>
 
-          {formData.type === "Project" && (
+          {formData.type === "project" && (
             <>
               <div className="mb-4">
                 <div className="flex items-center">
@@ -374,7 +387,7 @@ const ProjectModal = ({ project, onSave, onClose }) => {
                         className={`px-2 py-1 text-xs rounded-md transition-colors ${
                           formData.techStack.includes(tech)
                             ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                            : "bg-gray-700 text-gray-300 hover:bg-color1 hover:text-black"
+                            : "bg-gray-700 text-gray-300 hover:bg-color1 hover:text-black cursor-pointer"
                         }`}
                       >
                         {tech}
@@ -419,7 +432,7 @@ const ProjectModal = ({ project, onSave, onClose }) => {
                           <button
                             type="button"
                             onClick={() => removeTechStack(tech)}
-                            className="ml-1 text-black hover:text-red-600"
+                            className="ml-1 text-black hover:text-red-600 cursor-pointer"
                           >
                             <FaTimes size={10} />
                           </button>
@@ -432,7 +445,7 @@ const ProjectModal = ({ project, onSave, onClose }) => {
             </>
           )}
 
-          {formData.type === "Certification" && (
+          {formData.type === "certification" && (
             <>
               <div className="mb-4">
                 <OutlinedTextField

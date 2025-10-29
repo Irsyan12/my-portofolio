@@ -19,14 +19,6 @@ const visitSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    country: {
-      type: String,
-      default: "",
-    },
-    city: {
-      type: String,
-      default: "",
-    },
     device: {
       type: String,
       enum: ["desktop", "mobile", "tablet", "unknown"],
@@ -50,7 +42,7 @@ const visitSchema = new mongoose.Schema(
     },
     isUnique: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   {
@@ -62,7 +54,6 @@ const visitSchema = new mongoose.Schema(
 visitSchema.index({ createdAt: 1 });
 visitSchema.index({ page: 1, createdAt: -1 });
 visitSchema.index({ ipAddress: 1, createdAt: -1 });
-visitSchema.index({ country: 1 });
 visitSchema.index({ device: 1 });
 
 export default mongoose.model("Visit", visitSchema);

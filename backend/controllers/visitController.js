@@ -75,8 +75,10 @@ export const trackVisit = async (req, res) => {
       success: true,
       message: "Visit tracked successfully",
       data: {
-        id: newVisit._id,
-        isUnique: newVisit.isUnique,
+        visit: {
+          _id: newVisit._id,
+          isUnique: newVisit.isUnique,
+        },
       },
     });
   } catch (error) {
@@ -147,6 +149,16 @@ export const getAnalytics = async (req, res) => {
       },
       { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
     ]);
+
+    // Format dailyVisits for chart (convert to date string format)
+    const dailyVisits = visitsByDay.map((item) => {
+      const date = new Date(item._id.year, item._id.month - 1, item._id.day);
+      return {
+        _id: date.toISOString().split("T")[0], // Format: "2024-01-15"
+        count: item.total,
+        unique: item.unique,
+      };
+    });
 
     // Top pages
     const topPages = await Visit.aggregate([
@@ -237,10 +249,11 @@ export const getAnalytics = async (req, res) => {
       data: {
         summary: {
           totalVisits,
-          uniqueVisits,
+          uniqueVisitors: uniqueVisits,
           averageDuration,
           period,
         },
+        dailyVisits,
         visitsByDay,
         topPages,
         deviceStats,
@@ -390,6 +403,48 @@ export const getVisitTrends = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching visit trends",
+      error: error.message,
+    });
+  }
+};
+
+// Update visit duration (Public endpoint - called on page unload)
+export const updateVisitDuration = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { duration } = req.body;
+
+    if (!duration || duration < 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid duration value",
+      });
+    }
+
+    const visit = await Visit.findByIdAndUpdate(
+      id,
+      { duration },
+      { new: true }
+    );
+
+    if (!visit) {
+      return res.status(404).json({
+        success: false,
+        message: "Visit not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Duration updated successfully",
+      data: {
+        duration: visit.duration,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error updating duration",
       error: error.message,
     });
   }

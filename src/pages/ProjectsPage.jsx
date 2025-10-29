@@ -1,11 +1,18 @@
 import { React, useEffect, useState } from "react";
 import Projects from "../section/Projects";
 import { FaLongArrowAltUp } from "react-icons/fa";
+import { trackVisit, trackPageDuration } from "../utils/trackVisit";
 
 const ProjectsPage = () => {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
+    // Track visit to MongoDB
+    trackVisit();
+
+    // Track page duration
+    const cleanupDuration = trackPageDuration();
+
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setScrolled(true);
@@ -17,6 +24,7 @@ const ProjectsPage = () => {
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      if (cleanupDuration) cleanupDuration();
     };
   }, []);
 
