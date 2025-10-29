@@ -24,16 +24,6 @@ export const getProjects = async (req, res) => {
       sortOrder = "desc",
     } = req.query;
 
-    // Debug logging for Vercel
-    console.log("Query params:", {
-      type,
-      category,
-      featured,
-      status,
-      page,
-      limit,
-    });
-
     // Build filter object
     let filter = { isPublic: true };
 

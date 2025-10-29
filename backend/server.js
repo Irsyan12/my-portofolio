@@ -164,38 +164,6 @@ app.get("/api/status", (req, res) => {
   });
 });
 
-// Debug endpoint to check project types in DB
-app.get("/api/debug/projects-types", async (req, res) => {
-  try {
-    const Project = mongoose.model("Project");
-    const allProjects = await Project.find(
-      {},
-      { title: 1, type: 1, _id: 1 }
-    ).limit(50);
-    const typeCounts = await Project.aggregate([
-      { $group: { _id: "$type", count: { $sum: 1 } } },
-    ]);
-    const missingType = await Project.countDocuments({
-      type: { $exists: false },
-    });
-
-    res.json({
-      success: true,
-      data: {
-        projects: allProjects,
-        typeCounts,
-        missingType,
-        total: allProjects.length,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
-});
-
 // Error handling for undefined routes
 app.use((req, res, next) => {
   res.status(404).json({

@@ -80,7 +80,7 @@ const SkillsSection = () => {
       category: "Frontend",
       items: ["React", "Tailwind CSS", "Bootsrap", "JavaScript", "TypeScript"],
     },
-    { category: "Backend", items: ["Node.js", "Python", "PHP", "MySQL"] },
+    { category: "Backend", items: ["Node.js", "Python", "PHP"] },
     { category: "Design", items: ["Figma", "Adobe Ilustrator"] },
     { category: "Tools", items: ["Git", "Firebase"] },
   ];
