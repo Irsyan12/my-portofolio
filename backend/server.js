@@ -63,39 +63,58 @@ if (process.env.NODE_ENV === "development") {
 
 // MongoDB connection options for Vercel serverless
 const mongooseOptions = {
-  bufferCommands: false,
+  bufferCommands: false, // Disable buffering in serverless
   maxPoolSize: 10,
-  serverSelectionTimeoutMS: 5000,
+  serverSelectionTimeoutMS: 10000,
   socketTimeoutMS: 45000,
 };
 
-// Connect to MongoDB with better error handling for serverless
-let isConnected = false;
+// Connection cache for serverless
+let cachedConnection = null;
 
 const connectDB = async () => {
-  if (isConnected) {
-    console.log("Using existing MongoDB connection");
-    return;
+  if (cachedConnection && mongoose.connection.readyState === 1) {
+    console.log("✅ Using cached MongoDB connection");
+    return cachedConnection;
   }
 
   try {
-    const db = await mongoose.connect(process.env.MONGO_URI, mongooseOptions);
-    isConnected = db.connections[0].readyState === 1;
+    console.log("🔄 Creating new MongoDB connection...");
+    cachedConnection = await mongoose.connect(
+      process.env.MONGO_URI,
+      mongooseOptions
+    );
     console.log("✅ MongoDB Connected Successfully");
     console.log(`📊 Database: ${mongoose.connection.name}`);
+    return cachedConnection;
   } catch (err) {
     console.error("❌ MongoDB Connection Error:", err.message);
-    if (process.env.VERCEL) {
-      // Don't exit in serverless
-      throw err;
-    } else {
+    cachedConnection = null;
+    if (!process.env.VERCEL) {
       process.exit(1);
     }
+    throw err;
   }
 };
 
-// Initial connection
-connectDB();
+// Middleware to ensure DB connection before handling requests
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    res.status(503).json({
+      success: false,
+      message: "Database connection failed",
+      error: error.message,
+    });
+  }
+});
+
+// Initial connection (for local development)
+if (!process.env.VERCEL) {
+  connectDB();
+}
 
 // MongoDB connection events
 mongoose.connection.on("disconnected", () => {
