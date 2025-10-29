@@ -28,28 +28,12 @@ export const getProjects = async (req, res) => {
     let filter = { isPublic: true };
 
     if (type) {
-      // Backwards compatibility and heuristics:
-      // - If type=project: include documents with explicit type 'project' or missing `type` (legacy)
-      // - If type=certification: include documents with explicit type 'certification' OR
-      //   documents that have certificate-like fields (certificateInstitution, certificateLink, imageUrl)
-      //   or text hints in shortDescription (coursera, certificate, certif...). This helps surface
-      //   previously-imported/seeded certificate entries that were labeled as 'project'.
+      // Simple filter by type (assumes migration script has run and all docs have correct type)
+      // For legacy compatibility: if type=project, also include docs without type field
       if (type === "project") {
         filter.$or = [{ type: "project" }, { type: { $exists: false } }];
-      } else if (type === "certification") {
-        filter.$or = [
-          { type: "certification" },
-          { certificateInstitution: { $exists: true, $ne: "" } },
-          { certificateLink: { $exists: true, $ne: "" } },
-          { imageUrl: { $exists: true, $ne: "" } },
-          {
-            shortDescription: {
-              $regex: "certif|certificate|coursera",
-              $options: "i",
-            },
-          },
-        ];
       } else {
+        // Direct match for certification or other types
         filter.type = type;
       }
     }
@@ -117,21 +101,9 @@ export const getAllProjectsAdmin = async (req, res) => {
     let filter = {};
 
     if (type) {
+      // Simple filter by type
       if (type === "project") {
         filter.$or = [{ type: "project" }, { type: { $exists: false } }];
-      } else if (type === "certification") {
-        filter.$or = [
-          { type: "certification" },
-          { certificateInstitution: { $exists: true, $ne: "" } },
-          { certificateLink: { $exists: true, $ne: "" } },
-          { imageUrl: { $exists: true, $ne: "" } },
-          {
-            shortDescription: {
-              $regex: "certif|certificate|coursera",
-              $options: "i",
-            },
-          },
-        ];
       } else {
         filter.type = type;
       }
