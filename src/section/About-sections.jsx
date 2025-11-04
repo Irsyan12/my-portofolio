@@ -1,8 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
-import { FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+import { FaEnvelope, FaMapMarkerAlt, FaRedoAlt } from "react-icons/fa";
 import TechStack from "../components/TechStack";
-import { fetchExperiences } from "../firebase/experiencesService"; // Assuming this path is correct
+import { experiencesAPI } from "../api";
 
 const AboutSection = () => {
   return (
@@ -139,14 +139,16 @@ const ExperienceSection = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const experiencesData = await fetchExperiences(); // Fetches experiences (likely sorted asc by 'order' from service)
-        // Sort experiences by 'order' in descending order (highest order first)
-        const sortedExperiences = experiencesData.sort((a, b) => {
-          const orderA = typeof a.order === "number" ? a.order : -Infinity;
-          const orderB = typeof b.order === "number" ? b.order : -Infinity;
-          return orderB - orderA;
-        });
-        setExperiences(sortedExperiences);
+        const response = await experiencesAPI.getAll();
+        if (response.success) {
+          // Sort experiences by 'order' in descending order (highest order first)
+          const sortedExperiences = response.data.sort((a, b) => {
+            const orderA = typeof a.order === "number" ? a.order : -Infinity;
+            const orderB = typeof b.order === "number" ? b.order : -Infinity;
+            return orderB - orderA;
+          });
+          setExperiences(sortedExperiences);
+        }
       } catch (err) {
         console.error("Error loading experiences for public page:", err);
         setError("Failed to load experiences. Please try again later.");
@@ -194,8 +196,41 @@ const ExperienceSection = () => {
           ))}
         </div>
       ) : error ? (
-        <div className="text-center text-red-400 bg-red-900/20 p-4 rounded-md">
-          {error}
+        <div className="text-center text-red-400 bg-red-900/20 p-6 rounded-md">
+          <p className="mb-4">{error}</p>
+          <button
+            onClick={() => {
+              setError(null);
+              setIsLoading(true);
+              // Re-fetch experiences
+              experiencesAPI
+                .getAll()
+                .then((response) => {
+                  if (response.success) {
+                    const sortedExperiences = response.data.sort((a, b) => {
+                      const orderA =
+                        typeof a.order === "number" ? a.order : -Infinity;
+                      const orderB =
+                        typeof b.order === "number" ? b.order : -Infinity;
+                      return orderB - orderA;
+                    });
+                    setExperiences(sortedExperiences);
+                  }
+                })
+                .catch((err) => {
+                  console.error("Error reloading experiences:", err);
+                  setError(
+                    "Failed to load experiences. Please try again later."
+                  );
+                })
+                .finally(() => {
+                  setIsLoading(false);
+                });
+            }}
+            className="flex items-center gap-2 mx-auto bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 px-4 py-2 rounded-lg transition-all duration-300 border border-red-500/30 hover:border-red-500/50"
+          >
+            <FaRedoAlt className="text-sm" />
+          </button>
         </div>
       ) : experiences.length === 0 ? (
         <div className="text-center text-gray-400">
@@ -226,7 +261,7 @@ const ExperienceSection = () => {
                   </span>
                 </div>
                 <div className="md:w-3/5 bg-white/5 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-color1/10 hover:shadow-lg hover:-translate-y-1 backdrop-blur-xs border border-white/10">
-                  <h3 className="text-xl font-bold mb-2">{exp.role}</h3>
+                  <h3 className="text-xl font-bold mb-2">{exp.title}</h3>
                   <h4 className="text-lg text-color1 mb-4 flex items-center gap-2">
                     <span className="w-3 h-3 bg-color1 rounded-full inline-block"></span>
                     {exp.company}

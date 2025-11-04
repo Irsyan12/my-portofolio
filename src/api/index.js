@@ -262,6 +262,8 @@ export const experiencesAPI = {
 
 // Messages API
 export const messagesAPI = {
+  create: (data) => apiClient.post("/messages", data, { skipAuth: true }),
+
   send: (data) => apiClient.post("/messages", data, { skipAuth: true }),
 
   getAll: (params = {}) => {
@@ -290,6 +292,8 @@ export const feedbackAPI = {
     });
   },
 
+  create: (data) => apiClient.post("/feedback", data, { skipAuth: true }),
+
   submit: (rating) =>
     apiClient.post("/feedback", { rating }, { skipAuth: true }),
 
@@ -308,6 +312,13 @@ export const feedbackAPI = {
 // Analytics API
 export const analyticsAPI = {
   track: (data) => apiClient.post("/visits/track", data, { skipAuth: true }),
+
+  updateDuration: (visitId, duration) =>
+    apiClient.patch(
+      `/visits/${visitId}/duration`,
+      { duration },
+      { skipAuth: true }
+    ),
 
   getAnalytics: (params = {}) => {
     const queryString = new URLSearchParams(params).toString();

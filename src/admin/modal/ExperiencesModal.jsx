@@ -102,7 +102,7 @@ const ExperienceModal = ({ experience, onSave, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-[#1E1E1E] mx-10 md:mx-auto rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
         <h2 className="text-color1 text-2xl font-bold mb-4">
-          {experience ? "Edit Experience" : "Edit Experience"}
+          {experience ? "Edit Experience" : "Add Experience"}
         </h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -227,7 +227,7 @@ const ExperienceModal = ({ experience, onSave, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="text-gray-300 hover:text-white transition-colors px-4 py-2"
+              className="text-gray-300 cursor-pointer hover:text-white transition-colors px-4 py-2"
             >
               Cancel
             </button>

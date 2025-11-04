@@ -1,10 +1,9 @@
-import { db } from "../firebase/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { messagesAPI } from "../api";
 import axios from "axios";
 
 const sendMessage = async (formData, setSnackbar) => {
   const { name, email, subject, message } = formData;
-  const web3formAccessKey = "896a421d-8d9e-40b3-973a-a3e01c6d08cf"; // Ganti dengan key kamu
+  const web3formAccessKey = "896a421d-8d9e-40b3-973a-a3e01c6d08cf";
 
   if (!name || !email || !subject || !message) {
     setSnackbar({
@@ -16,13 +15,12 @@ const sendMessage = async (formData, setSnackbar) => {
   }
 
   try {
-    // Simpan ke Firestore
-    await addDoc(collection(db, "messages"), {
+    // Simpan ke MongoDB via backend
+    await messagesAPI.create({
       name,
       email,
       subject,
       message,
-      timestamp: serverTimestamp(),
     });
 
     // Kirim ke Web3Forms

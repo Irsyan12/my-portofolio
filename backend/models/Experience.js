@@ -34,7 +34,6 @@ const experienceSchema = new mongoose.Schema(
   }
 );
 
-// Index untuk sorting berdasarkan order
 experienceSchema.index({ order: 1 });
 
 export default mongoose.model("Experience", experienceSchema);

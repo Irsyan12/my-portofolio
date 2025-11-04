@@ -344,7 +344,7 @@ const ExperiencesPage = () => {
                   <th className="p-4"></th>
                   <th className="p-4 text-center">Order</th>
                   <th className="p-4 text-left">Period</th>
-                  <th className="p-4 text-left">Role</th>
+                  <th className="p-4 text-left">Title</th>
                   <th className="p-4 text-left">Company</th>
                   <th className="p-4 text-right">Actions</th>
                 </tr>

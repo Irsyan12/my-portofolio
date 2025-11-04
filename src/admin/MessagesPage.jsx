@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  FaEnvelope,
-  FaTrash,
-  FaStar,
-  FaRegStar,
-  FaEye,
-  FaArchive,
-  FaCircle,
-  FaEnvelopeOpen,
-} from "react-icons/fa";
+import { FaStar, FaEye, FaArchive, FaCircle } from "react-icons/fa";
 import { messagesAPI } from "../api";
+import MessageCard from "./components/MessageCard";
 import {
   Snackbar,
   Alert,
@@ -38,6 +30,7 @@ const MessagesPage = () => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const [showStarredOnly, setShowStarredOnly] = useState(false);
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
@@ -322,11 +315,70 @@ const MessagesPage = () => {
     return statusConfig[status] || statusConfig.new;
   };
 
+  // Toggle filter starred messages
+  const handleToggleStarFilter = () => {
+    setShowStarredOnly((prev) => !prev);
+  };
+
+  // Filter messages based on starred filter
+  const getFilteredMessages = (status) => {
+    const filteredByStatus = messages.filter((msg) => {
+      if (status === "archived") {
+        return msg.status === "archived";
+      }
+      return msg.status !== "archived";
+    });
+
+    if (showStarredOnly) {
+      return filteredByStatus.filter((msg) => msg.isStarred);
+    }
+
+    return filteredByStatus;
+  };
+
+  // Get starred messages count
+  const starredCount = messages.filter((msg) => msg.isStarred).length;
+
   return (
     <div className="w-full max-w-5xl mx-auto px-2 sm:px-4">
-      <h1 className="text-color1 text-2xl md:text-3xl font-bold mb-6">
-        Messages
-      </h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-color1 text-2xl md:text-3xl font-bold mb-6">
+          Messages
+        </h1>
+        {/* Filter starred messages button */}
+        <div className="flex items-center gap-2">
+          <Tooltip
+            title={
+              showStarredOnly
+                ? "Show all messages"
+                : `Show starred messages (${starredCount})`
+            }
+          >
+            <IconButton
+              size="small"
+              onClick={handleToggleStarFilter}
+              sx={{
+                color: showStarredOnly ? "#fbbf24" : "#c5f82a",
+                backgroundColor: showStarredOnly
+                  ? "rgba(251, 191, 36, 0.1)"
+                  : "transparent",
+                "&:hover": {
+                  backgroundColor: showStarredOnly
+                    ? "rgba(251, 191, 36, 0.2)"
+                    : "rgba(197, 248, 42, 0.1)",
+                },
+              }}
+            >
+              <FaStar size={16} />
+            </IconButton>
+          </Tooltip>
+          {starredCount > 0 && (
+            <span className="text-xs text-gray-400 hidden sm:inline">
+              {starredCount} starred
+            </span>
+          )}
+        </div>
+      </div>
 
       {isLoading ? (
         <div className="flex justify-center items-center h-40">
@@ -336,357 +388,68 @@ const MessagesPage = () => {
         <div className="rounded-lg p-8 text-center">
           <p className="text-gray-300">No messages found.</p>
         </div>
+      ) : getFilteredMessages("active").length === 0 &&
+        getFilteredMessages("archived").length === 0 ? (
+        <div className="rounded-lg p-8 text-center">
+          <FaStar size={48} className="text-gray-600 mx-auto mb-4" />
+          <p className="text-gray-300">No starred messages found.</p>
+          <button
+            onClick={handleToggleStarFilter}
+            className="mt-4 text-color1 hover:underline"
+          >
+            Show all messages
+          </button>
+        </div>
       ) : (
         <>
           {/* Active Messages (new & read) */}
-          <div className="grid gap-6 md:grid-cols-2">
-            {messages
-              .filter((msg) => msg.status !== "archived")
-              .map((message) => {
+          {getFilteredMessages("active").length > 0 && (
+            <div className="grid gap-6 md:grid-cols-2">
+              {getFilteredMessages("active").map((message) => {
                 const statusBadge = getStatusBadge(message.status);
                 return (
-                  <div
+                  <MessageCard
                     key={message._id}
-                    className="relative bg-[#18181b] rounded-xl shadow-lg border border-gray-800 p-6 flex flex-col gap-4 transition-transform hover:-translate-y-0.5 hover:shadow-2xl overflow-x-auto md:overflow-visible"
-                  >
-                    {/* Status Badge & Star at top left */}
-                    <div className="absolute top-4 left-4 flex items-center gap-2">
-                      <Chip
-                        icon={statusBadge.icon}
-                        label={statusBadge.label}
-                        size="small"
-                        color={statusBadge.color}
-                        variant={statusBadge.variant}
-                        sx={{
-                          height: "24px",
-                          fontSize: "0.75rem",
-                          "& .MuiChip-icon": {
-                            fontSize: "0.75rem",
-                            marginLeft: "8px",
-                          },
-                        }}
-                      />
-                      <Tooltip
-                        title={
-                          message.status === "read"
-                            ? "Mark as unread"
-                            : "Mark as read"
-                        }
-                      >
-                        <IconButton
-                          size="small"
-                          onClick={() => handleToggleRead(message)}
-                          sx={{ color: "#c5f82a" }}
-                        >
-                          {message.status === "read" ? (
-                            <FaEnvelopeOpen size={16} />
-                          ) : (
-                            <FaEnvelope size={16} />
-                          )}
-                        </IconButton>
-                      </Tooltip>
-                    </div>
-
-                    {/* Time at top right */}
-                    <div className="absolute top-4 right-6 flex items-center gap-1 text-xs text-gray-400">
-                      <svg width="16" height="16" fill="none" className="mr-1">
-                        <path
-                          d="M8 3v5l4 2"
-                          stroke="#c5f82a"
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <circle
-                          cx="8"
-                          cy="8"
-                          r="6.25"
-                          stroke="#c5f82a"
-                          strokeWidth="1.5"
-                        />
-                      </svg>
-                      {formatTimestamp(message.createdAt)}
-                      <Tooltip title={message.isStarred ? "Unstar" : "Star"}>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleToggleStar(message._id)}
-                          sx={{
-                            color: message.isStarred ? "#fbbf24" : "#6b7280",
-                          }}
-                        >
-                          {message.isStarred ? (
-                            <FaStar size={16} />
-                          ) : (
-                            <FaRegStar size={16} />
-                          )}
-                        </IconButton>
-                      </Tooltip>
-                    </div>
-                    {/* Card Header */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 mt-8">
-                      <div className="flex-shrink-0 bg-color1/10 rounded-full p-3">
-                        <FaEnvelope size={28} className="text-color1" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <span className="font-semibold text-lg text-white break-words">
-                          {message.name}
-                        </span>
-                        <div className="text-color1 font-semibold text-sm mt-1 break-words">
-                          {message.subject}
-                        </div>
-                        <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-gray-400">
-                          <Tooltip title={`Mail to ${message.email}`}>
-                            <IconButton
-                              size="small"
-                              onClick={() =>
-                                window.open(`mailto:${message.email}`, "_blank")
-                              }
-                              sx={{ color: "#c5f82a" }}
-                            >
-                              <FaEnvelope size={16} />
-                            </IconButton>
-                          </Tooltip>
-                          <span className="break-all">{message.email}</span>
-                        </div>
-                      </div>
-
-                      {/* Action buttons */}
-                      <div className="flex items-center gap-2">
-                        {/* Toggle Read/Unread */}
-
-                        {/* Archive button */}
-                        <Tooltip title="Archive">
-                          <IconButton
-                            size="small"
-                            onClick={() => handleArchive(message._id)}
-                            sx={{ color: "#9ca3af" }}
-                          >
-                            <FaArchive size={16} />
-                          </IconButton>
-                        </Tooltip>
-
-                        {/* Delete button */}
-                        <Tooltip title="Delete message">
-                          <IconButton
-                            size="small"
-                            onClick={() => openDeleteDialog(message)}
-                            sx={{ color: "#ef4444" }}
-                          >
-                            <FaTrash size={16} />
-                          </IconButton>
-                        </Tooltip>
-                      </div>
-                    </div>
-
-                    {/* Message Content Card */}
-                    <div className="bg-[#23232a] h-full rounded-lg p-4 mt-2 border border-gray-700 flex items-start gap-3 overflow-x-auto md:overflow-visible">
-                      <svg
-                        width="24"
-                        height="24"
-                        fill="none"
-                        className="flex-shrink-0 text-color1"
-                      >
-                        <rect
-                          x="2"
-                          y="6"
-                          width="20"
-                          height="12"
-                          rx="3"
-                          stroke="#c5f82a"
-                          strokeWidth="1.5"
-                        />
-                        <path
-                          d="M2 7l10 6 10-6"
-                          stroke="#c5f82a"
-                          strokeWidth="1.5"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <div
-                        className="text-gray-200 text-base break-words"
-                        dangerouslySetInnerHTML={{
-                          __html: message.message.replace(/\n/g, "<br />"),
-                        }}
-                      ></div>
-                    </div>
-                  </div>
+                    message={message}
+                    statusBadge={statusBadge}
+                    formatTimestamp={formatTimestamp}
+                    handleToggleRead={handleToggleRead}
+                    handleToggleStar={handleToggleStar}
+                    handleArchive={handleArchive}
+                    handleUnarchive={handleUnarchive}
+                    openDeleteDialog={openDeleteDialog}
+                    isArchived={false}
+                  />
                 );
               })}
-          </div>
+            </div>
+          )}
 
           {/* Archived Messages Section */}
-          {messages.filter((msg) => msg.status === "archived").length > 0 && (
+          {getFilteredMessages("archived").length > 0 && (
             <>
               <div className="my-8 border-t border-gray-700"></div>
               <h2 className="text-color1 text-xl md:text-2xl font-bold mb-4">
                 Archived Messages
               </h2>
               <div className="grid gap-6 md:grid-cols-2">
-                {messages
-                  .filter((msg) => msg.status === "archived")
-                  .map((message) => {
-                    const statusBadge = getStatusBadge(message.status);
-                    return (
-                      <div
-                        key={message._id}
-                        className="relative bg-[#18181b] rounded-xl shadow-lg border border-gray-800 p-6 flex flex-col gap-4 transition-transform hover:-translate-y-1 hover:shadow-2xl overflow-x-auto md:overflow-visible opacity-75"
-                      >
-                        {/* Status Badge & Star at top left */}
-                        <div className="absolute top-4 left-4 flex items-center gap-2">
-                          <Chip
-                            icon={statusBadge.icon}
-                            label={statusBadge.label}
-                            size="small"
-                            color={statusBadge.color}
-                            variant={statusBadge.variant}
-                            sx={{
-                              height: "24px",
-                              fontSize: "0.75rem",
-                              "& .MuiChip-icon": {
-                                fontSize: "0.75rem",
-                                marginLeft: "8px",
-                              },
-                            }}
-                          />
-                          <Tooltip
-                            title={message.isStarred ? "Unstar" : "Star"}
-                          >
-                            <IconButton
-                              size="small"
-                              onClick={() => handleToggleStar(message._id)}
-                              sx={{
-                                color: message.isStarred
-                                  ? "#fbbf24"
-                                  : "#6b7280",
-                              }}
-                            >
-                              {message.isStarred ? (
-                                <FaStar size={16} />
-                              ) : (
-                                <FaRegStar size={16} />
-                              )}
-                            </IconButton>
-                          </Tooltip>
-                        </div>
-
-                        {/* Time at top right */}
-                        <div className="absolute top-4 right-6 flex items-center gap-1 text-xs text-gray-400">
-                          <svg
-                            width="16"
-                            height="16"
-                            fill="none"
-                            className="mr-1"
-                          >
-                            <path
-                              d="M8 3v5l4 2"
-                              stroke="#c5f82a"
-                              strokeWidth="1.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                            <circle
-                              cx="8"
-                              cy="8"
-                              r="6.25"
-                              stroke="#c5f82a"
-                              strokeWidth="1.5"
-                            />
-                          </svg>
-                          {formatTimestamp(message.createdAt)}
-                        </div>
-
-                        {/* Card Header */}
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 mt-8">
-                          <div className="flex-shrink-0 bg-color1/10 rounded-full p-3">
-                            <FaEnvelope size={28} className="text-color1" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <span className="font-semibold text-lg text-white break-words">
-                              {message.name}
-                            </span>
-                            <div className="text-color1 font-semibold text-sm mt-1 break-words">
-                              {message.subject}
-                            </div>
-                            <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-gray-400">
-                              <FaEnvelope size={14} className="mr-1" />
-                              <span className="break-all">{message.email}</span>
-                              <Tooltip title={`Mail to ${message.email}`}>
-                                <IconButton
-                                  size="small"
-                                  onClick={() =>
-                                    window.open(
-                                      `mailto:${message.email}`,
-                                      "_blank"
-                                    )
-                                  }
-                                  sx={{ color: "#c5f82a" }}
-                                >
-                                  <FaEnvelope size={16} />
-                                </IconButton>
-                              </Tooltip>
-                            </div>
-                          </div>
-
-                          {/* Action buttons */}
-                          <div className="flex items-center gap-2">
-                            {/* Unarchive button */}
-                            <Tooltip title="Unarchive">
-                              <IconButton
-                                size="small"
-                                onClick={() => handleUnarchive(message._id)}
-                                sx={{ color: "#c5f82a" }}
-                              >
-                                <FaEnvelope size={16} />
-                              </IconButton>
-                            </Tooltip>
-
-                            {/* Delete button */}
-                            <Tooltip title="Delete message">
-                              <IconButton
-                                size="small"
-                                onClick={() => openDeleteDialog(message)}
-                                sx={{ color: "#ef4444" }}
-                              >
-                                <FaTrash size={16} />
-                              </IconButton>
-                            </Tooltip>
-                          </div>
-                        </div>
-
-                        {/* Message Content Card */}
-                        <div className="bg-[#23232a] h-full rounded-lg p-4 mt-2 border border-gray-700 flex items-start gap-3 overflow-x-auto md:overflow-visible">
-                          <svg
-                            width="24"
-                            height="24"
-                            fill="none"
-                            className="flex-shrink-0 text-color1"
-                          >
-                            <rect
-                              x="2"
-                              y="6"
-                              width="20"
-                              height="12"
-                              rx="3"
-                              stroke="#c5f82a"
-                              strokeWidth="1.5"
-                            />
-                            <path
-                              d="M2 7l10 6 10-6"
-                              stroke="#c5f82a"
-                              strokeWidth="1.5"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                          <div
-                            className="text-gray-200 text-base break-words"
-                            dangerouslySetInnerHTML={{
-                              __html: message.message.replace(/\n/g, "<br />"),
-                            }}
-                          ></div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                {getFilteredMessages("archived").map((message) => {
+                  const statusBadge = getStatusBadge(message.status);
+                  return (
+                    <MessageCard
+                      key={message._id}
+                      message={message}
+                      statusBadge={statusBadge}
+                      formatTimestamp={formatTimestamp}
+                      handleToggleRead={handleToggleRead}
+                      handleToggleStar={handleToggleStar}
+                      handleArchive={handleArchive}
+                      handleUnarchive={handleUnarchive}
+                      openDeleteDialog={openDeleteDialog}
+                      isArchived={true}
+                    />
+                  );
+                })}
               </div>
             </>
           )}

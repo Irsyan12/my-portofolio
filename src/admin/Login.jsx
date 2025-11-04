@@ -129,7 +129,7 @@ const LoginPage = () => {
           />
           <button
             type="submit"
-            className="w-full bg-color1 text-black px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors mt-4 flex items-center justify-center"
+            className="w-full cursor-pointer bg-color1 text-black px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors mt-4 flex items-center justify-center"
             disabled={isLoading}
           >
             {isLoading ? (

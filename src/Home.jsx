@@ -9,6 +9,7 @@ import ContactSection from "./section/Contact-me";
 import Footer from "./section/Footer";
 import CursorGlow from "./components/CursorGlow";
 import ChatbotPopup from "./components/ChatbotPopup";
+import FeedbackPopup from "./components/FeedbackPopup";
 import { trackVisit, trackPageDuration } from "./utils/trackVisit";
 
 function Home() {
@@ -43,6 +44,7 @@ function Home() {
       <ContactSection />
       <Footer />
       <ChatbotPopup />
+      <FeedbackPopup />
     </div>
   );
 }

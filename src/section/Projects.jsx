@@ -1,13 +1,12 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { db } from "../firebase/firebase"; // Adjust path if necessary
+import { projectsAPI } from "../api";
 import ProjectDetailModal from "../components/ProjectDetailModal"; // Import the new modal
 
 // eslint-disable-next-line react/prop-types
 const Projects = ({ limit = 8 }) => {
-  const categories = ["All", "Project", "Certification"];
+  const categories = ["All", "project", "certification"];
   const [activeType, setActiveType] = useState("All");
   const [allProjects, setAllProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -18,14 +17,10 @@ const Projects = ({ limit = 8 }) => {
     const fetchProjects = async () => {
       setIsLoading(true);
       try {
-        const projectsRef = collection(db, "projects");
-        const q = query(projectsRef, orderBy("createdAt", "desc"));
-        const snapshot = await getDocs(q);
-        const projectsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setAllProjects(projectsData);
+        const response = await projectsAPI.getAll();
+        if (response.success) {
+          setAllProjects(response.data);
+        }
       } catch (error) {
         console.error("Error fetching projects:", error);
       } finally {
@@ -49,10 +44,10 @@ const Projects = ({ limit = 8 }) => {
   };
 
   const classColorforType = (type) => {
-    switch (type) {
-      case "Project":
+    switch (type?.toLowerCase()) {
+      case "project":
         return "bg-color1";
-      case "Certification":
+      case "certification":
         return "bg-teal-400";
       default:
         return "bg-gray-500";
@@ -62,7 +57,9 @@ const Projects = ({ limit = 8 }) => {
   let itemsToDisplay = [];
   if (!isLoading && allProjects.length > 0) {
     const projectsForCategoryFilter = allProjects.filter((project) =>
-      activeType === "All" ? true : project.type === activeType
+      activeType === "All"
+        ? true
+        : project.type?.toLowerCase() === activeType.toLowerCase()
     );
 
     if (limit >= 999) {
@@ -70,10 +67,10 @@ const Projects = ({ limit = 8 }) => {
     } else {
       if (activeType === "All") {
         const projectItems = allProjects
-          .filter((p) => p.type === "Project")
+          .filter((p) => p.type?.toLowerCase() === "project")
           .slice(0, 4);
         const certificationItems = allProjects
-          .filter((p) => p.type === "Certification")
+          .filter((p) => p.type?.toLowerCase() === "certification")
           .slice(0, 4);
         itemsToDisplay = [...projectItems, ...certificationItems].slice(
           0,
@@ -150,7 +147,7 @@ const Projects = ({ limit = 8 }) => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {itemsToDisplay.map((project, index) => (
             <div
-              key={project.id}
+              key={project._id}
               className="group relative rounded-xl overflow-hidden bg-white/5 hover:bg-white/10 transition-colors"
               data-aos="fade-up"
               data-aos-delay={index * 100}

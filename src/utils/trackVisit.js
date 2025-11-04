@@ -11,7 +11,7 @@ export const trackVisit = async () => {
 
     // Check if last visit was more than 15 minutes ago
     if (lastVisit && now - parseInt(lastVisit) < 15 * 60 * 1000) {
-      console.log("Visit already tracked within last 15 minutes");
+      // console.log("Visit already tracked within last 15 minutes");
       return;
     }
 
@@ -77,7 +77,16 @@ const updateVisitDuration = async () => {
       return;
     }
 
-    // Send duration update using sendBeacon (reliable for page unload)
+    // Try using analyticsAPI first
+    try {
+      await analyticsAPI.updateDuration(visitId, duration);
+      // console.log(`📊 Duration updated: ${duration}s`);
+      return;
+    } catch (apiError) {
+      console.warn("API call failed, using sendBeacon fallback:", apiError);
+    }
+
+    // Fallback: Send duration update using sendBeacon (reliable for page unload)
     const data = JSON.stringify({ duration });
     const blob = new Blob([data], { type: "application/json" });
     const url = `${
@@ -87,7 +96,7 @@ const updateVisitDuration = async () => {
     // sendBeacon is more reliable than fetch during page unload
     if (navigator.sendBeacon) {
       navigator.sendBeacon(url, blob);
-      console.log(`📊 Duration updated: ${duration}s`);
+      // console.log(`📊 Duration updated via sendBeacon: ${duration}s`);
     } else {
       // Fallback to fetch with keepalive
       fetch(url, {
