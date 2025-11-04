@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { FaEnvelope, FaMapMarkerAlt, FaRedoAlt } from "react-icons/fa";
 import TechStack from "../components/TechStack";
 import { experiencesAPI } from "../api";
+import { fetchWithRetry } from "../utils/fetchWithRetry";
 
 const AboutSection = () => {
   return (
@@ -139,23 +140,40 @@ const ExperienceSection = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const response = await experiencesAPI.getAll();
-        if (response.success) {
-          // Sort experiences by 'order' in descending order (highest order first)
-          const sortedExperiences = response.data.sort((a, b) => {
-            const orderA = typeof a.order === "number" ? a.order : -Infinity;
-            const orderB = typeof b.order === "number" ? b.order : -Infinity;
-            return orderB - orderA;
-          });
-          setExperiences(sortedExperiences);
-        }
+
+        // Fetch with retry logic - will retry for 1 minute
+        const response = await fetchWithRetry(
+          async () => {
+            const res = await experiencesAPI.getAll();
+            if (!res.success) {
+              throw new Error("Failed to fetch experiences");
+            }
+            return res;
+          },
+          {
+            retryDelay: 3000, // 3 seconds between retries
+            timeout: 60000, // 1 minute total
+          }
+        );
+
+        // Sort experiences by 'order' in descending order (highest order first)
+        const sortedExperiences = response.data.sort((a, b) => {
+          const orderA = typeof a.order === "number" ? a.order : -Infinity;
+          const orderB = typeof b.order === "number" ? b.order : -Infinity;
+          return orderB - orderA;
+        });
+        setExperiences(sortedExperiences);
+        console.log("Experiences loaded:", sortedExperiences);
       } catch (err) {
         console.error("Error loading experiences for public page:", err);
-        setError("Failed to load experiences. Please try again later.");
+        setError(
+          "Failed to load experiences after multiple attempts. Please refresh the page."
+        );
       } finally {
         setIsLoading(false);
       }
     };
+
     loadExperiences();
   }, []);
 
@@ -175,25 +193,41 @@ const ExperienceSection = () => {
       </div>
 
       {isLoading ? (
-        <div className="space-y-6">
-          {[...Array(3)].map((_, idx) => (
-            <div
-              key={idx}
-              className="flex flex-col md:flex-row gap-10 relative animate-pulse"
-            >
-              <div className="md:w-1/4 flex items-center md:items-start md:justify-end">
-                <div className="sm:absolute left-0 md:left-1/4 w-8 h-8 rounded-full bg-color1/30 -ml-3 mt-1 hidden md:hidden" />
-                <div className="w-6 h-6 rounded-full bg-color1/30 mr-4 md:flex" />
-                <span className="bg-white/10 text-transparent px-4 py-2 rounded-full w-24 h-6 block" />
+        <div className="relative">
+          {/* Vertical timeline line for skeleton */}
+          <div className="absolute left-4 md:left-1/4 ml-1 top-2 bottom-2 w-1 bg-color1/30 hidden md:block"></div>
+
+          <div className="space-y-6 relative">
+            {[...Array(3)].map((_, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col md:flex-row gap-10 relative animate-pulse"
+              >
+                <div className="md:w-1/4 flex items-center md:items-start md:justify-end">
+                  <div className="absolute left-0 md:left-1/4 w-8 h-8 rounded-full bg-color1/30 -ml-3 mt-1 hidden md:flex" />
+                  <div className="w-6 h-6 rounded-full bg-color1/30 mr-4 md:hidden" />
+                  <div className="bg-white/10 h-8 rounded-full w-32" />
+                </div>
+                <div className="md:w-3/5 bg-white/5 p-6 rounded-lg border border-white/10">
+                  <div className="h-6 bg-white/20 rounded w-2/3 mb-3" />
+                  <div className="h-5 bg-color1/20 rounded w-1/2 mb-4" />
+                  <div className="space-y-2">
+                    <div className="h-4 bg-gray-400/20 rounded w-full" />
+                    <div className="h-4 bg-gray-400/20 rounded w-5/6" />
+                    <div className="h-4 bg-gray-400/20 rounded w-4/6" />
+                  </div>
+                </div>
               </div>
-              <div className="md:w-3/5 bg-white/10 p-6 rounded-lg">
-                <div className="h-6 bg-white/20 rounded w-1/2 mb-2" />
-                <div className="h-5 bg-color1/20 rounded w-1/3 mb-4" />
-                <div className="h-4 bg-gray-400/20 rounded w-full mb-1" />
-                <div className="h-4 bg-gray-400/20 rounded w-5/6" />
-              </div>
+            ))}
+          </div>
+
+          {/* Loading indicator text */}
+          <div className="text-center mt-8 text-gray-400 text-sm">
+            <div className="inline-flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-color1 border-t-transparent rounded-full animate-spin" />
+              <span>Loading experiences... Please wait</span>
             </div>
-          ))}
+          </div>
         </div>
       ) : error ? (
         <div className="text-center text-red-400 bg-red-900/20 p-6 rounded-md">

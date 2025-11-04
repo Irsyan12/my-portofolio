@@ -44,7 +44,6 @@ export const trackVisit = async () => {
 
       // Update last visit timestamp
       localStorage.setItem("last_visit_tracked", now.toString());
-      console.log("✅ Visit tracked successfully", { visitId });
 
       // Set timeout to clear localStorage after 15 minutes
       setTimeout(() => {

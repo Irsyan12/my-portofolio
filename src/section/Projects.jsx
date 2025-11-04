@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { projectsAPI } from "../api";
-import ProjectDetailModal from "../components/ProjectDetailModal"; // Import the new modal
+import ProjectDetailModal from "../components/ProjectDetailModal";
+import { fetchWithRetry } from "../utils/fetchWithRetry";
 
 // eslint-disable-next-line react/prop-types
 const Projects = ({ limit = 8 }) => {
@@ -17,12 +18,30 @@ const Projects = ({ limit = 8 }) => {
     const fetchProjects = async () => {
       setIsLoading(true);
       try {
-        const response = await projectsAPI.getAll();
-        if (response.success) {
-          setAllProjects(response.data);
-        }
+        // Fetch with retry logic - will retry for 1 minute
+        const response = await fetchWithRetry(
+          async () => {
+            const res = await projectsAPI.getAll();
+            if (!res.success) {
+              throw new Error("Failed to fetch projects");
+            }
+            return res;
+          },
+          {
+            retryDelay: 3000, // 3 seconds between retries
+            timeout: 60000, // 1 minute total
+          }
+        );
+
+        setAllProjects(response.data);
+        console.log("Projects loaded:", response.data);
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error(
+          "Error fetching projects after multiple attempts:",
+          error
+        );
+        // Keep empty array, user can refresh
+        setAllProjects([]);
       } finally {
         setIsLoading(false);
       }
@@ -125,19 +144,29 @@ const Projects = ({ limit = 8 }) => {
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {Array.from({ length: limit }).map((_, idx) => (
-            <div
-              key={idx}
-              className="rounded-xl overflow-hidden bg-white/5 animate-pulse"
-            >
-              <div className="relative aspect-4/3 bg-gray-700/40" />
-              <div className="p-6">
-                <div className="h-4 w-16 bg-gray-700/40 rounded-full mb-2" />
-                <div className="h-6 w-32 bg-gray-700/40 rounded mb-2" />
+        <div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {Array.from({ length: limit }).map((_, idx) => (
+              <div
+                key={idx}
+                className="rounded-xl overflow-hidden bg-white/5 animate-pulse"
+              >
+                <div className="relative aspect-4/3 bg-gray-700/40" />
+                <div className="p-6">
+                  <div className="h-4 w-20 bg-gray-700/40 rounded-full mb-3" />
+                  <div className="h-6 w-32 bg-gray-700/40 rounded mb-2" />
+                </div>
               </div>
+            ))}
+          </div>
+
+          {/* Loading indicator text */}
+          <div className="text-center mt-8 text-gray-400 text-sm">
+            <div className="inline-flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-color1 border-t-transparent rounded-full animate-spin" />
+              <span>Loading projects... Please wait</span>
             </div>
-          ))}
+          </div>
         </div>
       ) : itemsToDisplay.length === 0 ? (
         <div className="text-center text-gray-400">
