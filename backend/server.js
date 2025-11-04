@@ -33,7 +33,8 @@ const allowedOrigins = [
   process.env.CLIENT_URL || "http://localhost:3000",
   "http://localhost:5173", // Vite default port
   "http://localhost:5174", // Alternative Vite port
-  "https://irsyanramadhan.my.id",
+  "http://localhost:3000", // React dev server
+  "https://irsyanramadhan.my.id", // Production frontend
 ];
 
 const corsOptions = {
@@ -47,12 +48,15 @@ const corsOptions = {
     ) {
       callback(null, true);
     } else {
+      console.log("❌ CORS blocked origin:", origin);
       callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  exposedHeaders: ["Content-Range", "X-Content-Range"],
+  maxAge: 600, // Cache preflight requests for 10 minutes
 };
 app.use(cors(corsOptions));
 
