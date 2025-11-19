@@ -20,17 +20,19 @@ const AboutSection = () => {
             About Me
           </h2>
           <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-            Hi! I'm a passionate Computer Engineering student at Syiah Kuala
-            University, driven by curiosity and a love for building impactful
-            digital solutions. I thrive at the intersection of{" "}
+            Hi! I'm a passionate Computer Engineering fresh graduate from Syiah
+            Kuala University, driven by curiosity and a love for building
+            impactful digital solutions. I thrive at the intersection of{" "}
             <span className="text-color1 font-semibold">Machine Learning</span>,{" "}
-            <span className="text-color1 font-semibold">Web</span>, and{" "}
+            <span className="text-color1 font-semibold">Web Development</span>,
+            and{" "}
             <span className="text-color1 font-semibold">
               Mobile Development
             </span>
-            . I enjoy solving real-world problems and continuously learning new
+            . I enjoy solving real-world problems and continuously exploring new
             technologies.
           </p>
+
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <FaEnvelope className="text-color1" />
