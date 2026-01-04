@@ -35,7 +35,7 @@ export default function ChatbotPopup() {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_APP_CHATBOT_API_URL}/chat`,
+        `${import.meta.env.VITE_APP_CHATBOT_API_URL}chat`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -46,13 +46,60 @@ export default function ChatbotPopup() {
       const data = await response.json();
       setIsTyping(false);
 
-      // Langsung tampilkan response
+      // Check jika ada error dari backend
+      if (data.error) {
+        console.error("Chatbot API Error:", data.error);
+
+        // Check if it's a quota/rate limit error
+        const isQuotaError =
+          data.error.includes("quota") ||
+          data.error.includes("429") ||
+          data.error.includes("rate limit");
+
+        if (isQuotaError) {
+          setMessages((prev) => [
+            ...prev,
+            {
+              sender: "bot",
+              text: "👋 Hi there! I'm currently experiencing high demand.\n\nWhile I can't respond right now, here are ways to reach me:\n\n📧 Email: irsyanramadhan12@gmail.com\n💼 LinkedIn: linkedin.com/in/irsyanramadhan\n📱 GitHub: github.com/Irsyan12\n\nFeel free to contact me directly! I usually respond within 24 hours.",
+            },
+          ]);
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            {
+              sender: "bot",
+              text: "⚠️ Sorry, the chatbot service is temporarily unavailable. Please try again later or contact me directly via email at irsyanramadhan12@gmail.com",
+            },
+          ]);
+        }
+        return;
+      }
+
+      // Check jika response tidak memiliki reply
+      if (!data.reply) {
+        console.error("No reply from chatbot:", data);
+        setMessages((prev) => [
+          ...prev,
+          {
+            sender: "bot",
+            text: "⚠️ I couldn't process your request. Please try again or reach out via the contact form.",
+          },
+        ]);
+        return;
+      }
+
+      // Tampilkan response yang valid
       setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
     } catch (err) {
+      console.error("Chatbot Fetch Error:", err);
       setIsTyping(false);
       setMessages((prev) => [
         ...prev,
-        { sender: "bot", text: "Terjadi kesalahan saat menghubungi server." },
+        {
+          sender: "bot",
+          text: "❌ Connection error. Unable to reach the chatbot service. Please check your internet connection or try again later.",
+        },
       ]);
     }
   };
