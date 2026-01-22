@@ -244,13 +244,36 @@ export const createProject = async (req, res) => {
 
     // Per-type required field checks
     if (type === "project") {
-      if (!projectData.title || !projectData.description) {
+      if (!projectData.title) {
         return res.status(400).json({
           success: false,
           message: "Missing required fields for project",
-          error: "title and description are required for type 'project'",
+          error: "title is required for type 'project'",
         });
       }
+
+      // Clean up empty optional fields (convert empty strings to undefined)
+      const optionalFields = [
+        "description",
+        "shortDescription",
+        "projectLink",
+        "demoLink",
+        "demoUrl",
+        "githubUrl",
+        "imageUrl",
+        "certificateLink",
+        "certificateInstitution",
+      ];
+
+      optionalFields.forEach((field) => {
+        if (
+          projectData[field] !== undefined &&
+          typeof projectData[field] === "string" &&
+          projectData[field].trim() === ""
+        ) {
+          delete projectData[field]; // Remove empty string fields
+        }
+      });
 
       // Set order if not provided (projects ordering)
       if (!projectData.order) {
@@ -270,6 +293,29 @@ export const createProject = async (req, res) => {
           error: "title is required for type 'certification'",
         });
       }
+
+      // Clean up empty optional fields for certifications too
+      const optionalFields = [
+        "description",
+        "shortDescription",
+        "projectLink",
+        "demoLink",
+        "demoUrl",
+        "githubUrl",
+        "imageUrl",
+        "certificateLink",
+        "certificateInstitution",
+      ];
+
+      optionalFields.forEach((field) => {
+        if (
+          projectData[field] !== undefined &&
+          typeof projectData[field] === "string" &&
+          projectData[field].trim() === ""
+        ) {
+          delete projectData[field]; // Remove empty string fields
+        }
+      });
     }
 
     const newProject = new Project(projectData);
