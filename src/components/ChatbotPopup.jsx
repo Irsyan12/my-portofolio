@@ -61,7 +61,7 @@ export default function ChatbotPopup() {
             ...prev,
             {
               sender: "bot",
-              text: "👋 Hi there! I'm currently experiencing high demand.\n\nWhile I can't respond right now, here are ways to reach me:\n\n📧 Email: irsyanramadhan12@gmail.com\n💼 LinkedIn: linkedin.com/in/irsyanramadhan\n📱 GitHub: github.com/Irsyan12\n\nFeel free to contact me directly! I usually respond within 24 hours.",
+              text: "👋 Hi there! I'm currently experiencing high demand.\n\nWhile I can't respond right now, here are ways to reach me:\n\n📧 Email: irsyanramadhan72@gmail.com\n💼 LinkedIn: linkedin.com/in/irsyanramadhan\n📱 GitHub: github.com/Irsyan12\n\nFeel free to contact me directly! I usually respond within 24 hours.",
             },
           ]);
         } else {
@@ -69,7 +69,7 @@ export default function ChatbotPopup() {
             ...prev,
             {
               sender: "bot",
-              text: "⚠️ Sorry, the chatbot service is temporarily unavailable. Please try again later or contact me directly via email at irsyanramadhan12@gmail.com",
+              text: "⚠️ Sorry, the chatbot service is temporarily unavailable. Please try again later or contact me directly via email at irsyanramadhan72@gmail.com",
             },
           ]);
         }
@@ -98,7 +98,7 @@ export default function ChatbotPopup() {
         ...prev,
         {
           sender: "bot",
-          text: "❌ Connection error. Unable to reach the chatbot service. Please check your internet connection or try again later.",
+          text: "Sorry, I'm unable to connect to the chatbot service. Please try again later or contact me directly via email at irsyanramadhan72@gmail.com",
         },
       ]);
     }
