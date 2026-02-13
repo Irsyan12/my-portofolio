@@ -76,31 +76,33 @@ const TiltedCard = ({
 
   return (
     <div
-      className="relative rounded-xl"
+      className="relative rounded-xl flex justify-center items-center"
       style={{
         width: containerWidth,
         height: containerHeight,
         perspective: "1000px",
-        overflow: "visible", // biar ga terpotong saat tilt
+        overflow: "visible",
         transformStyle: "preserve-3d",
       }}
     >
       <div
         ref={cardRef}
-        className={`transition-transform duration-300 ease-out w-full h-full ${
+        className={`transition-transform duration-300 ease-out ${
           isMobile ? "" : "will-change-transform"
         }`}
         onMouseMove={handleMouseMove}
         onMouseLeave={resetTilt}
         onTouchStart={resetTilt}
         style={{
+          width: containerWidth,
+          height: containerHeight,
           transform: "rotateX(0deg) rotateY(0deg) scale(1)",
           transformStyle: "preserve-3d",
-          borderRadius: "0.75rem", // rounded-xl
+          borderRadius: "0.75rem",
         }}
       >
         <div
-          className="w-full h-full overflow-hidden rounded-xl"
+          className="w-full h-full overflow-hidden rounded-xl flex justify-center items-center"
           style={{ transform: "translateZ(0)" }}
         >
           {imageSrc ? (
@@ -111,7 +113,9 @@ const TiltedCard = ({
               draggable="false"
             />
           ) : (
-            children
+            <div className="w-full h-full flex justify-center items-center">
+              {children}
+            </div>
           )}
         </div>
       </div>

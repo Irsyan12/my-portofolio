@@ -1,13 +1,13 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
-import { db } from "../firebase/firebase"; // Adjust path if necessary
-import ProjectDetailModal from "../components/ProjectDetailModal"; // Import the new modal
+import { projectsAPI } from "../api";
+import ProjectDetailModal from "../components/ProjectDetailModal";
+import { fetchWithRetry } from "../utils/fetchWithRetry";
 
 // eslint-disable-next-line react/prop-types
 const Projects = ({ limit = 8 }) => {
-  const categories = ["All", "Project", "Certification"];
+  const categories = ["All", "project", "certification"];
   const [activeType, setActiveType] = useState("All");
   const [allProjects, setAllProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -18,16 +18,30 @@ const Projects = ({ limit = 8 }) => {
     const fetchProjects = async () => {
       setIsLoading(true);
       try {
-        const projectsRef = collection(db, "projects");
-        const q = query(projectsRef, orderBy("createdAt", "desc"));
-        const snapshot = await getDocs(q);
-        const projectsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setAllProjects(projectsData);
+        // Fetch with retry logic - will retry for 1 minute
+        const response = await fetchWithRetry(
+          async () => {
+            const res = await projectsAPI.getAll();
+            if (!res.success) {
+              throw new Error("Failed to fetch projects");
+            }
+            return res;
+          },
+          {
+            retryDelay: 3000, // 3 seconds between retries
+            timeout: 60000, // 1 minute total
+          }
+        );
+
+        setAllProjects(response.data);
+        console.log("Projects loaded:", response.data);
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error(
+          "Error fetching projects after multiple attempts:",
+          error
+        );
+        // Keep empty array, user can refresh
+        setAllProjects([]);
       } finally {
         setIsLoading(false);
       }
@@ -49,10 +63,10 @@ const Projects = ({ limit = 8 }) => {
   };
 
   const classColorforType = (type) => {
-    switch (type) {
-      case "Project":
+    switch (type?.toLowerCase()) {
+      case "project":
         return "bg-color1";
-      case "Certification":
+      case "certification":
         return "bg-teal-400";
       default:
         return "bg-gray-500";
@@ -62,7 +76,9 @@ const Projects = ({ limit = 8 }) => {
   let itemsToDisplay = [];
   if (!isLoading && allProjects.length > 0) {
     const projectsForCategoryFilter = allProjects.filter((project) =>
-      activeType === "All" ? true : project.type === activeType
+      activeType === "All"
+        ? true
+        : project.type?.toLowerCase() === activeType.toLowerCase()
     );
 
     if (limit >= 999) {
@@ -70,10 +86,10 @@ const Projects = ({ limit = 8 }) => {
     } else {
       if (activeType === "All") {
         const projectItems = allProjects
-          .filter((p) => p.type === "Project")
+          .filter((p) => p.type?.toLowerCase() === "project")
           .slice(0, 4);
         const certificationItems = allProjects
-          .filter((p) => p.type === "Certification")
+          .filter((p) => p.type?.toLowerCase() === "certification")
           .slice(0, 4);
         itemsToDisplay = [...projectItems, ...certificationItems].slice(
           0,
@@ -87,7 +103,7 @@ const Projects = ({ limit = 8 }) => {
 
   return (
     <section
-      className="py-20 w-11/12 md:w-5/6 mx-auto text-white"
+      className="pt-20 pb-10 w-11/12 md:w-5/6 mx-auto text-white"
       id="projects"
     >
       <div
@@ -120,7 +136,7 @@ const Projects = ({ limit = 8 }) => {
                   : "bg-white/10 hover:bg-white/20"
               }`}
             data-aos="fade-right"
-            data-aos-delay={index * 100}
+            data-aos-delay={index * 70}
           >
             {type}
           </button>
@@ -128,7 +144,30 @@ const Projects = ({ limit = 8 }) => {
       </div>
 
       {isLoading ? (
-        <div className="text-center text-gray-400">Loading projects...</div>
+        <div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {Array.from({ length: limit }).map((_, idx) => (
+              <div
+                key={idx}
+                className="rounded-xl overflow-hidden bg-white/5 animate-pulse"
+              >
+                <div className="relative aspect-4/3 bg-gray-700/40" />
+                <div className="p-6">
+                  <div className="h-4 w-20 bg-gray-700/40 rounded-full mb-3" />
+                  <div className="h-6 w-32 bg-gray-700/40 rounded mb-2" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Loading indicator text */}
+          <div className="text-center mt-8 text-gray-400 text-sm">
+            <div className="inline-flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-color1 border-t-transparent rounded-full animate-spin" />
+              <span>Loading projects... Please wait</span>
+            </div>
+          </div>
+        </div>
       ) : itemsToDisplay.length === 0 ? (
         <div className="text-center text-gray-400">
           No projects found for this category.
@@ -137,10 +176,10 @@ const Projects = ({ limit = 8 }) => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {itemsToDisplay.map((project, index) => (
             <div
-              key={project.id}
+              key={project._id}
               className="group relative rounded-xl overflow-hidden bg-white/5 hover:bg-white/10 transition-colors"
               data-aos="fade-up"
-              data-aos-delay={index * 150}
+              data-aos-delay={index * 100}
             >
               <div className="relative aspect-4/3 overflow-hidden">
                 <img
@@ -168,7 +207,7 @@ const Projects = ({ limit = 8 }) => {
 
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <button
-                  onClick={() => openDetailModal(project)} // Updated onClick
+                  onClick={() => openDetailModal(project)}
                   className={`px-6 py-3 cursor-pointer text-sm md:text-md ${classColorforType(
                     project.type
                   )} text-black rounded-full transform -translate-y-4 group-hover:translate-y-0 transition-transform`}
@@ -184,7 +223,7 @@ const Projects = ({ limit = 8 }) => {
         <div className="text-center mt-12">
           <Link
             to="/projects"
-            className="inline-block px-8 py-3 bg-color1 text-black rounded-full hover:bg-opacity-90 animate-bounce transition-colors"
+            className="inline-block px-8 py-3 bg-color1 text-black rounded-full hover:bg-opacity-90 transition-transform duration-300 hover:-translate-y-1"
             onClick={() => window.scrollTo(0, 0)}
           >
             See More Projects
@@ -197,13 +236,6 @@ const Projects = ({ limit = 8 }) => {
           onClose={closeDetailModal}
         />
       )}
-      <p
-        className="text-center text-gray-400 mt-8 italic"
-        data-aos="fade-left"
-        data-aos-delay="200"
-      >
-        Currently, not all projects are available.
-      </p>
     </section>
   );
 };

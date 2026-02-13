@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://irsyan12.github.io/",
+  "homepage": "https://irsyanramadhan.my.id/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -13,6 +13,9 @@
     "host": "npm run predeploy && npm run deploy"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^7.0.2",
@@ -23,12 +26,15 @@
     "firebase": "^11.4.0",
     "framer-motion": "^12.19.1",
     "lucide-react": "^0.479.0",
+    "ogl": "^1.0.11",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0",
     "react-fast-marquee": "^1.6.5",
     "react-icons": "^5.5.0",
-    "react-router-dom": "^7.3.0"
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.3.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.7",

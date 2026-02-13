@@ -8,7 +8,7 @@ import {
   FaBars,
   FaTimes,
   FaEnvelope,
-  FaCommentAlt, // Import feedback icon
+  FaStar,
 } from "react-icons/fa";
 
 const Sidebar = () => {
@@ -20,7 +20,7 @@ const Sidebar = () => {
     { icon: FaBriefcase, label: "Experiences", href: "/admin/experiences" },
     { icon: FaFile, label: "Projects", href: "/admin/projects" },
     { icon: FaEnvelope, label: "Message", href: "/admin/messages" },
-    { icon: FaCommentAlt, label: "Feedback", href: "/admin/feedback" }, // Add Feedback link
+    { icon: FaStar, label: "Feedback", href: "/admin/feedback" }, // Add Feedback link
   ];
 
   const toggleMenu = () => {

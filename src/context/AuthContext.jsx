@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase/auth";
+import { authAPI } from "../api";
 
 const AuthContext = createContext();
 
@@ -13,23 +12,64 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Firebase auth state observer
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      setLoading(false);
-    });
+    // Check if user is logged in from localStorage
+    const checkAuth = async () => {
+      try {
+        const user = authAPI.getCurrentUser();
+        const isAuthenticated = authAPI.isAuthenticated();
 
-    return unsubscribe;
+        if (user && isAuthenticated) {
+          // Verify token is still valid by fetching profile
+          try {
+            const response = await authAPI.getProfile();
+            if (response.success) {
+              setCurrentUser(response.data);
+            } else {
+              // Token invalid, clear auth
+              authAPI.logout();
+              setCurrentUser(null);
+            }
+          } catch (error) {
+            // Token invalid or expired
+            console.error("Auth verification failed:", error);
+            authAPI.logout();
+            setCurrentUser(null);
+          }
+        } else {
+          setCurrentUser(null);
+        }
+      } catch (error) {
+        console.error("Auth check error:", error);
+        setCurrentUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
+
+  const login = async (email, password) => {
+    const response = await authAPI.login(email, password);
+    if (response.success) {
+      setCurrentUser(response.data.user);
+    }
+    return response;
+  };
+
+  const logout = () => {
+    authAPI.logout();
+    setCurrentUser(null);
+  };
 
   const value = {
     currentUser,
-    loading
+    loading,
+    login,
+    logout,
+    isAuthenticated: authAPI.isAuthenticated,
+    isAdmin: authAPI.isAdmin,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

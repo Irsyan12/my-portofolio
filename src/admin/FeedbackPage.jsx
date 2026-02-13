@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  doc,
-  deleteDoc,
-} from "firebase/firestore";
-import { FaTrash, FaCommentAlt } from "react-icons/fa"; // Using FaCommentAlt for feedback icon
-import { db } from "../firebase/firebase";
+import { FaTrash, FaStar, FaRegStar } from "react-icons/fa";
+import { feedbackAPI } from "../api";
 import {
   Snackbar,
   Alert,
@@ -20,8 +12,10 @@ import {
   Button,
   Slide,
   CircularProgress,
+  Card,
+  CardContent,
 } from "@mui/material";
-import { formatDistanceToNow, differenceInDays } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 
 // Transition for dialog animation
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -30,6 +24,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const FeedbackPage = () => {
   const [feedbackItems, setFeedbackItems] = useState([]);
+  const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   const [snackbar, setSnackbar] = useState({
@@ -42,25 +37,30 @@ const FeedbackPage = () => {
     item: null,
   });
 
+  // Fetch feedback and stats
   useEffect(() => {
-    const fetchFeedback = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
-        const feedbackRef = collection(db, "feedback");
-        const q = query(feedbackRef, orderBy("timestamp", "desc"));
-        const querySnapshot = await getDocs(q);
 
-        const feedbackData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        // Fetch feedback and stats in parallel
+        const [feedbackResponse, statsResponse] = await Promise.all([
+          feedbackAPI.getAll({ sortBy: "createdAt", sortOrder: "desc" }),
+          feedbackAPI.getStats(),
+        ]);
 
-        setFeedbackItems(feedbackData);
+        if (feedbackResponse.success) {
+          setFeedbackItems(feedbackResponse.data);
+        }
+
+        if (statsResponse.success) {
+          setStats(statsResponse.data);
+        }
       } catch (error) {
-        console.error("Error fetching feedback:", error);
+        console.error("Error fetching data:", error);
         setSnackbar({
           open: true,
-          message: `Error fetching feedback: ${error.message}`,
+          message: `Error: ${error.message}`,
           severity: "error",
         });
       } finally {
@@ -68,7 +68,7 @@ const FeedbackPage = () => {
       }
     };
 
-    fetchFeedback();
+    fetchData();
   }, []);
 
   const openDeleteDialog = (item) => {
@@ -91,22 +91,39 @@ const FeedbackPage = () => {
       const itemToDelete = deleteDialog.item;
       if (!itemToDelete) return;
 
-      await deleteDoc(doc(db, "feedback", itemToDelete.id));
-      setFeedbackItems((prevItems) =>
-        prevItems.filter((item) => item.id !== itemToDelete.id)
-      );
+      const response = await feedbackAPI.delete(itemToDelete._id);
 
-      setSnackbar({
-        open: true,
-        message: "Feedback deleted successfully!",
-        severity: "success",
-      });
+      if (response.success) {
+        setFeedbackItems((prevItems) =>
+          prevItems.filter((item) => item._id !== itemToDelete._id)
+        );
+
+        // Update stats
+        if (stats) {
+          setStats({
+            ...stats,
+            totalFeedback: stats.totalFeedback - 1,
+            feedbackByRating: stats.feedbackByRating.map((rating) =>
+              rating._id === itemToDelete.rating
+                ? { ...rating, count: rating.count - 1 }
+                : rating
+            ),
+          });
+        }
+
+        setSnackbar({
+          open: true,
+          message: "Feedback deleted successfully!",
+          severity: "success",
+        });
+      }
+
       closeDeleteDialog();
     } catch (error) {
       console.error("Error deleting feedback:", error);
       setSnackbar({
         open: true,
-        message: "Failed to delete feedback!",
+        message: `Error: ${error.message}`,
         severity: "error",
       });
       closeDeleteDialog();
@@ -119,42 +136,31 @@ const FeedbackPage = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  // Render star rating
+  const renderStars = (rating) => {
+    return (
+      <div className="flex items-center gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span key={star}>
+            {star <= rating ? (
+              <FaStar className="text-yellow-400" size={16} />
+            ) : (
+              <FaRegStar className="text-gray-500" size={16} />
+            )}
+          </span>
+        ))}
+      </div>
+    );
+  };
+
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return "N/A";
-    const date = new Date(timestamp.seconds * 1000);
-    const daysDifference = differenceInDays(new Date(), date);
-
-    if (daysDifference < 1) {
-      return `Today at ${date.toLocaleTimeString("id-ID", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`;
-    } else if (daysDifference === 1) {
-      return `1 day ago at ${date.toLocaleTimeString("id-ID", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`;
-    } else if (daysDifference <= 3) {
-      return `${formatDistanceToNow(date, {
-        addSuffix: true,
-      })} at ${date.toLocaleTimeString("id-ID", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`;
-    } else {
-      const formattedDate = date.toLocaleDateString("id-ID", {
-        dateStyle: "long",
-      });
-      const formattedTime = date.toLocaleTimeString("id-ID", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      return `${formattedDate} at ${formattedTime}`;
-    }
+    const date = new Date(timestamp);
+    return formatDistanceToNow(date, { addSuffix: true });
   };
 
   return (
-    <div>
+    <div className="w-full max-w-6xl mx-auto px-2 sm:px-4">
       <h1 className="text-color1 text-2xl md:text-3xl font-bold mb-6">
         Feedback
       </h1>
@@ -163,49 +169,154 @@ const FeedbackPage = () => {
         <div className="flex justify-center items-center h-40">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-color1"></div>
         </div>
-      ) : feedbackItems.length === 0 ? (
-        <div className="rounded-lg p-8 text-center">
-          <p className="text-gray-300">No feedback found.</p>
-        </div>
       ) : (
-        <div className="rounded-lg p-4 overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-800">
-                <th className="p-4 text-left">Feedback</th>
-                <th className="p-4 text-left">Time Received</th>
-                <th className="p-4 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+        <>
+          {/* Statistics Cards */}
+          {stats && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {/* Average Rating Card */}
+              <Card
+                sx={{
+                  backgroundColor: "#18181b",
+                  border: "1px solid #3f3f46",
+                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <CardContent>
+                  <div className="flex flex-col items-center">
+                    <p className="text-gray-400 text-sm mb-2">Average Rating</p>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-color1 text-4xl font-bold">
+                        {stats.averageRating.toFixed(1)}
+                      </span>
+                      <FaStar className="text-yellow-400" size={24} />
+                    </div>
+                    <p className="text-gray-500 text-xs">
+                      from {stats.totalFeedback} feedback
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Total Feedback Card */}
+              <Card
+                sx={{
+                  backgroundColor: "#18181b",
+                  border: "1px solid #3f3f46",
+                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <CardContent>
+                  <div className="flex flex-col items-center">
+                    <p className="text-gray-400 text-sm mb-2">Total Feedback</p>
+                    <span className="text-color1 text-4xl font-bold">
+                      {stats.totalFeedback}
+                    </span>
+                    <p className="text-gray-500 text-xs mt-2">
+                      {stats.recentFeedback} in last 7 days
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Rating Distribution Card */}
+              <Card
+                sx={{
+                  backgroundColor: "#18181b",
+                  border: "1px solid #3f3f46",
+                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <CardContent>
+                  <p className="text-gray-400 text-sm mb-3 text-center">
+                    Rating Distribution
+                  </p>
+                  <div className="space-y-2">
+                    {[5, 4, 3, 2, 1].map((rating) => {
+                      const ratingData = stats.feedbackByRating.find(
+                        (r) => r._id === rating
+                      );
+                      const count = ratingData ? ratingData.count : 0;
+                      const percentage =
+                        stats.totalFeedback > 0
+                          ? (count / stats.totalFeedback) * 100
+                          : 0;
+
+                      return (
+                        <div
+                          key={rating}
+                          className="flex items-center gap-2 text-xs"
+                        >
+                          <div className="flex items-center gap-1 w-16">
+                            <FaStar className="text-yellow-400" size={12} />
+                            <span className="text-gray-300">{rating}</span>
+                          </div>
+                          <div className="flex-1 bg-gray-700 rounded-full h-2">
+                            <div
+                              className="bg-color1 h-2 rounded-full transition-all"
+                              style={{ width: `${percentage}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-gray-400 w-12 text-right">
+                            {count}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Feedback List */}
+          {feedbackItems.length === 0 ? (
+            <div className="rounded-lg p-8 text-center">
+              <p className="text-gray-300">No feedback found.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {feedbackItems.map((item) => (
-                <tr
-                  key={item.id}
-                  className="border-b border-gray-800 hover:bg-gray-800 transition-colors text-sm"
+                <Card
+                  key={item._id}
+                  sx={{
+                    backgroundColor: "#18181b",
+                    border: "1px solid #3f3f46",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    transition: "transform 0.2s",
+                    "&:hover": {
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                    },
+                  }}
                 >
-                  <td
-                    className="p-4"
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        item.feedbackMessage?.replace(/\n/g, "<br />") ||
-                        "No message content",
-                    }}
-                  ></td>
-                  <td className="p-4">{formatTimestamp(item.timestamp)}</td>
-                  <td className="p-4">
-                    <button
-                      className="text-red-500 px-4 py-2 rounded-md hover:opacity-90 transition-opacity"
-                      onClick={() => openDeleteDialog(item)}
-                      disabled={isLoadingDelete}
-                    >
-                      <FaTrash size={20} />
-                    </button>
-                  </td>
-                </tr>
+                  <CardContent sx={{ padding: "12px !important" }}>
+                    <div className="flex flex-col items-center gap-2">
+                      {/* Star Rating */}
+                      <div className="flex-shrink-0">
+                        {renderStars(item.rating)}
+                      </div>
+
+                      {/* Timestamp */}
+                      <span className="text-gray-500 text-xs text-center">
+                        {formatTimestamp(item.createdAt)}
+                      </span>
+
+                      {/* Delete Button */}
+                      <button
+                        className="text-red-500 hover:text-red-400 transition-colors cursor-pointer mt-1"
+                        onClick={() => openDeleteDialog(item)}
+                        disabled={isLoadingDelete}
+                      >
+                        <FaTrash size={14} />
+                      </button>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </div>
+          )}
+        </>
       )}
 
       <Dialog

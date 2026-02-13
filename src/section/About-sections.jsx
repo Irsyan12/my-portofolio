@@ -1,8 +1,9 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
-import { FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+import { FaEnvelope, FaMapMarkerAlt, FaRedoAlt } from "react-icons/fa";
 import TechStack from "../components/TechStack";
-import { fetchExperiences } from "../firebase/experiencesService"; // Assuming this path is correct
+import { experiencesAPI } from "../api";
+import { fetchWithRetry } from "../utils/fetchWithRetry";
 
 const AboutSection = () => {
   return (
@@ -19,17 +20,19 @@ const AboutSection = () => {
             About Me
           </h2>
           <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-            Hi! I'm a passionate Computer Engineering student at Syiah Kuala
-            University, driven by curiosity and a love for building impactful
-            digital solutions. I thrive at the intersection of{" "}
+            Hi! I'm a passionate Computer Engineering fresh graduate from Syiah
+            Kuala University, driven by curiosity and a love for building
+            impactful digital solutions. I thrive at the intersection of{" "}
             <span className="text-color1 font-semibold">Machine Learning</span>,{" "}
-            <span className="text-color1 font-semibold">Web</span>, and{" "}
+            <span className="text-color1 font-semibold">Web Development</span>,
+            and{" "}
             <span className="text-color1 font-semibold">
               Mobile Development
             </span>
-            . I enjoy solving real-world problems and continuously learning new
+            . I enjoy solving real-world problems and continuously exploring new
             technologies.
           </p>
+
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <FaEnvelope className="text-color1" />
@@ -51,10 +54,10 @@ const AboutSection = () => {
         {/* Right: Highlights */}
         <div className="grid grid-cols-2 gap-6">
           {[
-            { title: "ML", desc: "Machine Learning Specialist", delay: 0 },
+            { title: "ML", desc: "Machine Learning Specialist", delay: 10 },
             { title: "Web", desc: "Full-Stack Developer", delay: 100 },
-            { title: "Mobile", desc: "App Development", delay: 200 },
-            { title: "10+", desc: "Tech Certifications", delay: 300 },
+            { title: "Mobile", desc: "App Development", delay: 150 },
+            { title: "10+", desc: "Tech Certifications", delay: 200 },
           ].map((item, idx) => (
             <div
               key={idx}
@@ -80,7 +83,7 @@ const SkillsSection = () => {
       category: "Frontend",
       items: ["React", "Tailwind CSS", "Bootsrap", "JavaScript", "TypeScript"],
     },
-    { category: "Backend", items: ["Node.js", "Python", "PHP", "MySQL"] },
+    { category: "Backend", items: ["Node.js", "Python", "PHP"] },
     { category: "Design", items: ["Figma", "Adobe Ilustrator"] },
     { category: "Tools", items: ["Git", "Firebase"] },
   ];
@@ -90,7 +93,7 @@ const SkillsSection = () => {
       <section
         className="mt-20 w-11/12 md:w-5/6 mx-auto text-white"
         data-aos="fade-up"
-        data-aos-duration="1000"
+        data-aos-duration="500"
       >
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
@@ -139,21 +142,40 @@ const ExperienceSection = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const experiencesData = await fetchExperiences(); // Fetches experiences (likely sorted asc by 'order' from service)
+
+        // Fetch with retry logic - will retry for 1 minute
+        const response = await fetchWithRetry(
+          async () => {
+            const res = await experiencesAPI.getAll();
+            if (!res.success) {
+              throw new Error("Failed to fetch experiences");
+            }
+            return res;
+          },
+          {
+            retryDelay: 3000, // 3 seconds between retries
+            timeout: 60000, // 1 minute total
+          }
+        );
+
         // Sort experiences by 'order' in descending order (highest order first)
-        const sortedExperiences = experiencesData.sort((a, b) => {
+        const sortedExperiences = response.data.sort((a, b) => {
           const orderA = typeof a.order === "number" ? a.order : -Infinity;
           const orderB = typeof b.order === "number" ? b.order : -Infinity;
           return orderB - orderA;
         });
         setExperiences(sortedExperiences);
+        console.log("Experiences loaded:", sortedExperiences);
       } catch (err) {
         console.error("Error loading experiences for public page:", err);
-        setError("Failed to load experiences. Please try again later.");
+        setError(
+          "Failed to load experiences after multiple attempts. Please refresh the page."
+        );
       } finally {
         setIsLoading(false);
       }
     };
+
     loadExperiences();
   }, []);
 
@@ -161,7 +183,7 @@ const ExperienceSection = () => {
     <section
       className="py-20 w-11/12 md:w-5/6 cursor-default mx-auto text-white"
       data-aos="fade-up"
-      data-aos-duration="1000"
+      data-aos-duration="600"
     >
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-color1">
@@ -173,12 +195,78 @@ const ExperienceSection = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-40">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-color1"></div>
+        <div className="relative">
+          {/* Vertical timeline line for skeleton */}
+          <div className="absolute left-4 md:left-1/4 ml-1 top-2 bottom-2 w-1 bg-color1/30 hidden md:block"></div>
+
+          <div className="space-y-6 relative">
+            {[...Array(3)].map((_, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col md:flex-row gap-10 relative animate-pulse"
+              >
+                <div className="md:w-1/4 flex items-center md:items-start md:justify-end">
+                  <div className="absolute left-0 md:left-1/4 w-8 h-8 rounded-full bg-color1/30 -ml-3 mt-1 hidden md:flex" />
+                  <div className="w-6 h-6 rounded-full bg-color1/30 mr-4 md:hidden" />
+                  <div className="bg-white/10 h-8 rounded-full w-32" />
+                </div>
+                <div className="md:w-3/5 bg-white/5 p-6 rounded-lg border border-white/10">
+                  <div className="h-6 bg-white/20 rounded w-2/3 mb-3" />
+                  <div className="h-5 bg-color1/20 rounded w-1/2 mb-4" />
+                  <div className="space-y-2">
+                    <div className="h-4 bg-gray-400/20 rounded w-full" />
+                    <div className="h-4 bg-gray-400/20 rounded w-5/6" />
+                    <div className="h-4 bg-gray-400/20 rounded w-4/6" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Loading indicator text */}
+          <div className="text-center mt-8 text-gray-400 text-sm">
+            <div className="inline-flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-color1 border-t-transparent rounded-full animate-spin" />
+              <span>Loading experiences... Please wait</span>
+            </div>
+          </div>
         </div>
       ) : error ? (
-        <div className="text-center text-red-400 bg-red-900/20 p-4 rounded-md">
-          {error}
+        <div className="text-center text-red-400 bg-red-900/20 p-6 rounded-md">
+          <p className="mb-4">{error}</p>
+          <button
+            onClick={() => {
+              setError(null);
+              setIsLoading(true);
+              // Re-fetch experiences
+              experiencesAPI
+                .getAll()
+                .then((response) => {
+                  if (response.success) {
+                    const sortedExperiences = response.data.sort((a, b) => {
+                      const orderA =
+                        typeof a.order === "number" ? a.order : -Infinity;
+                      const orderB =
+                        typeof b.order === "number" ? b.order : -Infinity;
+                      return orderB - orderA;
+                    });
+                    setExperiences(sortedExperiences);
+                  }
+                })
+                .catch((err) => {
+                  console.error("Error reloading experiences:", err);
+                  setError(
+                    "Failed to load experiences. Please try again later."
+                  );
+                })
+                .finally(() => {
+                  setIsLoading(false);
+                });
+            }}
+            className="flex items-center gap-2 mx-auto bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 px-4 py-2 rounded-lg transition-all duration-300 border border-red-500/30 hover:border-red-500/50"
+          >
+            <FaRedoAlt className="text-sm" />
+          </button>
         </div>
       ) : experiences.length === 0 ? (
         <div className="text-center text-gray-400">
@@ -192,29 +280,24 @@ const ExperienceSection = () => {
           <div className="space-y-6 relative">
             {experiences.map((exp, index) => (
               <div
-                key={exp.id || index} // Use exp.id if available, otherwise index
+                key={exp.id || index}
                 className="flex flex-col md:flex-row gap-10 relative"
                 data-aos="fade-up"
                 data-aos-delay={index * 100}
               >
                 <div className="md:w-1/4 flex items-center md:items-start md:justify-end">
-                  {/* Timeline dot */}
                   <div className="absolute left-0 md:left-1/4 w-8 h-8 rounded-full bg-color1 items-center justify-center -ml-3 mt-1 shadow-lg shadow-color1/20 hidden md:flex">
                     <div className="w-3 h-3 bg-dark rounded-full"></div>
                   </div>
-
-                  {/* Mobile timeline indicator */}
                   <div className="w-6 h-6 rounded-full bg-color1 flex items-center justify-center mr-4 shadow-lg shadow-color1/20 md:hidden">
                     <div className="w-2 h-2 bg-black rounded-full"></div>
                   </div>
-
                   <span className="text-color1 md:me-10 font-medium bg-white/5 px-4 py-2 rounded-full hover:shadow-color1/10 hover:shadow-md transition-all duration-300 hover:-translate-y-1 backdrop-blur-xs border border-white/5">
                     {exp.period}
                   </span>
                 </div>
-
                 <div className="md:w-3/5 bg-white/5 p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-color1/10 hover:shadow-lg hover:-translate-y-1 backdrop-blur-xs border border-white/10">
-                  <h3 className="text-xl font-bold mb-2">{exp.role}</h3>
+                  <h3 className="text-xl font-bold mb-2">{exp.title}</h3>
                   <h4 className="text-lg text-color1 mb-4 flex items-center gap-2">
                     <span className="w-3 h-3 bg-color1 rounded-full inline-block"></span>
                     {exp.company}

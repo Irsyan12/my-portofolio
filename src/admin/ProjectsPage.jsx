@@ -12,20 +12,9 @@ import {
   Button,
   Slide,
 } from "@mui/material";
-import {
-  collection,
-  getDocs,
-  addDoc,
-  doc,
-  updateDoc,
-  deleteDoc,
-  Timestamp,
-  query,
-  orderBy,
-} from "firebase/firestore";
-import { db } from "../firebase/firebase";
 import ProjectsModal from "./modal/ProjectModal";
 import AddButton from "../components/AddButton";
+import { projectsAPI } from "../api";
 
 // Transition untuk animasi dialog
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -49,21 +38,16 @@ const ProjectsPage = () => {
     project: null,
   });
 
-  // Ambil data projects dari Firestore
+  // Ambil data projects dari MongoDB
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         setIsLoading(true);
-        const projectsRef = collection(db, "projects");
-        const q = query(projectsRef, orderBy("createdAt", "desc"));
-        const snapshot = await getDocs(q);
+        const response = await projectsAPI.getAllAdmin();
 
-        const projectsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-
-        setProjects(projectsData);
+        if (response.success) {
+          setProjects(response.data);
+        }
       } catch (error) {
         console.error("Error fetching projects:", error);
         setSnackbar({
@@ -82,21 +66,16 @@ const ProjectsPage = () => {
   const reloadProjects = async () => {
     try {
       setIsLoading(true);
-      const projectsRef = collection(db, "projects");
-      const q = query(projectsRef, orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
+      const response = await projectsAPI.getAllAdmin();
 
-      const projectsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-
-      setProjects(projectsData);
-      setSnackbar({
-        open: true,
-        message: "Projects reloaded successfully!",
-        severity: "success",
-      });
+      if (response.success) {
+        setProjects(response.data);
+        setSnackbar({
+          open: true,
+          message: "Projects reloaded successfully!",
+          severity: "success",
+        });
+      }
     } catch (error) {
       console.error("Error reloading projects:", error);
       setSnackbar({
@@ -135,38 +114,20 @@ const ProjectsPage = () => {
     });
   };
 
-  // Tambah project baru ke Firestore
+  // Tambah project baru ke MongoDB
   const addProject = async (project) => {
     try {
-      const projectData = {
-        title: project.title,
-        type: project.type,
-        description: project.description || "",
-        imageUrl: project.imageUrl || "",
-        projectLink: project.projectLink || "",
-        demoLink: project.demoLink || "", // Add demo link to Firestore
-        techStack: project.techStack || [], // Add tech stack to Firestore
-        certificateInstitution: project.certificateInstitution || "",
-        certificateLink: project.certificateLink || "",
-        createdAt: Timestamp.now(),
-      };
+      const response = await projectsAPI.create(project);
 
-      const projectsRef = collection(db, "projects");
-      const docRef = await addDoc(projectsRef, projectData);
+      if (response.success) {
+        setProjects((prevProjects) => [response.data, ...prevProjects]);
 
-      setProjects((prevProjects) => [
-        {
-          id: docRef.id,
-          ...projectData,
-        },
-        ...prevProjects,
-      ]);
-
-      setSnackbar({
-        open: true,
-        message: "Project successfully added",
-        severity: "success",
-      });
+        setSnackbar({
+          open: true,
+          message: "Project successfully added",
+          severity: "success",
+        });
+      }
     } catch (error) {
       console.error("Error adding project:", error);
       setSnackbar({
@@ -177,38 +138,27 @@ const ProjectsPage = () => {
     }
   };
 
-  // Update project yang ada di Firestore
+  // Update project yang ada di MongoDB
   const updateProject = async (updatedProject) => {
     try {
-      const projectData = {
-        title: updatedProject.title,
-        type: updatedProject.type,
-        description: updatedProject.description || "",
-        imageUrl: updatedProject.imageUrl || "",
-        projectLink: updatedProject.projectLink || "",
-        demoLink: updatedProject.demoLink || "", // Update demo link
-        techStack: updatedProject.techStack || [], // Update tech stack
-        certificateInstitution: updatedProject.certificateInstitution || "",
-        certificateLink: updatedProject.certificateLink || "",
-        updatedAt: Timestamp.now(),
-      };
-
-      const projectRef = doc(db, "projects", updatedProject.id);
-      await updateDoc(projectRef, projectData);
-
-      setProjects((prevProjects) =>
-        prevProjects.map((proj) =>
-          proj.id === updatedProject.id
-            ? { ...projectData, id: updatedProject.id }
-            : proj
-        )
+      const response = await projectsAPI.update(
+        updatedProject._id,
+        updatedProject
       );
 
-      setSnackbar({
-        open: true,
-        message: "Project berhasil diperbarui",
-        severity: "success",
-      });
+      if (response.success) {
+        setProjects((prevProjects) =>
+          prevProjects.map((proj) =>
+            proj._id === updatedProject._id ? response.data : proj
+          )
+        );
+
+        setSnackbar({
+          open: true,
+          message: "Project berhasil diperbarui",
+          severity: "success",
+        });
+      }
     } catch (error) {
       console.error("Error updating project:", error);
       setSnackbar({
@@ -221,7 +171,7 @@ const ProjectsPage = () => {
 
   // Handle simpan (add atau update)
   const handleSave = (project) => {
-    if (project.id) {
+    if (project._id) {
       updateProject(project);
     } else {
       addProject(project);
@@ -229,23 +179,25 @@ const ProjectsPage = () => {
     closeModal();
   };
 
-  // Hapus project dari Firestore
+  // Hapus project dari MongoDB
   const handleDelete = async () => {
     try {
       const projectToDelete = deleteDialog.project;
       if (!projectToDelete) return;
 
-      await deleteDoc(doc(db, "projects", projectToDelete.id));
+      const response = await projectsAPI.delete(projectToDelete._id);
 
-      setProjects((prevProjects) =>
-        prevProjects.filter((proj) => proj.id !== projectToDelete.id)
-      );
+      if (response.success) {
+        setProjects((prevProjects) =>
+          prevProjects.filter((proj) => proj._id !== projectToDelete._id)
+        );
 
-      setSnackbar({
-        open: true,
-        message: "Project berhasil dihapus",
-        severity: "success",
-      });
+        setSnackbar({
+          open: true,
+          message: "Project berhasil dihapus",
+          severity: "success",
+        });
+      }
 
       closeDeleteDialog();
     } catch (error) {
@@ -337,11 +289,14 @@ const ProjectsPage = () => {
             <tbody>
               {projects.map((project) => (
                 <tr
-                  key={project.id}
+                  key={project._id}
                   className="border-b border-gray-800 hover:bg-gray-800 transition-colors"
                 >
                   <td className="p-4">{project.title}</td>
-                  <td className="p-4">{project.type}</td>
+                  <td className="p-4">
+                    {project.type?.charAt(0).toUpperCase() +
+                      project.type?.slice(1)}
+                  </td>
                   <td
                     className="p-4 sm md:text-xs"
                     dangerouslySetInnerHTML={{
@@ -349,41 +304,46 @@ const ProjectsPage = () => {
                     }}
                   ></td>
                   <td className="p-4">
-                    {project.type === "Project"
+                    {project.type === "project"
                       ? renderTechStack(project.techStack)
                       : "-"}
                   </td>
                   <td className="p-4">
                     <div className="flex space-x-3">
-                      {project.type === "Project" && (
+                      {project.type === "project" && (
                         <>
-                          {project.projectLink && (
+                          {(project.projectLink || project.githubUrl) && (
                             <a
-                              href={project.projectLink}
+                              href={project.projectLink || project.githubUrl}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="hover:text-color1 transition-colors"
                               title="Repository Link"
                             >
-                              {renderLinkIcon(project.projectLink)}
+                              {renderLinkIcon(
+                                project.projectLink || project.githubUrl
+                              )}
                             </a>
                           )}
 
-                          {project.demoLink && (
+                          {(project.demoLink || project.demoUrl) && (
                             <a
-                              href={project.demoLink}
+                              href={project.demoLink || project.demoUrl}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="hover:text-color1 transition-colors"
                               title="Live Demo"
                             >
-                              {renderLinkIcon(project.demoLink, "demo")}
+                              {renderLinkIcon(
+                                project.demoLink || project.demoUrl,
+                                "demo"
+                              )}
                             </a>
                           )}
                         </>
                       )}
 
-                      {project.type === "Certification" &&
+                      {project.type === "certification" &&
                         project.certificateLink && (
                           <a
                             href={project.certificateLink}
@@ -396,10 +356,10 @@ const ProjectsPage = () => {
                           </a>
                         )}
 
-                      {!project.projectLink &&
-                        !project.demoLink &&
+                      {!(project.projectLink || project.githubUrl) &&
+                        !(project.demoLink || project.demoUrl) &&
                         !(
-                          project.type === "Certification" &&
+                          project.type === "certification" &&
                           project.certificateLink
                         ) &&
                         "-"}
@@ -413,24 +373,29 @@ const ProjectsPage = () => {
                           alt={project.title}
                           className="w-16 h-16 object-cover rounded-md"
                         />
-                        {project.type === "Project" && (
+                        {project.type === "project" && (
                           <div className="absolute top-0 right-0 bg-black bg-opacity-70 p-1 rounded-full hidden group-hover:flex gap-1">
-                            {project.projectLink && (
+                            {(project.projectLink || project.githubUrl) && (
                               <a
-                                href={project.projectLink}
+                                href={project.projectLink || project.githubUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
-                                {renderLinkIcon(project.projectLink)}
+                                {renderLinkIcon(
+                                  project.projectLink || project.githubUrl
+                                )}
                               </a>
                             )}
-                            {project.demoLink && (
+                            {(project.demoLink || project.demoUrl) && (
                               <a
-                                href={project.demoLink}
+                                href={project.demoLink || project.demoUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
-                                {renderLinkIcon(project.demoLink, "demo")}
+                                {renderLinkIcon(
+                                  project.demoLink || project.demoUrl,
+                                  "demo"
+                                )}
                               </a>
                             )}
                           </div>
@@ -442,13 +407,13 @@ const ProjectsPage = () => {
                     <div className="flex justify-end space-x-4">
                       <button
                         onClick={() => openModal(project)}
-                        className="text-gray-400 hover:text-color1 transition-colors"
+                        className="text-gray-400 hover:text-color1 transition-colors cursor-pointer"
                       >
                         <FaEdit size={25} />
                       </button>
                       <button
                         onClick={() => openDeleteDialog(project)}
-                        className="text-red-500 hover:opacity-80 transition-opacity"
+                        className="text-red-500 hover:opacity-80 transition-opacity cursor-pointer"
                       >
                         <FaTrash size={25} />
                       </button>

@@ -3,11 +3,10 @@ import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { Snackbar, Alert } from "@mui/material";
-import { logout } from "../firebase/auth";
 import { useAuth } from "../context/AuthContext";
 
 const DashboardLayout = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const sessionTimeoutIdRef = useRef(null); // Define sessionTimeoutIdRef here
 
@@ -19,7 +18,7 @@ const DashboardLayout = () => {
 
   const handleLogout = async () => {
     try {
-      await logout(); // Use the imported logout function
+      logout(); // Use the logout from AuthContext (which calls authAPI.logout())
       // Clear the session timestamp on manual logout as well
 
       if (sessionTimeoutIdRef.current) {
@@ -50,7 +49,7 @@ const DashboardLayout = () => {
 
     const handleSessionLogout = async () => {
       try {
-        await logout();
+        logout(); // Use logout from AuthContext
         localStorage.removeItem(LOGIN_TIMESTAMP_KEY);
         setSnackbar({
           open: true,
@@ -103,7 +102,6 @@ const DashboardLayout = () => {
     };
   }, [navigate, currentUser, setSnackbar]); // Add currentUser and setSnackbar to dependencies
 
-  
   return (
     <div className="flex h-screen text-white">
       <Sidebar />

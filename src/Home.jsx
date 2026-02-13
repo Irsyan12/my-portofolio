@@ -1,16 +1,4 @@
 import { useEffect } from "react";
-import {
-  analytics,
-  logEvent,
-  db,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  increment,
-  arrayUnion,
-  Timestamp,
-} from "../src/firebase/firebase";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Navbar from "./components/Navbar";
@@ -20,54 +8,28 @@ import AboutSections from "./section/About-sections";
 import ContactSection from "./section/Contact-me";
 import Footer from "./section/Footer";
 import CursorGlow from "./components/CursorGlow";
+import ChatbotPopup from "./components/ChatbotPopup";
+import FeedbackPopup from "./components/FeedbackPopup";
+import { trackVisit, trackPageDuration } from "./utils/trackVisit";
 
 function Home() {
   useEffect(() => {
-    const updatePageView = async () => {
-      const lastVisit = localStorage.getItem("last_page_view");
+    // Track visit to MongoDB
+    trackVisit();
 
-      if (!lastVisit || Date.now() - parseInt(lastVisit) > 15 * 60 * 1000) {
-        logEvent(analytics, "page_view");
-        logEvent(analytics, "page_view_increment");
+    // Track page duration
+    const cleanupDuration = trackPageDuration();
 
-        // Simpan timestamp terakhir kunjungan ke localStorage
-        localStorage.setItem("last_page_view", Date.now().toString());
-
-        try {
-          const visitRef = doc(db, "analytics", "website_visits");
-          const visitSnap = await getDoc(visitRef);
-
-          const currentTime = Timestamp.now();
-
-          if (visitSnap.exists()) {
-            await updateDoc(visitRef, {
-              total_visits: increment(1),
-              timestamps: arrayUnion(currentTime),
-            });
-          } else {
-            await setDoc(visitRef, {
-              total_visits: 1,
-              timestamps: [currentTime],
-            });
-          }
-          console.log("Total kunjungan dan timestamps diperbarui!");
-        } catch (error) {
-          console.error("Error memperbarui total kunjungan:", error);
-        }
-
-        // Hapus localStorage setelah 15 menit
-        setTimeout(() => {
-          localStorage.removeItem("last_page_view");
-        }, 15 * 60 * 1000);
-      }
-    };
-
-    updatePageView();
-
+    // Initialize AOS animations
     AOS.init({
       duration: 800, // durasi animasi default
       once: true, // animasi hanya sekali saat scroll
     });
+
+    // Cleanup
+    return () => {
+      if (cleanupDuration) cleanupDuration();
+    };
   }, []);
 
   return (
@@ -81,6 +43,8 @@ function Home() {
       <Projects />
       <ContactSection />
       <Footer />
+      <ChatbotPopup />
+      <FeedbackPopup />
     </div>
   );
 }

@@ -32,37 +32,40 @@ const ProjectDetailModal = ({ project, onClose }) => {
 
   const renderLinkIcon = (link, type) => {
     if (!link) return null;
-    let icon = <FaLink className="mr-2" />;
-    let text = "Link";
+    let icon = <FaLink size={20} />;
+    let tooltip = "View Link";
 
     if (type === "demo") {
-      icon = <FaPlay className="mr-2 text-green-500" />;
-      text = "Live Demo";
-    } else if (type === "project" && link.includes("github.com")) {
-      icon = <FaGithub className="mr-2" />;
-      text = "GitHub Repo";
+      icon = <FaPlay size={16} />;
+      tooltip = "Show Live Demo";
+    } else if (
+      type === "github" ||
+      (type === "project" && link.includes("github.com"))
+    ) {
+      icon = <FaGithub size={16} />;
+      tooltip = "Go to Github Repo";
     } else if (type === "project") {
-      icon = <FaLink className="mr-2" />;
-      text = "Project Link";
+      icon = <FaLink size={16} />;
+      tooltip = "View Project Link";
     } else if (type === "certificate") {
-      icon = <FaCertificate className="mr-2 text-yellow-500" />;
-      text = "View Certificate";
+      icon = <FaCertificate size={16} />;
+      tooltip = "View Certificate";
     }
     return (
       <a
         href={link}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-md transition-colors"
+        title={tooltip}
+        className="inline-flex items-center justify-center w-10 h-10 bg-white/5 hover:bg-white/20 text-white rounded-full transition-colors"
       >
         {icon}
-        {text}
       </a>
     );
   };
 
   const typeColor =
-    project.type === "Project"
+    project.type === "project"
       ? "bg-color1 text-black"
       : "bg-teal-400 text-black";
 
@@ -71,7 +74,7 @@ const ProjectDetailModal = ({ project, onClose }) => {
       className={`fixed inset-0 flex justify-end z-100 transition-opacity duration-300 ease-in-out ${
         isVisible ? "bg-black/75 " : "pointer-events-none"
       }`}
-      onClick={handleCloseRequest} // Close on backdrop click
+      onClick={handleCloseRequest}
     >
       <div
         className={`w-full max-w-lg h-full bg-[#2a2a2a] text-white shadow-xl p-6 overflow-y-auto transform transition-transform duration-300 ease-in-out ${
@@ -122,19 +125,33 @@ const ProjectDetailModal = ({ project, onClose }) => {
           </div>
         )}
 
-        {(project.projectLink ||
+        {(project.githubUrl ||
+          project.projectLink ||
+          project.demoUrl ||
           project.demoLink ||
           project.certificateLink) && (
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-color2 mb-3">Links</h3>
-            <div className="space-y-3">
-              {project.type === "Project" && project.projectLink && (
-                <div>{renderLinkIcon(project.projectLink, "project")}</div>
-              )}
-              {project.type === "Project" && project.demoLink && (
-                <div>{renderLinkIcon(project.demoLink, "demo")}</div>
-              )}
-              {project.type === "Certification" && project.certificateLink && (
+            <div className="flex gap-3">
+              {project.type === "project" &&
+                (project.githubUrl || project.projectLink) && (
+                  <div>
+                    {renderLinkIcon(
+                      project.githubUrl || project.projectLink,
+                      "github",
+                    )}
+                  </div>
+                )}
+              {project.type === "project" &&
+                (project.demoUrl || project.demoLink) && (
+                  <div>
+                    {renderLinkIcon(
+                      project.demoUrl || project.demoLink,
+                      "demo",
+                    )}
+                  </div>
+                )}
+              {project.type === "certification" && project.certificateLink && (
                 <div>
                   {renderLinkIcon(project.certificateLink, "certificate")}
                 </div>
@@ -148,7 +165,10 @@ const ProjectDetailModal = ({ project, onClose }) => {
             <h3 className="text-lg font-semibold text-color2 mb-2">
               Tech Stacks
             </h3>
-            <div className="flex flex-wrap gap-0.5 select-none" draggable="false">
+            <div
+              className="flex flex-wrap gap-0.5 select-none"
+              draggable="false"
+            >
               {project.techStack.map((tech) => (
                 <span
                   key={tech}
@@ -167,7 +187,7 @@ const ProjectDetailModal = ({ project, onClose }) => {
           </div>
         )}
 
-        {project.type === "Certification" && project.certificateInstitution && (
+        {project.type === "certification" && project.certificateInstitution && (
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-color2 mb-2">
               Issuing Institution
