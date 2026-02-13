@@ -34,12 +34,21 @@ export default function ChatbotPopup() {
     setIsTyping(true);
 
     try {
+      const history = messages.map((msg) => ({
+        role: msg.sender === "user" ? "user" : "model",
+        text: msg.text,
+      }));
+
       const response = await fetch(
         `${import.meta.env.VITE_APP_CHATBOT_API_URL}chat`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: input, session_id: sessionId }),
+          // 2. Kirim parameter 'history' bersamaan dengan 'message'
+          body: JSON.stringify({ 
+            message: input, 
+            history: history 
+          }),
         }
       );
 
