@@ -15,7 +15,6 @@ export const getUsers = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching users",
-      error: error.message,
     });
   }
 };
@@ -38,7 +37,6 @@ export const getUserById = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching user",
-      error: error.message,
     });
   }
 };
@@ -75,7 +73,7 @@ export const registerUser = async (req, res) => {
     const token = jwt.sign(
       { userId: newUser._id, role: newUser.role },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.status(201).json({
@@ -95,7 +93,6 @@ export const registerUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error registering user",
-      error: error.message,
     });
   }
 };
@@ -104,6 +101,22 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    // Validate input types
+    if (typeof email !== "string" || typeof password !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid input format",
+      });
+    }
+
+    // Basic validation
+    if (!email.includes("@") || password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password format",
+      });
+    }
 
     // Check if user exists
     const user = await User.findOne({ email });
@@ -135,7 +148,7 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
 
     res.json({
@@ -156,7 +169,6 @@ export const loginUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error logging in",
-      error: error.message,
     });
   }
 };
@@ -197,7 +209,6 @@ export const updateUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error updating user",
-      error: error.message,
     });
   }
 };
@@ -221,7 +232,6 @@ export const deleteUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error deleting user",
-      error: error.message,
     });
   }
 };
@@ -238,7 +248,6 @@ export const getProfile = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching profile",
-      error: error.message,
     });
   }
 };
