@@ -28,7 +28,7 @@ const sendMessage = async (formData, setSnackbar) => {
       access_key: web3formAccessKey,
       name,
       email,
-      subject: `New message from portfolio web: ${subject}`,
+      subject: `New message on portofolio website from ${name} : ${subject}`,
       message,
     });
 
