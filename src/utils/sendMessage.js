@@ -3,7 +3,7 @@ import axios from "axios";
 
 const sendMessage = async (formData, setSnackbar) => {
   const { name, email, subject, message } = formData;
-  const web3formAccessKey = "896a421d-8d9e-40b3-973a-a3e01c6d08cf";
+  const web3formAccessKey = import.meta.env.VITE_APP_WEB3FORM_ACCESS_KEY;
 
   if (!name || !email || !subject || !message) {
     setSnackbar({
