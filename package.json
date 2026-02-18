@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist -b main -r https://github.com/Irsyan12/Irsyan12.github.io.git",
-    "host": "npm run predeploy && npm run deploy"
+    "host": "npm run predeploy && npm run deploy",
+    "merge": "git checkout main && git merge edit && git push"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
