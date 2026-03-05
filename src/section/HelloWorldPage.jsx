@@ -6,7 +6,7 @@ import OptimizedProfileImage from "../components/OptimizedProfileImage";
 import { Snackbar, Alert } from "@mui/material";
 import TiltedCard from "../components/TiltedCard";
 import cvFile from "../assets/cv.pdf"; // Import the CV file
-import Particles from "../components/Particles"; 
+import Particles from "../components/Particles";
 
 function HelloWorldPage() {
   const [snackbar, setSnackbar] = useState({
@@ -49,12 +49,13 @@ function HelloWorldPage() {
 
   return (
     <>
+      {/* Section dengan background transparent - pattern terlihat */}
       <div
-        className="w-11/12 pt-20 md:pt-24 min-h-screen mx-auto text-white bg-dark relative"
+        className="w-11/12 pt-20 md:pt-24 min-h-screen mx-auto text-white relative"
         id="home"
       >
-        {/* Particles Background */}
-        <div className="absolute inset-0 w-full h-full">
+        {/* Particles Overlay */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none">
           <Particles
             particleColors={["#d8dc8d", "#ffffff"]}
             particleCount={70}
@@ -66,7 +67,7 @@ function HelloWorldPage() {
             disableRotation={false}
           />
         </div>
-        
+
         <div className="md:w-5/6 mx-auto relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-center pt-16 md:pt-32">
             {/* Left side content */}

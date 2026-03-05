@@ -37,7 +37,7 @@ export default function ChatbotPopup() {
     try {
       // 1. FILTER HISTORY: Jangan masukkan pesan error ke memori AI
       const history = messages
-        .filter(msg => !msg.isError) // Abaikan pesan error
+        .filter(msg => !msg.isError)
         .map((msg) => ({
           role: msg.sender === "user" ? "user" : "model",
           text: msg.text,
@@ -81,8 +81,6 @@ export default function ChatbotPopup() {
         }
         return;
       }
-
-      // ... (Sisa kode handling error data.reply tetap sama, beri flag isError: true jika error)
 
       // Tampilkan response sukses
       setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);

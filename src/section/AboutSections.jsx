@@ -61,7 +61,7 @@ const AboutSection = () => {
           ].map((item, idx) => (
             <div
               key={idx}
-              className="bg-white/10 p-7 rounded-xl hover:shadow-color1/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
+              className="bg-gray-800 p-7 rounded-xl hover:shadow-color1/20 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
               data-aos="zoom-in"
               data-aos-delay={item.delay}
             >
@@ -155,7 +155,7 @@ const ExperienceSection = () => {
           {
             retryDelay: 3000, // 3 seconds between retries
             timeout: 60000, // 1 minute total
-          }
+          },
         );
 
         // Sort experiences by 'order' in descending order (highest order first)
@@ -169,7 +169,7 @@ const ExperienceSection = () => {
       } catch (err) {
         console.error("Error loading experiences for public page:", err);
         setError(
-          "Failed to load experiences after multiple attempts. Please refresh the page."
+          "Failed to load experiences after multiple attempts. Please refresh the page.",
         );
       } finally {
         setIsLoading(false);
@@ -256,7 +256,7 @@ const ExperienceSection = () => {
                 .catch((err) => {
                   console.error("Error reloading experiences:", err);
                   setError(
-                    "Failed to load experiences. Please try again later."
+                    "Failed to load experiences. Please try again later.",
                   );
                 })
                 .finally(() => {
@@ -315,7 +315,7 @@ const ExperienceSection = () => {
 
 const AboutSections = () => {
   return (
-    <div className="bg-dark">
+    <div className="">
       <AboutSection />
       <SkillsSection />
       <ExperienceSection />

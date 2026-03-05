@@ -103,7 +103,7 @@ const Projects = ({ limit = 8 }) => {
 
   return (
     <section
-      className="pt-20 pb-10 w-11/12 md:w-5/6 mx-auto text-white"
+      className="pt-20 pb-10 px-4 md:px-40 mx-auto text-white bg-dark2"
       id="projects"
     >
       <div

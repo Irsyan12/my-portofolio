@@ -13,9 +13,10 @@ layer(base);
   --animate-marquee: marquee 25s linear infinite;
   --animate-marquee2: marquee2 25s linear infinite;
 
-  --color-primary: #d8dc8d;
-  --color-secondary: #f9f9f9;
-  --color-dark: #1e1e1e;
+  --color-primary: #f8f8f8;
+  --color-secondary: #c5f82a;
+  --color-dark: #111827;
+  --color-dark2: #051525;
   --color-color1: #c5f82a;
   --color-color2: #f8f8f8;
 
