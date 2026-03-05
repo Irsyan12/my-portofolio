@@ -30,7 +30,7 @@ function Navbar() {
       className={`fixed top-0 z-50 md:left-1/2 md:-translate-x-1/2 transition-all duration-500
       ${
         scrolled
-          ? "bg-black/60 backdrop-blur-md shadow-md rounded-2xl mt-3 w-5/6 md:rounded-xl md:w-4/6 md:mt-4 py-5 translate-x-10"
+          ? "bg-dark2/60 backdrop-blur-md shadow-md rounded-2xl mt-3 w-5/6 md:rounded-xl md:w-4/6 md:mt-4 py-5 translate-x-10"
           : "w-full bg-transparent md:my-9 md:w-5/6 py-4"
       }`}
     >
@@ -73,6 +73,11 @@ function Navbar() {
               Contact Me
             </a>
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-color1 transition-all duration-300 group-hover:w-full"></span>
+          </li>
+          <li>
+            <button className="bg-color1 cursor-pointer text-black px-4 py-2 rounded-md hover:bg-opacity-90 hover:transition-all duration-300 hover:scale-105">
+              Get in Touch
+            </button>
           </li>
         </ul>
 

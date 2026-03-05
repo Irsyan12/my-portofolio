@@ -20,13 +20,14 @@ const iconMap = {
   tailwind: "tailwind_br85lu",
   vue: "Vue_ocgcpe",
   supabase: "supabase_uhipak",
+  nextjs: "nextjsc8cawn",
 };
 
 // ✅ Ambil semua icon sebagai objek lengkap { name, url }
 export const getAllIcons = () => {
   return Object.entries(iconMap).map(([name, id]) => ({
     name,
-    url: `${cloudinaryBaseUrl}/v1759761622/${cloudinaryFolder}/${id}.png`,
+    url: `${cloudinaryBaseUrl}/v1772696791/${cloudinaryFolder}/${id}.png`,
   }));
 };
 
@@ -35,13 +36,13 @@ export const getIconByName = (name) => {
   const id = iconMap[name];
   if (!id) return null;
 
-  return `${cloudinaryBaseUrl}/v1759761622/${cloudinaryFolder}/${id}.png`;
+  return `${cloudinaryBaseUrl}/v1772696791/${cloudinaryFolder}/${id}.png`;
 };
 
 // ✅ Jika perlu, ekspor juga seluruh dictionary URL langsung
 export const iconDict = Object.fromEntries(
   Object.entries(iconMap).map(([name, id]) => [
     name,
-    `${cloudinaryBaseUrl}/v1759761622/${cloudinaryFolder}/${id}.png`,
+    `${cloudinaryBaseUrl}/v1772696791/${cloudinaryFolder}/${id}.png`,
   ])
 );

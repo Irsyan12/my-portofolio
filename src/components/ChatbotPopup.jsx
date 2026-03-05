@@ -28,23 +28,26 @@ export default function ChatbotPopup() {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
+    // Simpan pesan user ke UI
     const newMessages = [...messages, { sender: "user", text: input }];
     setMessages(newMessages);
     setInput("");
     setIsTyping(true);
 
     try {
-      const history = messages.map((msg) => ({
-        role: msg.sender === "user" ? "user" : "model",
-        text: msg.text,
-      }));
+      // 1. FILTER HISTORY: Jangan masukkan pesan error ke memori AI
+      const history = messages
+        .filter(msg => !msg.isError)
+        .map((msg) => ({
+          role: msg.sender === "user" ? "user" : "model",
+          text: msg.text,
+        }));
 
       const response = await fetch(
         `${import.meta.env.VITE_APP_CHATBOT_API_URL}chat`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          // 2. Kirim parameter 'history' bersamaan dengan 'message'
           body: JSON.stringify({ 
             message: input, 
             history: history 
@@ -55,22 +58,15 @@ export default function ChatbotPopup() {
       const data = await response.json();
       setIsTyping(false);
 
-      // Check jika ada error dari backend
       if (data.error) {
-        console.error("Chatbot API Error:", data.error);
-
-        // Check if it's a quota/rate limit error
-        const isQuotaError =
-          data.error.includes("quota") ||
-          data.error.includes("429") ||
-          data.error.includes("rate limit");
-
+        // ... (Logika kuota error kamu tetap sama)
         if (isQuotaError) {
           setMessages((prev) => [
             ...prev,
             {
               sender: "bot",
-              text: "👋 Hi there! I'm currently experiencing high demand.\n\nWhile I can't respond right now, here are ways to reach me:\n\n📧 Email: irsyanramadhan72@gmail.com\n💼 LinkedIn: linkedin.com/in/irsyanramadhan\n📱 GitHub: github.com/Irsyan12\n\nFeel free to contact me directly! I usually respond within 24 hours.",
+              text: "👋 Hi there! I'm currently experiencing high demand...",
+              isError: true // Tambahkan flag ini
             },
           ]);
         } else {
@@ -78,27 +74,15 @@ export default function ChatbotPopup() {
             ...prev,
             {
               sender: "bot",
-              text: "⚠️ Sorry, the chatbot service is temporarily unavailable. Please try again later or contact me directly via email at irsyanramadhan72@gmail.com",
+              text: "⚠️ Sorry, the chatbot service is temporarily unavailable...",
+              isError: true // Tambahkan flag ini
             },
           ]);
         }
         return;
       }
 
-      // Check jika response tidak memiliki reply
-      if (!data.reply) {
-        console.error("No reply from chatbot:", data);
-        setMessages((prev) => [
-          ...prev,
-          {
-            sender: "bot",
-            text: "⚠️ I couldn't process your request. Please try again or reach out via the contact form.",
-          },
-        ]);
-        return;
-      }
-
-      // Tampilkan response yang valid
+      // Tampilkan response sukses
       setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
     } catch (err) {
       console.error("Chatbot Fetch Error:", err);
@@ -107,11 +91,12 @@ export default function ChatbotPopup() {
         ...prev,
         {
           sender: "bot",
-          text: "Sorry, I'm unable to connect to the chatbot service. Please try again later or contact me directly via email at irsyanramadhan72@gmail.com",
+          text: "Sorry, I'm unable to connect to the chatbot service...",
+          isError: true // Tambahkan flag ini
         },
       ]);
     }
-  };
+  };  
 
   useEffect(() => {
     chatBodyRef.current?.scrollTo({

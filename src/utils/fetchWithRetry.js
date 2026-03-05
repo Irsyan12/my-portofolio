@@ -21,24 +21,24 @@ export const fetchWithRetry = async (fetchFunction, options = {}) => {
   while (Date.now() - startTime < timeout && attempt < maxRetries) {
     try {
       attempt++;
-      console.log(`🔄 Attempt ${attempt} to fetch data...`);
+      // console.log(`🔄 Attempt ${attempt} to fetch data...`);
 
       const result = await fetchFunction();
 
-      console.log(`✅ Fetch successful on attempt ${attempt}`);
+      // console.log(`✅ Fetch successful on attempt ${attempt}`);
       return result;
     } catch (error) {
       lastError = error;
       const elapsedTime = Date.now() - startTime;
       const remainingTime = timeout - elapsedTime;
 
-      console.warn(
-        `❌ Attempt ${attempt} failed:`,
-        error.message,
-        `- Retrying in ${retryDelay / 1000}s... (${Math.floor(
-          remainingTime / 1000
-        )}s remaining)`
-      );
+      // console.warn(
+      //   `❌ Attempt ${attempt} failed:`,
+      //   error.message,
+      //   `- Retrying in ${retryDelay / 1000}s... (${Math.floor(
+      //     remainingTime / 1000
+      //   )}s remaining)`
+      // );
 
       // If we still have time, wait before retry
       if (remainingTime > retryDelay) {
@@ -51,11 +51,11 @@ export const fetchWithRetry = async (fetchFunction, options = {}) => {
   }
 
   // All retries failed
-  console.error(
-    `💥 All retry attempts failed after ${attempt} tries in ${
-      (Date.now() - startTime) / 1000
-    }s`
-  );
+  // console.error(
+  //   `💥 All retry attempts failed after ${attempt} tries in ${
+  //     (Date.now() - startTime) / 1000
+  //   }s`
+  // );
   throw lastError || new Error("Fetch failed after maximum retries");
 };
 
