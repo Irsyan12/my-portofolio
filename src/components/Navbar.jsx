@@ -74,11 +74,7 @@ function Navbar() {
             </a>
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-color1 transition-all duration-300 group-hover:w-full"></span>
           </li>
-          <li>
-            <button className="bg-color1 cursor-pointer text-black px-4 py-2 rounded-md hover:bg-opacity-90 hover:transition-all duration-300 hover:scale-105">
-              Get in Touch
-            </button>
-          </li>
+          
         </ul>
 
         {/* Mobile Menu - Simple Text Links */}
