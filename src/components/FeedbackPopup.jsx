@@ -88,10 +88,9 @@ const FeedbackPopup = () => {
       fullWidth
       PaperProps={{
         sx: {
-          backgroundColor: "#1a1a1a",
+          backgroundColor: "#111827",
           backgroundImage: "linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%)",
           borderRadius: "16px",
-          border: "1px solid rgba(197, 248, 42, 0.2)",
           boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5)",
         },
       }}
@@ -144,6 +143,9 @@ const FeedbackPopup = () => {
                     color: "#c5f82a",
                   },
                   "& .MuiRating-iconHover": {
+                    color: "#d4ff4d",
+                  },
+                  "& .MuiRating-iconEmpty": {
                     color: "#d4ff4d",
                   },
                 }}

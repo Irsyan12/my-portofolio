@@ -4,11 +4,24 @@ import {
   FaEnvelope,
   FaMapMarkerAlt,
   FaRedoAlt,
-  FaGithub,
 } from "react-icons/fa";
+import GitHubContributionCard from "../components/GitHubContributionCard";
 import TechStack from "../components/TechStack";
 import { experiencesAPI } from "../api";
 import { fetchWithRetry } from "../utils/fetchWithRetry";
+import { FaReact, FaNodeJs, FaFigma, FaDocker, FaGitAlt } from "react-icons/fa";
+import {
+  SiNextdotjs,
+  SiTailwindcss,
+  SiTypescript,
+  SiJavascript,
+  SiBootstrap,
+  SiGo,
+  SiPython,
+  SiPhp,
+  SiAdobeillustrator,
+  SiFirebase,
+} from "react-icons/si";
 
 const AboutSection = () => {
   const quotes = [
@@ -20,118 +33,6 @@ const AboutSection = () => {
 
   const [activeQuoteIndex, setActiveQuoteIndex] = useState(0);
   const quoteStepRefs = useRef([]);
-  const [contributions, setContributions] = useState([]);
-  const [isContributionLoading, setIsContributionLoading] = useState(true);
-  const [contributionError, setContributionError] = useState("");
-  const CELL_SIZE = 7;
-  const CELL_GAP = 1;
-
-  useEffect(() => {
-    const fetchContributions = async () => {
-      try {
-        setIsContributionLoading(true);
-        setContributionError("");
-
-        const response = await fetch(
-          "https://github-contributions-api.jogruber.de/v4/Irsyan12",
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch contribution data");
-        }
-
-        const data = await response.json();
-        setContributions(
-          Array.isArray(data.contributions) ? data.contributions : [],
-        );
-      } catch (error) {
-        console.error("Contribution API Error:", error);
-        setContributionError("Contribution graph is unavailable right now.");
-      } finally {
-        setIsContributionLoading(false);
-      }
-    };
-
-    fetchContributions();
-  }, []);
-
-  const contributionWeeks = useMemo(() => {
-    if (!contributions.length) return [];
-
-    const normalized = [...contributions].sort(
-      (a, b) => new Date(a.date) - new Date(b.date),
-    );
-
-    const contributionMap = new Map(
-      normalized.map((item) => [item.date, item]),
-    );
-
-    const start = new Date(normalized[0].date);
-    while (start.getDay() !== 0) {
-      start.setDate(start.getDate() - 1);
-    }
-
-    const end = new Date(normalized[normalized.length - 1].date);
-    while (end.getDay() !== 6) {
-      end.setDate(end.getDate() + 1);
-    }
-
-    const weeks = [];
-    const current = new Date(start);
-
-    while (current <= end) {
-      const week = [];
-      for (let day = 0; day < 7; day += 1) {
-        const dateKey = current.toISOString().split("T")[0];
-        week.push(contributionMap.get(dateKey) || null);
-        current.setDate(current.getDate() + 1);
-      }
-      weeks.push(week);
-    }
-
-    return weeks;
-  }, [contributions]);
-
-  const monthLabels = useMemo(() => {
-    let previousMonth = "";
-
-    return contributionWeeks.map((week) => {
-      const firstDay = week.find(Boolean);
-      if (!firstDay) return "";
-
-      const month = new Date(firstDay.date).toLocaleDateString("en-US", {
-        month: "short",
-      });
-
-      if (month !== previousMonth) {
-        previousMonth = month;
-        return month;
-      }
-
-      return "";
-    });
-  }, [contributionWeeks]);
-
-  const formatTooltipDate = (dateValue) => {
-    return new Date(dateValue).toLocaleDateString("en-US", {
-      weekday: "short",
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  const getLevelClass = (level) => {
-    const levelMap = {
-      0: "bg-[#2d333b]",
-      1: "bg-[#0e4429]",
-      2: "bg-[#006d32]",
-      3: "bg-[#26a641]",
-      4: "bg-[#39d353]",
-    };
-
-    return levelMap[level] || levelMap[0];
-  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -226,121 +127,25 @@ const AboutSection = () => {
           ))}
         </div>
       </div>
+
       <div
         className="mt-16 grid lg:grid-cols-2 gap-8 items-start"
         data-aos="fade-up"
         data-aos-delay={300}
       >
-        <div className="p-5">
-          <div className="flex items-center justify-between gap-3 mb-4">
-            <div className="flex items-center gap-3">
-              <img
-                src="https://github.com/Irsyan12.png"
-                alt="Irsyan Ramadhan GitHub avatar"
-                className="w-12 h-12 rounded-full border border-white/20 object-cover"
-                loading="lazy"
-              />
-              <div>
-                <p className="text-xs text-gray-300">@Irsyan12</p>
-              </div>
-            </div>
-            <FaGithub className="text-xl text-gray-200" />
-          </div>
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-xs uppercase tracking-[0.2em] text-gray-400">
-              Contribution Graph
-            </p>
-            <span className="text-xs text-gray-300">Last 12 months</span>
-          </div>
-          {isContributionLoading ? (
-            <div className="h-[130px] rounded-xl border border-white/10 bg-white/5 animate-pulse" />
-          ) : contributionError ? (
-            <div className="h-[130px] rounded-xl border border-red-400/30 bg-red-400/10 text-red-200 text-sm flex items-center justify-center px-4 text-center">
-              {contributionError}
-            </div>
-          ) : (
-            <div className="overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-              <div
-                className="relative mb-2 min-w-max h-3"
-                style={{
-                  width: `${contributionWeeks.length * (CELL_SIZE + CELL_GAP)}px`,
-                }}
-              >
-                {monthLabels.map((label, index) =>
-                  label ? (
-                    <span
-                      key={`${label}-${index}`}
-                      className="absolute text-[9px] leading-none text-gray-400"
-                      style={{
-                        left: `${index * (CELL_SIZE + CELL_GAP)}px`,
-                      }}
-                    >
-                      {label}
-                    </span>
-                  ) : null,
-                )}
-              </div>
-
-              <div className="inline-flex gap-[1px] min-w-max">
-                {contributionWeeks.map((week, weekIndex) => (
-                  <div key={weekIndex} className="grid grid-rows-7 gap-[1px]">
-                    {week.map((day, dayIndex) => {
-                      const levelClass = day
-                        ? getLevelClass(day.level)
-                        : "bg-transparent";
-                      return (
-                        <div
-                          key={`${weekIndex}-${dayIndex}`}
-                          className="relative group"
-                        >
-                          <div
-                            className={`rounded-[2px] border border-white/5 ${levelClass}`}
-                            style={{
-                              width: `${CELL_SIZE}px`,
-                              height: `${CELL_SIZE}px`,
-                            }}
-                          />
-                          {day ? (
-                            <div className="pointer-events-none absolute bottom-[120%] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-black/90 px-2 py-1 text-[11px] text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100 z-20">
-                              {day.count} contributions on{" "}
-                              {formatTooltipDate(day.date)}
-                            </div>
-                          ) : null}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-              <div className="mt-3 flex items-center justify-end gap-2 text-[11px] text-gray-300">
-                <span>Less</span>
-                {[0, 1, 2, 3, 4].map((level) => (
-                  <span
-                    key={level}
-                    className={`rounded-[2px] border border-white/10 ${getLevelClass(level)}`}
-                    style={{
-                      width: `${CELL_SIZE}px`,
-                      height: `${CELL_SIZE}px`,
-                    }}
-                  />
-                ))}
-                <span>More</span>
-              </div>
-            </div>
-          )}
-        </div>
+        <GitHubContributionCard monthsToShow={6} username="Irsyan12" />
 
         <div className="relative">
-          <div className="sticky top-24 p-6 min-h-[220px] flex flex-col justify-between">
+          <div className="sticky top-24 rounded-2xl ">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-gray-400 mb-3">
+              <p className="text-[10px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.2em] text-gray-400 mb-3">
                 Inspiration
               </p>
               <div className="relative min-h-[90px]">
                 {quotes.map((quote, idx) => (
                   <p
                     key={quote}
-                    className={`absolute inset-0 text-gray-100 text-base leading-relaxed italic transition-all duration-700 ease-out ${
+                    className={`absolute inset-0 text-gray-100 text-sm sm:text-base leading-relaxed italic transition-all duration-700 ease-out ${
                       activeQuoteIndex === idx
                         ? "opacity-100 translate-y-0"
                         : "opacity-0 translate-y-3"
@@ -365,19 +170,6 @@ const AboutSection = () => {
               ))}
             </div>
           </div>
-
-          <div className="mt-6 space-y-6" aria-hidden="true">
-            {quotes.map((_, index) => (
-              <div
-                key={index}
-                ref={(el) => {
-                  quoteStepRefs.current[index] = el;
-                }}
-                data-index={index}
-                className="h-20"
-              />
-            ))}
-          </div>
         </div>
       </div>
     </section>
@@ -388,11 +180,39 @@ const SkillsSection = () => {
   const skills = [
     {
       category: "Frontend",
-      items: ["React", "Tailwind CSS", "Bootsrap", "JavaScript", "TypeScript"],
+      items: [
+        { name: "React", icon: <FaReact /> },
+        { name: "Next.js", icon: <SiNextdotjs /> },
+        { name: "Tailwind CSS", icon: <SiTailwindcss /> },
+        { name: "Bootstrap", icon: <SiBootstrap /> },
+        { name: "JavaScript", icon: <SiJavascript /> },
+        { name: "TypeScript", icon: <SiTypescript /> },
+      ],
     },
-    { category: "Backend", items: ["Node.js", "Python", "PHP"] },
-    { category: "Design", items: ["Figma", "Adobe Ilustrator"] },
-    { category: "Tools", items: ["Git", "Firebase"] },
+    {
+      category: "Backend",
+      items: [
+        { name: "Node.js", icon: <FaNodeJs /> },
+        { name: "Go", icon: <SiGo /> },
+        { name: "Python", icon: <SiPython /> },
+        { name: "PHP", icon: <SiPhp /> },
+      ],
+    },
+    {
+      category: "Design",
+      items: [
+        { name: "Figma", icon: <FaFigma /> },
+        { name: "Adobe Illustrator", icon: <SiAdobeillustrator /> },
+      ],
+    },
+    {
+      category: "Tools",
+      items: [
+        { name: "Git", icon: <FaGitAlt /> },
+        { name: "Docker", icon: <FaDocker /> },
+        { name: "Firebase", icon: <SiFirebase /> },
+      ],
+    },
   ];
 
   return (
@@ -421,11 +241,17 @@ const SkillsSection = () => {
               <h3 className="text-xl font-bold mb-4 text-color1">
                 {skillGroup.category}
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {skillGroup.items.map((skill) => (
-                  <li key={skill} className="flex items-center">
-                    <div className="w-2 h-2 bg-color1 rounded-full mr-2" />
-                    {skill}
+                  <li
+                    key={skill.name}
+                    className="flex items-center text-gray-300 hover:text-white transition-colors"
+                  >
+                    {/* Render icon di sini, ukurannya bisa diatur pakai text-xl dll */}
+                    <span className="text-xl mr-3 text-gray-600">
+                      {skill.icon}
+                    </span>
+                    {skill.name}
                   </li>
                 ))}
               </ul>
@@ -433,8 +259,7 @@ const SkillsSection = () => {
           ))}
         </div>
       </section>
-
-      <TechStack />
+      {/* <TechStack /> */}
     </div>
   );
 };
@@ -592,7 +417,7 @@ const ExperienceSection = () => {
                 data-aos="fade-up"
                 data-aos-delay={index * 100}
               >
-                <div className="md:w-1/4 flex items-center md:items-start md:justify-end">
+                <div className="md:w-1/4 flex items-center md:items-start md:justify-end text-xs md:text-sm lg:text-base">
                   <div className="absolute left-0 md:left-1/4 w-8 h-8 rounded-full bg-color1 items-center justify-center -ml-3 mt-1 shadow-lg shadow-color1/20 hidden md:flex">
                     <div className="w-3 h-3 bg-dark rounded-full"></div>
                   </div>
