@@ -30,8 +30,8 @@ function Navbar() {
       className={`fixed top-0 z-50 md:left-1/2 md:-translate-x-1/2 transition-all duration-500
       ${
         scrolled
-          ? "bg-dark2/60 backdrop-blur-md shadow-md rounded-2xl mt-3 w-5/6 md:rounded-xl md:w-4/6 md:mt-4 py-5 translate-x-10"
-          : "w-full bg-transparent md:my-9 md:w-5/6 py-4"
+          ? "bg-neutral-900/60 backdrop-blur-md shadow-md rounded-2xl mt-3 w-5/6 md:rounded-xl md:w-4/6 md:mt-4 py-5 translate-x-10 border border-white/5"
+          : "w-full bg-transparent md:my-9 md:w-5/6 py-4 border border-transparent"
       }`}
     >
       <div className="px-4 md:px-6 mx-auto flex justify-between items-center ">
@@ -44,49 +44,26 @@ function Navbar() {
           />
         </a>
 
-        {/* Desktop Menu */}
-        <ul className="hidden md:flex items-center text-white text-base space-x-10">
-          <li className="hover:text-color1 relative group cursor-pointer">
-            <a
-            
-              onClick={() => window.scrollTo(0, 0)}
-              className="transition-colors"
-            >
-              Home
-            </a>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-color1 transition-all duration-300 group-hover:w-full"></span>
-          </li>
-          <li className="hover:text-color1 relative group cursor-pointer">
-            <a href="#about" className="transition-colors">
-              About
-            </a>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-color1 transition-all duration-300 group-hover:w-full"></span>
-          </li>
-          <li className="hover:text-color1 relative group cursor-pointer">
-            <a href="#projects" className="transition-colors">
-              Projects
-            </a>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-color1 transition-all duration-300 group-hover:w-full"></span>
-          </li>
-          <li className="hover:text-color1 relative group cursor-pointer">
-            <a href="#contactMe" className="transition-colors">
-              Contact Me
-            </a>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-color1 transition-all duration-300 group-hover:w-full"></span>
-          </li>
-          
-        </ul>
-
-        {/* Mobile Menu - Simple Text Links */}
+        {/* Desktop Menu - Download CV */}
+        <div className="hidden md:flex items-center">
+          <a
+            href="/cv.pdf"
+            download="Irsyan_Ramadhan_CV.pdf"
+            target="_blank"
+            className="px-5 py-2 rounded-full text-sm font-medium bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-700 transition flex items-center gap-2 cursor-pointer"
+          >
+            <i className="ri-download-line"></i> Download CV
+          </a>
+        </div>        {/* Mobile Menu - Simple Text Links */}
         <ul className="md:hidden flex items-center text-white text-sm space-x-3">
-          <li className="hover:text-color1">
-            <a href="#about">About</a>
+          <li className="hover:text-amber-500">
+            <a href="#content">About</a>
           </li>
-          <li className="hover:text-color1">
-            <a href="#projects">Projects</a>
+          <li className="hover:text-amber-500">
+            <a href="#content">Projects</a>
           </li>
-          <li className="hover:text-color1">
-            <a href="#contactMe">Contact Me</a>
+          <li className="hover:text-amber-500">
+            <a href="#contact">Contact Me</a>
           </li>
         </ul>
       </div>

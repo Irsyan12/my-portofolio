@@ -23,6 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 .env
+/example
 
 # backend
 backend/scripts/createAdmin.js
+
+# Agents
+.agents
+AGENTS.md
+PRODUCT.md
