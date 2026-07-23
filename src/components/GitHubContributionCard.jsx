@@ -13,8 +13,8 @@ const GitHubContributionCard = ({
   const isSmallScreen = viewportWidth < 640;
   const isMediumScreen = viewportWidth >= 640 && viewportWidth < 1024;
 
-  const CELL_SIZE = isSmallScreen ? 8 : isMediumScreen ? 10 : 12;
-  const CELL_GAP = isSmallScreen ? 2 : 3;
+  const CELL_SIZE = isSmallScreen ? 9.5 : isMediumScreen ? 10 : 12;
+  const CELL_GAP = isSmallScreen ? 2.5 : 3;
 
   useEffect(() => {
     const updateViewportWidth = () => {
@@ -141,17 +141,17 @@ const GitHubContributionCard = ({
 
   return (
     <div className="p-4 max-w-md sm:p-5 font-jetbrains mx-auto">
-      <div className="flex flex-col mx-auto gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
+      <div className="flex items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-3">
           <img
             src={`https://github.com/${username}.png`}
             alt={`${username} GitHub avatar`}
-            className="w-11 h-11 sm:w-12 sm:h-12 rounded-full border border-white/20 object-cover"
+            className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/20 object-cover shrink-0"
             loading="lazy"
           />
-          <div>
-            <p className="text-[11px] sm:text-xs text-gray-300">@{username}</p>
-            <p className="text-[10px] sm:text-[11px] text-gray-500">
+          <div className="min-w-0">
+            <p className="text-[11px] sm:text-xs text-gray-300 font-semibold truncate">@{username}</p>
+            <p className="text-[10px] sm:text-[11px] text-gray-500 truncate">
               GitHub activity overview
             </p>
           </div>
@@ -160,7 +160,7 @@ const GitHubContributionCard = ({
           href={`https://github.com/${username}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="group flex items-center gap-0 rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-white/10 hover:shadow-lg border border-transparent hover:border-white/10"
+          className="group flex items-center gap-0 rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-white/10 hover:shadow-lg border border-transparent hover:border-white/10 shrink-0"
         >
           <FaGithub className="text-xl text-gray-400 group-hover:text-color1 transition-colors duration-300" />
 

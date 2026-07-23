@@ -1,4 +1,5 @@
 import React from "react";
+import { RiGithubFill, RiLinkedinFill, RiInstagramFill } from "react-icons/ri";
 
 const Footer = () => {
   return (
@@ -21,25 +22,23 @@ const Footer = () => {
             className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
             aria-label="GitHub"
           >
-            <i className="ri-github-fill text-xl"></i>
+            <RiGithubFill className="text-xl" />
           </a>
           <a
-            href="https://www.linkedin.com/in/irsyanramadhan/"
+            href="https://linkedin.com/in/irsyan-ramadhan"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
-            aria-label="LinkedIn"
+            className="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
           >
-            <i className="ri-linkedin-fill text-xl"></i>
+            <RiLinkedinFill className="text-xl" />
           </a>
           <a
-            href="https://instagram.com/irsan.rmd_"
+            href="https://instagram.com/syan.r"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
-            aria-label="Instagram"
+            className="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
           >
-            <i className="ri-instagram-fill text-xl"></i>
+            <RiInstagramFill className="text-xl" />
           </a>
         </div>
       </div>

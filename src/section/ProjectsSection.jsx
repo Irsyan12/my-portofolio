@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { projectsAPI } from "../api";
 import ProjectDetailModal from "../components/ProjectDetailModal";
 import { fetchWithRetry } from "../utils/fetchWithRetry";
+import { RiArrowDownLine } from "react-icons/ri";
 
 const ProjectsSection = ({ limit = 6 }) => {
-  const [activeTab, setActiveTab] = useState("project"); // "project" or "certification"
+  const [activeTab, setActiveTab] = useState("project");
   const [allProjects, setAllProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -55,30 +57,43 @@ const ProjectsSection = ({ limit = 6 }) => {
   const itemsToDisplay = filteredProjects.slice(0, displayLimit);
 
   return (
-    <div
-      className="bg-cardBg border border-cardBorder rounded-3xl p-6 sm:p-8"
-      data-aos="fade-up"
-      data-aos-delay="200"
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <h2 className="font-serif text-3xl font-bold text-white">Recent Work</h2>
-        <div className="flex gap-2">
+
+        {/* Redesigned filter tabs */}
+        <div className="relative flex items-center bg-neutral-900/80 rounded-full p-1 border border-neutral-800 w-64">
+          {/* Animated sliding background (solid color, no gradient) */}
+          <motion.div
+            className="absolute top-1 bottom-1 rounded-full bg-neutral-800 border border-neutral-700/50"
+            layout
+            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+            style={{
+              left: activeTab === "project" ? "4px" : "calc(50% + 2px)",
+              width: "calc(50% - 6px)",
+            }}
+          />
           <button
             onClick={() => { setActiveTab("project"); setDisplayLimit(limit); }}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium transition cursor-pointer ${
+            className={`relative z-10 flex-1 py-1.5 text-center rounded-full text-xs font-semibold transition-colors duration-200 cursor-pointer ${
               activeTab === "project"
-                ? "bg-amber-500 text-black glow-orange"
-                : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
+                ? "text-amber-400"
+                : "text-neutral-400 hover:text-neutral-200"
             }`}
           >
             Projects
           </button>
           <button
             onClick={() => { setActiveTab("certification"); setDisplayLimit(limit); }}
-            className={`px-4 py-1.5 rounded-full text-xs font-medium transition cursor-pointer ${
+            className={`relative z-10 flex-1 py-1.5 text-center rounded-full text-xs font-semibold transition-colors duration-200 cursor-pointer ${
               activeTab === "certification"
-                ? "bg-emerald-500 text-black glow-green"
-                : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
+                ? "text-emerald-400"
+                : "text-neutral-400 hover:text-neutral-200"
             }`}
           >
             Certificates
@@ -102,42 +117,48 @@ const ProjectsSection = ({ limit = 6 }) => {
             No items found.
           </div>
         ) : (
-          itemsToDisplay.map((project, index) => (
-            <div
-              key={project._id}
-              className="group rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-800 hover:border-neutral-600 transition-all duration-300 cursor-pointer"
-              onClick={() => openDetailModal(project)}
-            >
-              <div className="aspect-video overflow-hidden relative">
-                <img
-                  src={project.imageUrl || "https://placehold.co/600x400?text=No+Image"}
-                  alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-transparent to-transparent opacity-80"></div>
-              </div>
-              <div className="p-5">
-                <h3 className="text-lg font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-1">
-                  {project.title}
-                </h3>
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {(project.techStack?.slice(0, 3) || []).map((tech, idx) => (
-                    <span
-                      key={idx}
-                      className="px-2 py-1 bg-neutral-800 rounded text-[10px] text-neutral-300"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                  {project.techStack?.length > 3 && (
-                    <span className="px-2 py-1 bg-neutral-800 rounded text-[10px] text-neutral-300">
-                      +{project.techStack.length - 3}
-                    </span>
-                  )}
+          <AnimatePresence mode="wait">
+            {itemsToDisplay.map((project, index) => (
+              <motion.div
+                key={project._id}
+                className="group rounded-2xl overflow-hidden bg-neutral-900/50 border border-neutral-800 hover:border-neutral-600 transition-all duration-300 cursor-pointer"
+                onClick={() => openDetailModal(project)}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: index * 0.05, ease: "easeOut" }}
+                whileHover={{ y: -4 }}
+              >
+                <div className="aspect-video overflow-hidden relative">
+                  <img
+                    src={project.imageUrl || "https://placehold.co/600x400?text=No+Image"}
+                    alt={project.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-transparent to-transparent opacity-80"></div>
                 </div>
-              </div>
-            </div>
-          ))
+                <div className="p-5">
+                  <h3 className="text-lg font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-1">
+                    {project.title}
+                  </h3>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {(project.techStack?.slice(0, 3) || []).map((tech, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2 py-1 bg-neutral-800 rounded text-[10px] text-neutral-300"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                    {project.techStack?.length > 3 && (
+                      <span className="px-2 py-1 bg-neutral-800 rounded text-[10px] text-neutral-300">
+                        +{project.techStack.length - 3}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         )}
       </div>
 
@@ -148,7 +169,7 @@ const ProjectsSection = ({ limit = 6 }) => {
             className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition group cursor-pointer"
           >
             View more
-            <i className="ri-arrow-down-line group-hover:translate-y-1 transition-transform"></i>
+            <RiArrowDownLine className="group-hover:translate-y-1 transition-transform" />
           </button>
         </div>
       )}
@@ -159,7 +180,7 @@ const ProjectsSection = ({ limit = 6 }) => {
           onClose={closeDetailModal}
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 

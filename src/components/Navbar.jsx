@@ -1,5 +1,5 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from "react";
+import { RiFileDownloadLine } from "react-icons/ri";
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -34,7 +34,7 @@ function Navbar() {
           : "w-full bg-transparent md:my-9 md:w-5/6 py-4 border border-transparent"
       }`}
     >
-      <div className="px-4 md:px-6 mx-auto flex justify-between items-center ">
+      <div className="px-4 md:px-6 mx-auto flex justify-between items-center">
         <a onClick={() => window.scrollTo(0, 0)}>
           <img
             src={logo}
@@ -44,17 +44,21 @@ function Navbar() {
           />
         </a>
 
-        {/* Desktop Menu - Download CV */}
+        {/* Desktop Menu - Download CV (same style as AboutMe) */}
         <div className="hidden md:flex items-center">
           <a
             href="/cv.pdf"
             download="Irsyan_Ramadhan_CV.pdf"
             target="_blank"
-            className="px-5 py-2 rounded-full text-sm font-medium bg-neutral-800 hover:bg-neutral-700 text-white border border-neutral-700 transition flex items-center gap-2 cursor-pointer"
+            className="group relative inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-xs font-semibold text-white bg-neutral-900 border border-neutral-700 hover:border-amber-500/50 transition-all duration-300 overflow-hidden cursor-pointer"
           >
-            <i className="ri-download-line"></i> Download CV
+            <span className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-amber-500/10 to-amber-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
+            <RiFileDownloadLine className="text-amber-500 text-lg transition-transform group-hover:-translate-y-0.5" />
+            <span>Download CV</span>
           </a>
-        </div>        {/* Mobile Menu - Simple Text Links */}
+        </div>
+
+        {/* Mobile Menu - Simple Text Links */}
         <ul className="md:hidden flex items-center text-white text-sm space-x-3">
           <li className="hover:text-amber-500">
             <a href="#content">About</a>

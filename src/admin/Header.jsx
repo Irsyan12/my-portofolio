@@ -1,5 +1,5 @@
 import React from "react";
-import { LogOut, User } from "lucide-react";
+import { FiLogOut, FiUser } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -16,7 +16,7 @@ const Header = () => {
     <header className="bg-dark border-b border-gray-800 p-4 flex justify-end items-center">
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2 mr-4">
-          <User className="text-gray-400" size={20} />
+          <FiUser className="text-gray-400" size={20} />
           <span className="text-gray-300">
             {currentUser?.name || currentUser?.email || "Admin"}
           </span>
@@ -25,7 +25,7 @@ const Header = () => {
           onClick={handleLogout}
           className="text-gray-300 hover:text-color1 transition-colors flex items-center space-x-2"
         >
-          <LogOut size={20} />
+          <FiLogOut size={20} />
           <span>Logout</span>
         </button>
       </div>
@@ -34,3 +34,4 @@ const Header = () => {
 };
 
 export default Header;
+

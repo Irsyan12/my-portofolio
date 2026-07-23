@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, useMotionValue, useSpring, useMotionTemplate } from "framer-motion";
 import OptimizedProfileImage from "../components/OptimizedProfileImage";
+import { RiArrowDownLine } from "react-icons/ri";
 
 const HeroSection = () => {
   const cursorX = useMotionValue(-1000);
@@ -37,8 +38,8 @@ const HeroSection = () => {
 
       {/* Interactive Background Text Container */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] w-full text-center opacity-70">
-          <p className="font-serif text-[15vw] sm:text-8xl md:text-[11rem] lg:text-[13rem] font-bold tracking-widest text-outline leading-none text-transparent whitespace-nowrap">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] w-full text-center opacity-70 px-2">
+          <p className="font-serif text-[18vw] sm:text-8xl md:text-[11rem] lg:text-[13rem] font-bold tracking-widest text-outline leading-tight sm:leading-none text-transparent break-words whitespace-normal sm:whitespace-nowrap text-center">
             PORTFOLIO
           </p>
           <p className="hidden sm:block font-serif text-[15vw] sm:text-8xl md:text-[11rem] lg:text-[13rem] font-bold tracking-widest text-outline leading-none -mt-4 sm:-mt-8 text-transparent whitespace-nowrap">
@@ -54,8 +55,8 @@ const HeroSection = () => {
             maskImage: useMotionTemplate`radial-gradient(250px circle at ${mouseX}px ${mouseY}px, black 10%, transparent 80%)`,
           }}
         >
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] w-full text-center">
-            <p className="font-serif text-[15vw] sm:text-8xl md:text-[11rem] lg:text-[13rem] font-bold tracking-widest text-amber-500/30 leading-none whitespace-nowrap">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[45%] w-full text-center px-2">
+            <p className="font-serif text-[18vw] sm:text-8xl md:text-[11rem] lg:text-[13rem] font-bold tracking-widest text-amber-500/30 leading-tight sm:leading-none break-words whitespace-normal sm:whitespace-nowrap text-center">
               PORTFOLIO
             </p>
             <p className="hidden sm:block font-serif text-[15vw] sm:text-8xl md:text-[11rem] lg:text-[13rem] font-bold tracking-widest text-emerald-500/20 leading-none -mt-4 sm:-mt-8 whitespace-nowrap">
@@ -86,7 +87,7 @@ const HeroSection = () => {
         data-aos-delay="700"
       >
         <span className="text-[10px] tracking-[0.2em] uppercase font-bold [writing-mode:vertical-rl] rotate-180">Scroll</span>
-        <i className="ri-arrow-down-line text-xl animate-bounce"></i>
+        <RiArrowDownLine className="text-xl animate-bounce" />
       </a>
     </header>
   );

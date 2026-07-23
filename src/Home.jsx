@@ -72,7 +72,7 @@ function Home() {
   }, []);
 
   return (
-    <div className={`min-h-screen relative selection:bg-amber-500 selection:text-black bg-darkBg text-gray-200 ${isLoading ? "h-screen overflow-hidden" : ""}`}>
+    <div className={`min-h-screen relative selection:bg-amber-500 selection:text-black bg-darkBg text-gray-200 overflow-x-hidden ${isLoading ? "h-screen overflow-y-hidden" : ""}`}>
       
       {/* Loading screen rendered in the background */}
       {showLoadingScreen && <HackerLoadingScreen />}

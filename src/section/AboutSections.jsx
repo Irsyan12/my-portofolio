@@ -6,7 +6,6 @@ import {
   FaRedoAlt,
 } from "react-icons/fa";
 import GitHubContributionCard from "../components/GitHubContributionCard";
-import TechStack from "../components/TechStack";
 import { experiencesAPI } from "../api";
 import { fetchWithRetry } from "../utils/fetchWithRetry";
 import { FaReact, FaNodeJs, FaFigma, FaDocker, FaGitAlt } from "react-icons/fa";
@@ -24,42 +23,6 @@ import {
 } from "react-icons/si";
 
 const AboutSection = () => {
-  const quotes = [
-    "Consistency beats intensity when building a meaningful career.",
-    "Small improvements every day create extraordinary results over time.",
-    "Discipline turns your goals into real, visible progress.",
-    "Stay curious, keep shipping, and let your work speak for itself.",
-  ];
-
-  const [activeQuoteIndex, setActiveQuoteIndex] = useState(0);
-  const quoteStepRefs = useRef([]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const index = Number(entry.target.dataset.index);
-            if (!Number.isNaN(index)) {
-              setActiveQuoteIndex(index);
-            }
-          }
-        });
-      },
-      {
-        root: null,
-        threshold: 0.6,
-        rootMargin: "-25% 0px -25% 0px",
-      },
-    );
-
-    quoteStepRefs.current.forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <section
       className="py-24 w-11/12 md:w-5/6 mx-auto text-white cursor-default"
@@ -129,48 +92,11 @@ const AboutSection = () => {
       </div>
 
       <div
-        className="mt-16 grid lg:grid-cols-2 gap-8 items-start"
+        className="mt-16 block"
         data-aos="fade-up"
         data-aos-delay={300}
       >
         <GitHubContributionCard monthsToShow={6} username="Irsyan12" />
-
-        <div className="relative">
-          <div className="sticky top-24 rounded-2xl ">
-            <div>
-              <p className="text-[10px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.2em] text-gray-400 mb-3">
-                Inspiration
-              </p>
-              <div className="relative min-h-[90px]">
-                {quotes.map((quote, idx) => (
-                  <p
-                    key={quote}
-                    className={`absolute inset-0 text-gray-100 text-sm sm:text-base leading-relaxed italic transition-all duration-700 ease-out ${
-                      activeQuoteIndex === idx
-                        ? "opacity-100 translate-y-0"
-                        : "opacity-0 translate-y-3"
-                    }`}
-                  >
-                    "{quote}"
-                  </p>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 mt-4">
-              {quotes.map((_, idx) => (
-                <span
-                  key={idx}
-                  className={`h-1.5 rounded-full transition-all duration-500 ${
-                    activeQuoteIndex === idx
-                      ? "w-8 bg-color1"
-                      : "w-3 bg-white/30"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
