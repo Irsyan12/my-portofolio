@@ -12,7 +12,7 @@ const socialLinks = [
   {
     name: "GitHub",
     username: "@Irsyan12",
-    description: "Check out my projects & code repositories",
+    description: "Check out my projects!",
     url: "https://github.com/Irsyan12",
     icon: RiGithubFill,
     accentColor: "from-white/[0.03] via-white/[0.015] to-transparent",
@@ -23,7 +23,7 @@ const socialLinks = [
   {
     name: "LinkedIn",
     username: "Irsyan Ramadhan",
-    description: "Connect with me professionally & see my career updates",
+    description: "Connect with me professionally!",
     url: "https://linkedin.com/in/irsyanramadhan",
     icon: RiLinkedinFill,
     accentColor: "from-sky-400/[0.08] via-sky-400/[0.03] to-transparent",
@@ -34,7 +34,7 @@ const socialLinks = [
   {
     name: "Instagram",
     username: "@irsan.rmd_",
-    description: "Follow my personal life, tech visual logs & updates",
+    description: "Follow my daily life & tech updates!",
     url: "https://instagram.com/irsan.rmd_",
     icon: RiInstagramFill,
     accentColor: "from-fuchsia-400/[0.08] via-pink-400/[0.03] to-transparent",
@@ -45,8 +45,7 @@ const socialLinks = [
   {
     name: "Gmail",
     username: "irsyanramadhan72@gmail.com",
-    description:
-      "Send me an email for collaborations, questions, or just to say hi!",
+    description: "Send me an email for collaborations!",
     url: "mailto:irsyanramadhan72@gmail.com",
     icon: RiMailFill,
     accentColor: "from-red-400/[0.08] via-orange-400/[0.03] to-transparent",
