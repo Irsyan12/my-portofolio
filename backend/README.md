@@ -319,7 +319,7 @@ MONGO_URI=mongodb+srv://...
 JWT_SECRET=super-secure-production-key
 PORT=5000
 NODE_ENV=production
-CLIENT_URL=https://yourdomain.com
+CLIENT_URL=https://irsyanrmd.dev
 ```
 
 ### Deployment Checklist

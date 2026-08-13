@@ -28,13 +28,13 @@ app.use(
   })
 );
 
-// CORS configuration
 const allowedOrigins = [
-  process.env.CLIENT_URL || "http://localhost:3000",
+  process.env.CLIENT_URL || "https://irsyanrmd.dev",
+  "https://irsyanrmd.dev", // Production primary frontend
+  "https://irsyanramadhan.my.id", // Legacy domain for transition
   "http://localhost:5173", // Vite default port
   "http://localhost:5174", // Alternative Vite port
   "http://localhost:3000", // React dev server
-  "https://irsyanramadhan.my.id", // Production frontend
 ];
 
 const corsOptions = {
