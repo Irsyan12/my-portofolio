@@ -153,16 +153,8 @@ app.get("/", (req, res) => {
   res.json({
     success: true,
     message: "Portfolio Backend API is running! 🚀",
-    version: "1.0.0",
-    timestamp: new Date().toISOString(),
-    endpoints: {
-      users: "/api/users",
-      projects: "/api/projects",
-      experiences: "/api/experiences",
-      messages: "/api/messages",
-      feedback: "/api/feedback",
-      analytics: "/api/visits",
-    },
+    version: "1.4.0",
+    timestamp: new Date().toISOString()
   });
 });
 
