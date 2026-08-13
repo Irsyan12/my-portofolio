@@ -1,5 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-import ProjectsPage from "../pages/ProjectsPage";
 import Home from "../Home";
 import Login from "../admin/Login";
 import NotFoundPage from "../pages/404";
@@ -15,10 +14,6 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
-  },
-  {
-    path: "/projects",
-    element: <ProjectsPage />,
   },
   {
     path: "/login",
