@@ -35,6 +35,7 @@ export const getPublicFeedback = async (req, res) => {
 
     const total = await Feedback.countDocuments(filter);
 
+    res.set("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=86400");
     res.json({
       success: true,
       data: feedback,
@@ -86,6 +87,7 @@ export const getAllFeedback = async (req, res) => {
 
     const total = await Feedback.countDocuments(filter);
 
+    res.set("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=86400");
     res.json({
       success: true,
       data: feedback,

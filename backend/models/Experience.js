@@ -34,6 +34,6 @@ const experienceSchema = new mongoose.Schema(
   }
 );
 
-experienceSchema.index({ order: 1 });
+experienceSchema.index({ order: 1, createdAt: -1 });
 
 export default mongoose.model("Experience", experienceSchema);

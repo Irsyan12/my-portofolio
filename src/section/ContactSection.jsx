@@ -85,6 +85,8 @@ const ContactSection = () => {
       <AnimatePresence>
         {validationError && (
           <motion.div
+            role="alert"
+            aria-live="assertive"
             initial={{ opacity: 0, y: -10, height: 0 }}
             animate={{ opacity: 1, y: 0, height: "auto" }}
             exit={{ opacity: 0, y: -10, height: 0 }}
@@ -99,47 +101,81 @@ const ContactSection = () => {
 
       <form className="space-y-4 relative z-10" onSubmit={handleSubmit} noValidate>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="contact-name" className="block text-xs font-medium text-neutral-400 mb-1.5">
+              Your Name <span className="text-amber-500">*</span>
+            </label>
+            <input
+              id="contact-name"
+              type="text"
+              name="name"
+              placeholder="Your Name"
+              autoComplete="name"
+              required
+              aria-required="true"
+              value={formData.name}
+              onChange={handleChange}
+              className={`w-full bg-neutral-900 border ${
+                validationError && !formData.name.trim() ? "border-rose-500/60 focus:border-rose-500" : "border-neutral-800 focus:border-amber-500/50"
+              } rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none transition-colors`}
+            />
+          </div>
+          <div>
+            <label htmlFor="contact-email" className="block text-xs font-medium text-neutral-400 mb-1.5">
+              Your Email <span className="text-amber-500">*</span>
+            </label>
+            <input
+              id="contact-email"
+              type="email"
+              name="email"
+              placeholder="Your Email"
+              autoComplete="email"
+              required
+              aria-required="true"
+              value={formData.email}
+              onChange={handleChange}
+              className={`w-full bg-neutral-900 border ${
+                validationError && (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) ? "border-rose-500/60 focus:border-rose-500" : "border-neutral-800 focus:border-amber-500/50"
+              } rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none transition-colors`}
+            />
+          </div>
+        </div>
+        <div>
+          <label htmlFor="contact-subject" className="block text-xs font-medium text-neutral-400 mb-1.5">
+            Subject <span className="text-amber-500">*</span>
+          </label>
           <input
+            id="contact-subject"
             type="text"
-            name="name"
-            placeholder="Your Name"
-            value={formData.name}
+            name="subject"
+            placeholder="Subject"
+            required
+            aria-required="true"
+            value={formData.subject}
             onChange={handleChange}
             className={`w-full bg-neutral-900 border ${
-              validationError && !formData.name.trim() ? "border-rose-500/60 focus:border-rose-500" : "border-neutral-800 focus:border-amber-500/50"
-            } rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none transition-colors`}
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Your Email"
-            value={formData.email}
-            onChange={handleChange}
-            className={`w-full bg-neutral-900 border ${
-              validationError && (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) ? "border-rose-500/60 focus:border-rose-500" : "border-neutral-800 focus:border-amber-500/50"
+              validationError && !formData.subject.trim() ? "border-rose-500/60 focus:border-rose-500" : "border-neutral-800 focus:border-amber-500/50"
             } rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none transition-colors`}
           />
         </div>
-        <input
-          type="text"
-          name="subject"
-          placeholder="Subject"
-          value={formData.subject}
-          onChange={handleChange}
-          className={`w-full bg-neutral-900 border ${
-            validationError && !formData.subject.trim() ? "border-rose-500/60 focus:border-rose-500" : "border-neutral-800 focus:border-amber-500/50"
-          } rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none transition-colors`}
-        />
-        <textarea
-          name="message"
-          placeholder="Your Message"
-          rows="5"
-          value={formData.message}
-          onChange={handleChange}
-          className={`w-full bg-neutral-900 border ${
-            validationError && !formData.message.trim() ? "border-rose-500/60 focus:border-rose-500" : "border-neutral-800 focus:border-amber-500/50"
-          } rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none transition-colors resize-none`}
-        ></textarea>
+        <div>
+          <label htmlFor="contact-message" className="block text-xs font-medium text-neutral-400 mb-1.5">
+            Your Message <span className="text-amber-500">*</span>
+          </label>
+          <textarea
+            id="contact-message"
+            name="message"
+            placeholder="Your Message"
+            rows="5"
+            required
+            aria-required="true"
+            value={formData.message}
+            onChange={handleChange}
+            className={`w-full bg-neutral-900 border ${
+              validationError && !formData.message.trim() ? "border-rose-500/60 focus:border-rose-500" : "border-neutral-800 focus:border-amber-500/50"
+            } rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none transition-colors resize-none`}
+          ></textarea>
+        </div>
 
         <button
           type="submit"
@@ -171,6 +207,8 @@ const ContactSection = () => {
         <Alert
           onClose={handleSnackbarClose}
           severity={snackbar.severity}
+          role="status"
+          aria-live="polite"
           sx={{
             backgroundColor: "#171717",
             color: "#f5f5f5",

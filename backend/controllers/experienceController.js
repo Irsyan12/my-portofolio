@@ -17,6 +17,7 @@ export const getExperiences = async (req, res) => {
     // Execute query
     const experiences = await Experience.find(filter).sort(sort);
 
+    res.set("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=86400");
     res.json({
       success: true,
       data: experiences,

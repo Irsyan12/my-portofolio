@@ -42,8 +42,15 @@ const DashboardLayout = () => {
     }
   };
 
-  // useEffect for session management
+  // useEffect for session management & SEO noindex
   useEffect(() => {
+    // Prevent indexing of admin dashboard (SEC-06, ACT-23)
+    const metaRobots = document.querySelector('meta[name="robots"]');
+    const originalContent = metaRobots ? metaRobots.getAttribute("content") : "index, follow";
+    if (metaRobots) {
+      metaRobots.setAttribute("content", "noindex, nofollow");
+    }
+
     const LOGIN_TIMESTAMP_KEY = "AUTH_";
     const SESSION_DURATION = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
 

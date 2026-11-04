@@ -53,16 +53,15 @@ function Navbar() {
           />
         </a>
 
-        {/* Desktop Menu - Download CV (same style as AboutMe) */}
+        {/* Desktop Menu - Download CV */}
         <div className="hidden md:flex items-center">
           <a
             href="/cv.pdf"
             download="Irsyan_Ramadhan_CV.pdf"
             target="_blank"
-            className="group relative inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-xs font-semibold text-white bg-neutral-900 border border-neutral-700 hover:border-amber-500/50 transition-all duration-300 overflow-hidden cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-neutral-400 hover:text-white transition-colors duration-200 cursor-pointer"
           >
-            <span className="absolute inset-0 bg-gradient-to-r from-amber-500/0 via-amber-500/10 to-amber-500/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></span>
-            <RiFileDownloadLine className="text-amber-500 text-lg transition-transform group-hover:-translate-y-0.5" />
+            <RiFileDownloadLine className="text-base text-amber-500" />
             <span>Download CV</span>
           </a>
         </div>

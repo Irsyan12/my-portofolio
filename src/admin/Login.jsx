@@ -20,9 +20,20 @@ const LoginPage = () => {
 
   // If already logged in, redirect to admin
   useEffect(() => {
+    // Prevent search indexing of login page (SEC-06, ACT-23)
+    const metaRobots = document.querySelector('meta[name="robots"]');
+    const originalContent = metaRobots ? metaRobots.getAttribute("content") : "index, follow";
+    if (metaRobots) {
+      metaRobots.setAttribute("content", "noindex, nofollow");
+    }
+
     if (currentUser) {
       navigate("/admin");
     }
+
+    return () => {
+      if (metaRobots) metaRobots.setAttribute("content", originalContent);
+    };
   }, [currentUser, navigate]);
 
   const logo =

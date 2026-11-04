@@ -19,34 +19,45 @@ const TechStack = () => {
   }
 
   return (
-    <div className="mt-20 w-full bg-transparent relative overflow-hidden">
-      {/* Left Fade */}
-      <div className="absolute left-0 top-0 h-full w-96 bg-gradient-to-r from-dark via-transparent to-transparent z-10 pointer-events-none" />
+    <>
+      {/* Screen-reader accessible list of technologies (read once, clean) */}
+      <div className="sr-only">
+        <h3>Technologies & Tools</h3>
+        <p>{icons.map((i) => i.name).join(", ")}</p>
+      </div>
 
-      {/* Right Fade */}
-      <div className="absolute right-0 top-0 h-full w-96 bg-gradient-to-l from-dark via-transparent to-transparent z-10 pointer-events-none" />
+      <div
+        className="mt-20 w-full bg-transparent relative overflow-hidden"
+        aria-hidden="true"
+      >
+        {/* Left Fade */}
+        <div className="absolute left-0 top-0 h-full w-96 bg-gradient-to-r from-dark via-transparent to-transparent z-10 pointer-events-none" />
 
-      <Marquee speed={40} autoFill={true}>
-        {icons.map(({ name, url }, index) => (
-          <div
-            key={name}
-            className="mx-5 md:mx-8"
-            data-aos="zoom-in"
-            data-aos-delay={index * 150}
-          >
-            <img
-              src={url}
-              alt={name}
-              loading="lazy"
-              decoding="async"
-              width="48"
-              height="48"
-              className="h-10 md:h-12 w-auto object-contain"
-            />
-          </div>
-        ))}
-      </Marquee>
-    </div>
+        {/* Right Fade */}
+        <div className="absolute right-0 top-0 h-full w-96 bg-gradient-to-l from-dark via-transparent to-transparent z-10 pointer-events-none" />
+
+        <Marquee speed={40} autoFill={true}>
+          {icons.map(({ name, url }, index) => (
+            <div
+              key={name}
+              className="mx-5 md:mx-8"
+              data-aos="zoom-in"
+              data-aos-delay={index * 150}
+            >
+              <img
+                src={url}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                width="48"
+                height="48"
+                className="h-10 md:h-12 w-auto object-contain"
+              />
+            </div>
+          ))}
+        </Marquee>
+      </div>
+    </>
   );
 };
 

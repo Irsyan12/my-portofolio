@@ -167,6 +167,8 @@ const SocialStackCarousel = () => {
                   setCurrentIndex(index);
                 }
               }}
+              tabIndex={isActive ? 0 : -1}
+              aria-hidden={!isActive}
               className={`absolute w-[82%] sm:w-[360px] rounded-2xl p-3.5 sm:p-4 flex items-center justify-between border backdrop-blur-xl bg-neutral-900/85 ${item.borderColor}`}
               animate={{
                 x: isLeft
@@ -240,18 +242,24 @@ const SocialStackCarousel = () => {
       </div>
 
       {/* Progress Indicators */}
-      <div className="flex justify-center items-center gap-1.5 mt-6">
-        {socialLinks.map((_, idx) => (
+      <div className="flex justify-center items-center gap-1 mt-6">
+        {socialLinks.map((item, idx) => (
           <button
             key={idx}
+            type="button"
             onClick={() => setCurrentIndex(idx)}
-            className={`h-1 rounded-full transition-all duration-300 ${
-              currentIndex === idx
-                ? "w-6 bg-amber-500"
-                : "w-1.5 bg-neutral-700 hover:bg-neutral-500"
-            }`}
-            aria-label={`Go to slide ${idx + 1}`}
-          />
+            className="p-2 flex items-center justify-center focus:outline-none cursor-pointer"
+            aria-label={`Go to slide ${idx + 1} (${item.name})`}
+            aria-current={currentIndex === idx ? "true" : undefined}
+          >
+            <span
+              className={`h-1.5 rounded-full transition-all duration-300 block ${
+                currentIndex === idx
+                  ? "w-6 bg-amber-500 shadow-sm shadow-amber-500/50"
+                  : "w-1.5 bg-neutral-700 hover:bg-neutral-500"
+              }`}
+            />
+          </button>
         ))}
       </div>
     </div>

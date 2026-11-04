@@ -119,9 +119,11 @@ const projectSchema = new mongoose.Schema(
   }
 );
 
-// Index untuk pencarian
+// Index untuk pencarian dan query publik
 projectSchema.index({ title: "text", description: "text" });
 projectSchema.index({ category: 1 });
 projectSchema.index({ featured: -1, createdAt: -1 });
+projectSchema.index({ type: 1, isPublic: 1, createdAt: -1 });
+projectSchema.index({ isPublic: 1, createdAt: -1 });
 
 export default mongoose.model("Project", projectSchema);

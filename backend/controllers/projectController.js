@@ -66,6 +66,7 @@ export const getProjects = async (req, res) => {
     // Ensure response includes `type` for older documents that did not have the field
     const projectsResp = projects.map(ensureType);
 
+    res.set("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=86400");
     res.json({
       success: true,
       data: projectsResp,
@@ -136,6 +137,7 @@ export const getAllProjectsAdmin = async (req, res) => {
     // Ensure response includes `type` for older documents that did not have the field
     const projectsResp = projects.map(ensureType);
 
+    res.set("Cache-Control", "public, max-age=60, s-maxage=300, stale-while-revalidate=86400");
     res.json({
       success: true,
       data: projectsResp,

@@ -199,3 +199,15 @@
 div[ref="scrollRef"]::-webkit-scrollbar {
   display: none;
 }
+
+/* Accessibility: Support for prefers-reduced-motion (A11Y-06, ACT-21) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

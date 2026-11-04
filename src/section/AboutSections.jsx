@@ -185,7 +185,6 @@ const SkillsSection = () => {
           ))}
         </div>
       </section>
-      {/* <TechStack /> */}
     </div>
   );
 };

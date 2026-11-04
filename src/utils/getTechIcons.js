@@ -19,13 +19,18 @@ const iconMap = {
   vue: "Vue_ocgcpe",
   supabase: "supabase_uhipak",
   nextjs: "nextjsc8cawn",
+  claude: "zz8bppblu34mhodgduy1",
+  deepseek: "c6ywba6vtg3zo1i6r7nz",
+  google_antigravity: "oozvbh9zzihcezrcm0xz",
+  openclaw: "u1fzlrvcilvk0tw55glj",
+  opencode: "azqimvg9x3uumwrqimcu",
 };
 
 // ✅ Ambil semua icon sebagai objek lengkap { name, url }
 export const getAllIcons = () => {
   return Object.entries(iconMap).map(([name, id]) => ({
     name,
-    url: `${cloudinaryBaseUrl}/v1772696791/${cloudinaryFolder}/${id}.png`,
+    url: `${cloudinaryBaseUrl}/${cloudinaryFolder}/${id}.png`,
   }));
 };
 
@@ -34,13 +39,13 @@ export const getIconByName = (name) => {
   const id = iconMap[name];
   if (!id) return null;
 
-  return `${cloudinaryBaseUrl}/v1772696791/${cloudinaryFolder}/${id}.png`;
+  return `${cloudinaryBaseUrl}/${cloudinaryFolder}/${id}.png`;
 };
 
 // ✅ Jika perlu, ekspor juga seluruh dictionary URL langsung
 export const iconDict = Object.fromEntries(
   Object.entries(iconMap).map(([name, id]) => [
     name,
-    `${cloudinaryBaseUrl}/v1772696791/${cloudinaryFolder}/${id}.png`,
+    `${cloudinaryBaseUrl}/${cloudinaryFolder}/${id}.png`,
   ])
 );
