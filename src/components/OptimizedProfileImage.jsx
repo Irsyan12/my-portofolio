@@ -6,9 +6,13 @@ const OptimizedProfileImage = () => {
   
   return (
     <img
-      src="https://res.cloudinary.com/dxwmph7tj/image/upload/v1783964240/myfoto2_dzdqo4.png"
+      src="https://res.cloudinary.com/dxwmph7tj/image/upload/f_auto,q_auto,w_800/v1783964240/myfoto2_dzdqo4.png"
       alt="Irsyan Ramadhan"
       draggable="false"
+      loading="eager"
+      fetchpriority="high"
+      width="495"
+      height="832"
       onLoad={() => setLoaded(true)}
       className={`max-w-xs sm:max-w-sm md:max-w-md w-full h-auto object-contain transition-opacity duration-700 ${
         loaded ? "opacity-100" : "opacity-0"

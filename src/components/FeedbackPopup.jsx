@@ -114,6 +114,7 @@ const FeedbackPopup = () => {
             </div>
             <IconButton
               onClick={handleClose}
+              aria-label="Tutup dialog feedback"
               size="small"
               sx={{
                 color: "#9ca3af",

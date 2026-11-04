@@ -35,11 +35,20 @@ function Navbar() {
       }`}
     >
       <div className="px-4 md:px-6 mx-auto flex justify-between items-center">
-        <a onClick={() => window.scrollTo(0, 0)}>
+        <a
+          href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          aria-label="Irsyan Ramadhan — Homepage"
+        >
           <img
             src={logo}
             className="w-[70px] md:w-[100px] cursor-pointer"
             alt="Irsyan Ramadhan Logo"
+            width="100"
+            height="22"
             draggable="false"
           />
         </a>
@@ -64,7 +73,7 @@ function Navbar() {
             <a href="#content">About</a>
           </li>
           <li className="hover:text-amber-500">
-            <a href="#content">Projects</a>
+            <a href="#projects">Projects</a>
           </li>
           <li className="hover:text-amber-500">
             <a href="#contact">Contact Me</a>

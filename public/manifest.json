@@ -1,7 +1,7 @@
 {
   "name": "Irsyan Ramadhan - Full Stack Developer Portfolio",
   "short_name": "Irsyan Portfolio",
-  "description": "Computer Engineering student at Syiah Kuala University specializing in Full Stack Development. Experienced in React, Node.js, Laravel, Flutter, and AI/ML.",
+  "description": "Computer Engineering graduate from Syiah Kuala University specializing in Full Stack Development. Experienced in React, Node.js, Laravel, Flutter, and AI/ML.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#1e1e1e",
@@ -9,16 +9,16 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/images/MyPhoto.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/images/MyPhoto.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ],
   "categories": ["portfolio", "development", "education"],

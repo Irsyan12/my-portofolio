@@ -6,6 +6,14 @@ import ProjectDetailModal from "../components/ProjectDetailModal";
 import { fetchWithRetry } from "../utils/fetchWithRetry";
 import { RiArrowDownLine } from "react-icons/ri";
 
+const optimizeCloudinary = (url, width = 640) => {
+  if (!url || typeof url !== "string") return url;
+  if (url.includes("res.cloudinary.com") && url.includes("/image/upload/")) {
+    return url.replace("/image/upload/", `/image/upload/f_auto,q_auto,w_${width}/`);
+  }
+  return url;
+};
+
 const ProjectsSection = ({ limit = 6 }) => {
   const [activeTab, setActiveTab] = useState("project");
   const [allProjects, setAllProjects] = useState([]);
@@ -58,6 +66,7 @@ const ProjectsSection = ({ limit = 6 }) => {
 
   return (
     <motion.div
+      id="projects"
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
@@ -130,8 +139,12 @@ const ProjectsSection = ({ limit = 6 }) => {
               >
                 <div className="aspect-video overflow-hidden relative">
                   <img
-                    src={project.imageUrl || "https://placehold.co/600x400?text=No+Image"}
+                    src={optimizeCloudinary(project.imageUrl, 640) || "https://placehold.co/600x400?text=No+Image"}
                     alt={project.title}
+                    loading="lazy"
+                    decoding="async"
+                    width="600"
+                    height="338"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-transparent to-transparent opacity-80"></div>

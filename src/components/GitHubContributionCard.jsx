@@ -151,7 +151,7 @@ const GitHubContributionCard = ({
           />
           <div className="min-w-0">
             <p className="text-[11px] sm:text-xs text-gray-300 font-semibold truncate">@{username}</p>
-            <p className="text-[10px] sm:text-[11px] text-gray-500 truncate">
+            <p className="text-[10px] sm:text-[11px] text-gray-400 truncate">
               GitHub activity overview
             </p>
           </div>
@@ -160,6 +160,7 @@ const GitHubContributionCard = ({
           href={`https://github.com/${username}`}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={`${username} on GitHub`}
           className="group flex items-center gap-0 rounded-full bg-white/5 p-2 transition-all duration-300 hover:bg-white/10 hover:shadow-lg border border-transparent hover:border-white/10 shrink-0"
         >
           <FaGithub className="text-xl text-gray-400 group-hover:text-color1 transition-colors duration-300" />

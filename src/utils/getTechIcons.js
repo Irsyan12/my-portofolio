@@ -1,6 +1,4 @@
-import { FaLaravel } from "react-icons/fa";
-
-const cloudinaryBaseUrl = "https://res.cloudinary.com/dxwmph7tj/image/upload";
+const cloudinaryBaseUrl = "https://res.cloudinary.com/dxwmph7tj/image/upload/f_auto,q_auto,w_64";
 const cloudinaryFolder = "icons";
 
 // Gunakan dictionary (object) dengan key = nama teknologi

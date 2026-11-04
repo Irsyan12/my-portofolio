@@ -12,7 +12,10 @@ export const getPublicFeedback = async (req, res) => {
     } = req.query;
 
     // Build filter object for public feedback
-    let filter = {};
+    let filter = {
+      isApproved: true,
+      isPublic: true,
+    };
 
     if (rating) filter.rating = parseInt(rating);
 
@@ -28,7 +31,7 @@ export const getPublicFeedback = async (req, res) => {
       .sort(sort)
       .skip(skip)
       .limit(parseInt(limit))
-      .select("-ipAddress -userAgent");
+      .select("rating name comment createdAt adminResponse");
 
     const total = await Feedback.countDocuments(filter);
 

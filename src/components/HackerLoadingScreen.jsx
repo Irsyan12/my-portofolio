@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 
-const HackerLoadingScreen = () => {
+const HackerLoadingScreen = ({ onSkip }) => {
   const [dots, setDots] = useState("");
 
   useEffect(() => {
@@ -10,10 +9,19 @@ const HackerLoadingScreen = () => {
       setDots((prev) => (prev.length >= 3 ? "" : prev + "."));
     }, 500);
 
+    // Listen for Escape key to skip
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && onSkip) {
+        onSkip();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
     return () => {
       clearInterval(interval);
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [onSkip]);
 
   return (
     <div className="fixed inset-0 z-0 flex flex-col items-center justify-center bg-[#030303] overflow-hidden">

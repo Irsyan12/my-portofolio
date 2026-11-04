@@ -130,6 +130,7 @@ export default function ChatbotPopup() {
       {/* FAB Button */}
       <button
         onClick={togglePopup}
+        aria-label="Buka Chatbot"
         className="fixed bottom-6 right-6 z-50 p-4 rounded-full bg-white/10 backdrop-blur-md shadow-xl border border-white/20 hover:bg-white/20 transition-all duration-300 cursor-pointer"
       >
         <FiMessageSquare className="text-white" size={24} />
@@ -148,6 +149,7 @@ export default function ChatbotPopup() {
           <h2 className="text-lg font-semibold">Chatbot</h2>
           <button
             onClick={togglePopup}
+            aria-label="Tutup Chatbot"
             className="text-xl hover:text-red-400 cursor-pointer transition-all"
           >
             ✖
@@ -186,6 +188,7 @@ export default function ChatbotPopup() {
             placeholder={
               isTyping ? "Bot sedang mengetik..." : "Type your message..."
             }
+            aria-label="Tulis pesan untuk chatbot"
             value={input}
             rows={1}
             disabled={isTyping}
@@ -205,6 +208,7 @@ export default function ChatbotPopup() {
           />
           <button
             onClick={sendMessage}
+            aria-label="Kirim pesan chatbot"
             disabled={isTyping || !input.trim()}
             className="ml-2 px-3 py-1 bg-color1 text-dark hover:bg-color1/80 cursor-pointer rounded-lg transition-all text-md disabled:opacity-50 disabled:cursor-not-allowed"
           >

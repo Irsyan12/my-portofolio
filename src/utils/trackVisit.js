@@ -1,4 +1,4 @@
-import { analyticsAPI } from "../api";
+import { analyticsAPI, getApiUrl } from "../api";
 
 /**
  * Track visitor dengan rate limiting (1 visit per 15 minutes)
@@ -88,9 +88,8 @@ const updateVisitDuration = async () => {
     // Fallback: Send duration update using sendBeacon (reliable for page unload)
     const data = JSON.stringify({ duration });
     const blob = new Blob([data], { type: "application/json" });
-    const url = `${
-      import.meta.env.VITE_API_URL || "http://localhost:5000/api"
-    }/visits/${visitId}/duration`;
+    const baseUrl = getApiUrl();
+    const url = `${baseUrl}/visits/${visitId}/duration`;
 
     // sendBeacon is more reliable than fetch during page unload
     if (navigator.sendBeacon) {

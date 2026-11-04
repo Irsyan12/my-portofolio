@@ -2,11 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image" href="/images/MyPhoto.png" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="canonical" href="https://irsyanrmd.dev/" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="theme-color" content="#c5f82a" />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Irsyan Ramadhan" />
@@ -14,12 +16,6 @@
     <title>
       Irsyan Ramadhan - Web & Mobile Developer | Lulusan Teknik Komputer USK
     </title>
-    
-
-    <meta
-      name="keywords"
-      content="Irsyan Ramadhan, Full Stack Developer, Web Developer Banda Aceh, Teknik Komputer USK, Lulusan USK, Programmer Aceh, Mobile Developer, React Developer, Flutter, Machine Learning, Jasa Pembuatan Website Aceh, Irsyan12"
-    />
 
     <meta name="application-name" content="Irsyan Ramadhan Portfolio" />
 
@@ -33,6 +29,17 @@
       content="QDwVh11Ta-rrqjcdob4G7-GUAi6Y4gj_JgUAoENrd70"
     />
 
+    <!-- Font Preconnect & Hero Preload -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="image"
+      href="https://res.cloudinary.com/dxwmph7tj/image/upload/f_auto,q_auto,w_800/v1783964240/myfoto2_dzdqo4.png"
+      fetchpriority="high"
+    />
+
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://irsyanrmd.dev" />
     <meta
@@ -45,11 +52,12 @@
     />
     <meta
       property="og:image"
-      content="https://irsyanrmd.dev/images/MyPhoto.png"
+      content="https://irsyanrmd.dev/og-image.png"
     />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="https://irsyanrmd.dev" />
     <meta
@@ -62,11 +70,11 @@
     />
     <meta
       name="twitter:image"
-      content="https://irsyanrmd.dev/images/MyPhoto.png"
+      content="https://irsyanrmd.dev/og-image.png"
     />
 
     <style>
-      /* Custom Scrollbar Styles (TETAP SAMA, TIDAK SAYA UBAH) */
+      /* Custom Scrollbar Styles */
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -93,7 +101,7 @@
         "@type": "Person",
         "name": "Irsyan Ramadhan",
         "url": "https://irsyanrmd.dev",
-        "image": "https://irsyanrmd.dev/images/MyPhoto.png",
+        "image": "https://irsyanrmd.dev/og-image.png",
         "jobTitle": "Full Stack Developer",
         "description": "Lulusan Teknik Komputer Universitas Syiah Kuala (USK) yang berfokus pada Web & Mobile Development (React, Flutter, Python).",
         "alumniOf": {

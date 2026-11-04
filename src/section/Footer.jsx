@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="border-t border-neutral-900 mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-neutral-500 text-sm">
+        <p className="text-neutral-400 text-sm">
           <span
             className="cursor-pointer"
             onClick={() => (window.location.href = "/login")}
@@ -20,7 +20,7 @@ const Footer = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
-            aria-label="GitHub"
+            aria-label="GitHub — Irsyan12"
           >
             <RiGithubFill className="text-xl" />
           </a>
@@ -29,6 +29,7 @@ const Footer = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
+            aria-label="LinkedIn — Irsyan Ramadhan"
           >
             <RiLinkedinFill className="text-xl" />
           </a>
@@ -37,6 +38,7 @@ const Footer = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="w-10 h-10 rounded-full bg-neutral-900 border border-neutral-800 flex items-center justify-center text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
+            aria-label="Instagram — @syan.r"
           >
             <RiInstagramFill className="text-xl" />
           </a>

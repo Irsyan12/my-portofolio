@@ -34,7 +34,15 @@ const TechStack = () => {
             data-aos="zoom-in"
             data-aos-delay={index * 150}
           >
-            <img src={url} alt={name} className="h-10 md:h-12 object-contain" />
+            <img
+              src={url}
+              alt={name}
+              loading="lazy"
+              decoding="async"
+              width="48"
+              height="48"
+              className="h-10 md:h-12 w-auto object-contain"
+            />
           </div>
         ))}
       </Marquee>

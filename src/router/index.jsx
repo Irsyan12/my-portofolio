@@ -1,14 +1,29 @@
+import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Home from "../Home";
-import Login from "../admin/Login";
-import NotFoundPage from "../pages/404";
-import Dashboard from "../admin/Dashboard";
-import ExperiencesPage from "../admin/ExperiencesPage";
-import ProjectsAdminPage from "../admin/ProjectsPage";
-import ProtectedRoute from "../components/ProtectedRoute";
-import DashboardLayout from "../admin/DashboardLayout";
-import MessagesPage from "../admin/MessagesPage";
-import FeedbackPage from "../admin/FeedbackPage";
+
+// Route-based code splitting for admin & error pages (Fase 2 - ACT-13)
+const Login = lazy(() => import("../admin/Login"));
+const NotFoundPage = lazy(() => import("../pages/404"));
+const Dashboard = lazy(() => import("../admin/Dashboard"));
+const ExperiencesPage = lazy(() => import("../admin/ExperiencesPage"));
+const ProjectsAdminPage = lazy(() => import("../admin/ProjectsPage"));
+const ProtectedRoute = lazy(() => import("../components/ProtectedRoute"));
+const DashboardLayout = lazy(() => import("../admin/DashboardLayout"));
+const MessagesPage = lazy(() => import("../admin/MessagesPage"));
+const FeedbackPage = lazy(() => import("../admin/FeedbackPage"));
+
+const RouteSuspense = ({ children }) => (
+  <Suspense
+    fallback={
+      <div className="min-h-screen bg-[#030303] flex items-center justify-center text-amber-500 font-mono text-sm">
+        <span className="animate-pulse">Loading...</span>
+      </div>
+    }
+  >
+    {children}
+  </Suspense>
+);
 
 const router = createBrowserRouter([
   {
@@ -17,35 +32,67 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <RouteSuspense>
+        <Login />
+      </RouteSuspense>
+    ),
   },
   {
     path: "/admin",
-    element: <ProtectedRoute />,
+    element: (
+      <RouteSuspense>
+        <ProtectedRoute />
+      </RouteSuspense>
+    ),
     children: [
       {
         path: "",
-        element: <DashboardLayout />,
+        element: (
+          <RouteSuspense>
+            <DashboardLayout />
+          </RouteSuspense>
+        ),
         children: [
           {
             index: true,
-            element: <Dashboard />,
+            element: (
+              <RouteSuspense>
+                <Dashboard />
+              </RouteSuspense>
+            ),
           },
           {
             path: "experiences",
-            element: <ExperiencesPage />,
+            element: (
+              <RouteSuspense>
+                <ExperiencesPage />
+              </RouteSuspense>
+            ),
           },
           {
             path: "projects",
-            element: <ProjectsAdminPage />,
+            element: (
+              <RouteSuspense>
+                <ProjectsAdminPage />
+              </RouteSuspense>
+            ),
           },
           {
             path: "messages",
-            element: <MessagesPage />,
+            element: (
+              <RouteSuspense>
+                <MessagesPage />
+              </RouteSuspense>
+            ),
           },
           {
             path: "feedback",
-            element: <FeedbackPage />,
+            element: (
+              <RouteSuspense>
+                <FeedbackPage />
+              </RouteSuspense>
+            ),
           },
         ],
       },
@@ -53,7 +100,11 @@ const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <NotFoundPage />,
+    element: (
+      <RouteSuspense>
+        <NotFoundPage />
+      </RouteSuspense>
+    ),
   },
 ]);
 
