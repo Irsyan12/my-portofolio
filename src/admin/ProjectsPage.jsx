@@ -297,12 +297,9 @@ const ProjectsPage = () => {
                     {project.type?.charAt(0).toUpperCase() +
                       project.type?.slice(1)}
                   </td>
-                  <td
-                    className="p-4 sm md:text-xs"
-                    dangerouslySetInnerHTML={{
-                      __html: project.description.replace(/\n/g, "<br />"),
-                    }}
-                  ></td>
+                  <td className="p-4 sm md:text-xs whitespace-pre-wrap">
+                    {project.description || ""}
+                  </td>
                   <td className="p-4">
                     {project.type === "project"
                       ? renderTechStack(project.techStack)

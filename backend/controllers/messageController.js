@@ -16,25 +16,30 @@ export const getMessages = async (req, res) => {
     // Build filter object
     let filter = {};
 
-    if (status) filter.status = status;
+    const allowedStatuses = ["new", "read", "archived"];
+    if (status && allowedStatuses.includes(status)) filter.status = status;
     if (isStarred !== undefined) filter.isStarred = isStarred === "true";
 
-    if (search) {
-      filter.$text = { $search: search };
+    if (search && typeof search === "string") {
+      filter.$text = { $search: search.slice(0, 100) };
     }
 
     // Calculate skip value for pagination
-    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const validLimit = Math.min(Math.max(parseInt(limit) || 10, 1), 50);
+    const validPage = Math.max(parseInt(page) || 1, 1);
+    const skip = (validPage - 1) * validLimit;
 
-    // Build sort object
+    // Build sort object with whitelisted fields
+    const allowedSortFields = ["createdAt", "updatedAt", "status", "urgency", "name", "email", "subject"];
+    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : "createdAt";
     const sort = {};
-    sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+    sort[validSortBy] = sortOrder === "desc" ? -1 : 1;
 
     // Execute query
     const messages = await Message.find(filter)
       .sort(sort)
       .skip(skip)
-      .limit(parseInt(limit));
+      .limit(validLimit);
 
     const total = await Message.countDocuments(filter);
 
@@ -42,11 +47,11 @@ export const getMessages = async (req, res) => {
       success: true,
       data: messages,
       pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(total / parseInt(limit)),
+        currentPage: validPage,
+        totalPages: Math.ceil(total / validLimit),
         totalMessages: total,
-        hasNext: parseInt(page) < Math.ceil(total / parseInt(limit)),
-        hasPrev: parseInt(page) > 1,
+        hasNext: validPage < Math.ceil(total / validLimit),
+        hasPrev: validPage > 1,
       },
     });
   } catch (error) {
@@ -103,9 +108,39 @@ export const createMessage = async (req, res) => {
       });
     }
 
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof subject !== "string" ||
+      typeof message !== "string"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid field format",
+        error: "Name, email, subject, and message must be strings",
+      });
+    }
+
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim().toLowerCase();
+    const trimmedSubject = subject.trim();
+    const trimmedMessage = message.trim();
+
+    if (
+      trimmedName.length > 100 ||
+      trimmedEmail.length > 150 ||
+      trimmedSubject.length > 200 ||
+      trimmedMessage.length > 2000
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Input length exceeds allowed limits",
+      });
+    }
+
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(trimmedEmail)) {
       return res.status(400).json({
         success: false,
         message: "Invalid email format",
@@ -114,10 +149,10 @@ export const createMessage = async (req, res) => {
     }
 
     const messageData = {
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      subject: subject.trim(),
-      message: message.trim(),
+      name: trimmedName,
+      email: trimmedEmail,
+      subject: trimmedSubject,
+      message: trimmedMessage,
     };
 
     const newMessage = new Message(messageData);

@@ -41,60 +41,12 @@ export const getUserById = async (req, res) => {
   }
 };
 
-// Register new user
+// Register new user (Disabled for security)
 export const registerUser = async (req, res) => {
-  try {
-    const { name, email, password, role } = req.body;
-
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: "User already exists with this email",
-      });
-    }
-
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create user
-    const newUser = new User({
-      name,
-      email,
-      password: hashedPassword,
-      role: role || "user",
-    });
-
-    await newUser.save();
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: newUser._id, role: newUser.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" },
-    );
-
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      data: {
-        user: {
-          id: newUser._id,
-          name: newUser.name,
-          email: newUser.email,
-          role: newUser.role,
-        },
-        token,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error registering user",
-    });
-  }
+  return res.status(403).json({
+    success: false,
+    message: "Registration is permanently disabled. Administrators are managed internally.",
+  });
 };
 
 // Login user
@@ -177,7 +129,27 @@ export const loginUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { name, avatar } = req.body;
-    const userId = req.params.id;
+    const userId = req.params.id || req.user?.userId;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
+
+    // If an ID was explicitly specified in params and it's not the user's own ID, require admin
+    if (
+      req.params.id &&
+      req.user &&
+      req.params.id.toString() !== req.user.userId.toString() &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "Admin access required to update other users",
+      });
+    }
 
     // Check if user exists
     const user = await User.findById(userId);
@@ -188,9 +160,26 @@ export const updateUser = async (req, res) => {
       });
     }
 
-    // Update user
-    user.name = name || user.name;
-    user.avatar = avatar || user.avatar;
+    // Update user safely
+    if (name !== undefined) {
+      if (typeof name !== "string" || name.trim().length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Name must be a valid non-empty string",
+        });
+      }
+      user.name = name.trim().slice(0, 100);
+    }
+
+    if (avatar !== undefined) {
+      if (typeof avatar !== "string") {
+        return res.status(400).json({
+          success: false,
+          message: "Avatar must be a valid string",
+        });
+      }
+      user.avatar = avatar.trim().slice(0, 500);
+    }
 
     await user.save();
 
@@ -216,13 +205,47 @@ export const updateUser = async (req, res) => {
 // Delete user
 export const deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) {
+    const targetUserId = req.params.id;
+
+    if (!targetUserId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
+
+    // Prevent deleting own account
+    if (req.user && req.user.userId.toString() === targetUserId.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot delete your own admin account",
+      });
+    }
+
+    const userToDelete = await User.findById(targetUserId);
+    if (!userToDelete) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
+
+    // Prevent deleting the last active admin
+    if (userToDelete.role === "admin") {
+      const activeAdminCount = await User.countDocuments({
+        role: "admin",
+        isActive: true,
+      });
+
+      if (activeAdminCount <= 1) {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot delete the last remaining active admin account",
+        });
+      }
+    }
+
+    await User.findByIdAndDelete(targetUserId);
 
     res.json({
       success: true,

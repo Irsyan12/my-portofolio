@@ -157,26 +157,6 @@ export const authAPI = {
     return response;
   },
 
-  register: async (name, email, password, role = "user") => {
-    const response = await apiClient.post(
-      "/users/register",
-      {
-        name,
-        email,
-        password,
-        role,
-      },
-      { skipAuth: true }
-    );
-
-    if (response.success && response.data.token) {
-      apiClient.setToken(response.data.token);
-      localStorage.setItem("userData", JSON.stringify(response.data.user));
-    }
-
-    return response;
-  },
-
   getProfile: async () => {
     return apiClient.get("/users/profile");
   },

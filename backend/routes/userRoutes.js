@@ -2,7 +2,6 @@ import express from "express";
 import {
   getUsers,
   getUserById,
-  registerUser,
   loginUser,
   updateUser,
   deleteUser,
@@ -16,8 +15,7 @@ import {
 
 const router = express.Router();
 
-// Public routes
-router.post("/register", rateLimiter(5), registerUser);
+// Public routes (Registration disabled - admins created via secure script)
 router.post("/login", rateLimiter(10), loginUser);
 
 // Protected routes (require authentication)

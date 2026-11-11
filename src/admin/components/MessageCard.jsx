@@ -204,12 +204,9 @@ const MessageCard = ({
             strokeLinejoin="round"
           />
         </svg>
-        <div
-          className="text-gray-200 text-base break-words"
-          dangerouslySetInnerHTML={{
-            __html: message.message.replace(/\n/g, "<br />"),
-          }}
-        ></div>
+        <div className="text-gray-200 text-base break-words whitespace-pre-wrap">
+          {message.message}
+        </div>
       </div>
     </div>
   );

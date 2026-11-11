@@ -103,24 +103,11 @@ Authorization: Bearer <your-jwt-token>
 
 ---
 
-## User Management
+## User Management & Authentication
 
-### 1. Register User (Public)
+> Catatan Keamanan: Endpoint registrasi publik dinonaktifkan secara permanen untuk mencegah eksploitasi. Akun administrator dikelola secara internal melalui server console / script `createAdmin.js`.
 
-**POST** `/api/users/register`
-
-**Body:**
-
-```json
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "password123",
-  "role": "user"
-}
-```
-
-### 2. Login (Public)
+### 1. Login (Public)
 
 **POST** `/api/users/login`
 
@@ -491,7 +478,6 @@ Buat collection baru di Postman dengan struktur berikut:
 ```
 Portfolio API
 ├── Auth
-│   ├── Register User
 │   ├── Login Admin
 │   └── Get Profile
 ├── Users

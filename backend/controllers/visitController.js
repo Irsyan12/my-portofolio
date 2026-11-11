@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Visit from "../models/Visit.js";
 
 // Track new visit (Public endpoint)
@@ -5,13 +6,24 @@ export const trackVisit = async (req, res) => {
   try {
     const { page, referrer, sessionId, duration = 0 } = req.body;
 
+    if (!page || typeof page !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Page must be a valid string",
+      });
+    }
+
+    const safeDuration = typeof duration === "number" && duration >= 0 && duration <= 86400
+      ? Math.round(duration)
+      : 0;
+
     const visitData = {
-      page,
-      referrer: referrer || "",
-      sessionId,
-      duration,
+      page: page.trim().slice(0, 500),
+      referrer: typeof referrer === "string" ? referrer.trim().slice(0, 500) : "",
+      sessionId: typeof sessionId === "string" ? sessionId.trim().slice(0, 100) : undefined,
+      duration: safeDuration,
       ipAddress: req.ip || req.connection.remoteAddress,
-      userAgent: req.get("User-Agent") || "Unknown",
+      userAgent: (req.get("User-Agent") || "Unknown").slice(0, 500),
     };
 
     // Check if this is a unique visit (same IP and page in last 24 hours)
@@ -414,16 +426,24 @@ export const updateVisitDuration = async (req, res) => {
     const { id } = req.params;
     const { duration } = req.body;
 
-    if (!duration || duration < 0) {
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid duration value",
+        message: "Invalid visit ID",
+      });
+    }
+
+    const numDuration = Number(duration);
+    if (isNaN(numDuration) || numDuration < 0 || numDuration > 86400) {
+      return res.status(400).json({
+        success: false,
+        message: "Duration must be a positive number up to 86400 seconds",
       });
     }
 
     const visit = await Visit.findByIdAndUpdate(
       id,
-      { duration },
+      { duration: Math.round(numDuration) },
       { new: true }
     );
 

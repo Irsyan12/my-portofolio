@@ -116,12 +116,9 @@ const ProjectDetailModal = ({ project, onClose }) => {
             <h3 className="text-lg font-semibold text-color2 mb-2">
               Description
             </h3>
-            <p
-              className="text-gray-300 leading-relaxed"
-              dangerouslySetInnerHTML={{
-                __html: project.description.replace(/\n/g, "<br />"),
-              }}
-            ></p>
+            <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">
+              {project.description || ""}
+            </p>
           </div>
         )}
 

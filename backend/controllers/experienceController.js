@@ -8,11 +8,17 @@ export const getExperiences = async (req, res) => {
     // Build filter object
     let filter = {};
 
-    if (company) filter.company = new RegExp(company, "i");
+    if (company && typeof company === "string") {
+      // Escape regex special characters to prevent ReDoS / Regex Injection
+      const sanitizedCompany = company.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.company = new RegExp(sanitizedCompany, "i");
+    }
 
-    // Build sort object
+    // Build sort object with whitelisted fields
+    const allowedSortFields = ["order", "createdAt", "updatedAt", "title", "company"];
+    const validSortBy = allowedSortFields.includes(sortBy) ? sortBy : "order";
     const sort = {};
-    sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+    sort[validSortBy] = sortOrder === "desc" ? -1 : 1;
 
     // Execute query
     const experiences = await Experience.find(filter).sort(sort);
